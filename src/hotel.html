@@ -1,0 +1,624 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title id="pageTitle">Hotel Details - RoomFound</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link href="./output.css?v=20261005b" rel="stylesheet">
+</head>
+
+<body class="m-0 p-0 bg-[#f7f6f4] min-h-screen">
+
+    <!-- Navbar -->
+    <div class="w-full max-w-[1146px] mx-auto px-4 xl:px-0 pt-[42px] flex flex-wrap items-center justify-between gap-4">
+        <a href="./index.html" class="logo no-underline">
+            <img src="./img/logo2.png" alt="RoomFound">
+        </a>
+
+        <div class="bg-white rounded-[49px] flex items-center flex-wrap justify-center gap-[10px] md:gap-[24px] pl-4 md:pl-[32px] pr-[9px] py-[8px]">
+            <div class="flex items-center gap-[10px] md:gap-[24px] text-[14px] font-medium text-[#070200] tracking-[-0.7px]">
+                <a href="./index.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Home</span></a>
+                <a href="./loyalty.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Loyalty Program</span></a>
+                <a href="./support.html" class="no-underline text-[#070200]"><span class="leading-[1.8] w-[68px]">Support</span></a>
+            </div>
+
+            <button id="openSignupBtn" class="rounded-[32px] px-3 md:px-[24px] py-[10px] md:py-[12px] text-[14px] font-medium text-[#070200] tracking-[-0.7px] leading-[1.8] whitespace-nowrap cursor-pointer bg-transparent border-[1.5px] border-solid border-[#1e2e37] transition-opacity duration-200" onclick="window.location.href='./index.html?signup=1'">
+                Sign Up
+            </button>
+
+            <button id="openLoginBtn" class="btn-signin relative overflow-hidden rounded-[32px] px-3 md:px-[24px] py-[10px] md:py-[12px] text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] whitespace-nowrap md:-ml-[8px] bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]" onclick="window.location.href='./index.html?login=1'">
+                Sign In
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="w-full max-w-[1162px] mx-auto px-4 xl:px-0 mt-[60px] mb-[80px] flex flex-col gap-[59px]">
+
+        <!-- Back link -->
+        <a id="backLink" href="./rooms.html"
+            class="inline-flex items-center gap-[8px] font-inter text-[14px] text-[#666] tracking-[-0.5px] no-underline hover:text-[#1e2e37] transition-colors duration-150 w-fit">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 12H5" />
+                <path d="M12 19l-7-7 7-7" />
+            </svg>
+            Back to results
+        </a>
+
+        <!-- Image Gallery -->
+        <div class="flex flex-col lg:flex-row gap-[16px] lg:gap-[34px] items-stretch lg:items-center rounded-[12px]">
+            <div
+                class="h-[240px] sm:h-[360px] lg:h-[698px] w-full lg:w-[730px] lg:shrink-0 rounded-[12px] overflow-hidden relative shadow-[2px_2px_8.5px_0px_rgba(0,0,0,0.25)]">
+                <img id="mainImage" src="img/rooms/room1.jpg" alt="" class="w-full h-full object-cover "
+                    fetchpriority="high">
+                <div class="absolute inset-0 bg-[rgba(0,0,0,0.04)] rounded-[12px]"></div>
+            </div>
+            <div class="flex sm:flex-row flex-col lg:flex-col gap-[16px] lg:gap-[34px] w-full lg:w-[398px] lg:shrink-0">
+                <div class="shadow-[2px_2px_8.5px_0px_rgba(0,0,0,0.25)] rounded-[12px] overflow-hidden flex-1"
+                    style="aspect-ratio: 2700/2250;">
+                    <img id="sideImage1" src="img/rooms/hotel-interior1.jpg" alt="" class="w-full h-full object-cover"
+                        loading="lazy">
+                </div>
+                <div class="shadow-[2px_2px_8.5px_0px_rgba(0,0,0,0.25)] rounded-[12px] overflow-hidden flex-1"
+                    style="aspect-ratio: 2700/2250;">
+                    <img id="sideImage2" src="img/rooms/hotel-interior2.jpg" alt="" class="w-full h-full object-cover"
+                        loading="lazy">
+                </div>
+            </div>
+        </div>
+
+        <!-- Hotel Info -->
+        <div class="flex flex-col gap-[69px]">
+
+            <!-- Name, Location, Rating, Description -->
+            <div class="flex flex-col gap-[82px]">
+                <div class="flex flex-col gap-[19px]">
+                    <h1 id="hotelName"
+                        class="font-abeezee text-[34px] sm:text-[44px] md:text-[60px] text-[rgba(10,9,21,0.9)]" tracking-[-0.85px] leading-[1.4] m-0">
+                        The Azure Bay Resort</h1>
+            <div class="flex items-center justify-between flex-wrap gap-3">
+                <div class="flex gap-[15px] items-end opacity-86">
+                    <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                        stroke-width="1.5">
+                        <circle cx="12" cy="12" r="3" />
+                        <circle cx="12" cy="12" r="9" />
+                        <path d="M12 3v2M12 19v2M3 12h2M19 12h2" />
+                    </svg>
+                    <span id="hotelLocation"
+                        class="font-inter text-[18px] md:text-[24px] text-[#1e2e37] tracking-[-1.46px] leading-[1.6] whitespace-nowrap">Marine
+                        Drive, Cox's Bazar</span>
+                </div>
+                <div class="flex gap-[11px] items-center">
+                    <svg width="26" height="26" viewBox="0 0 24 24" fill="#FFB800">
+                        <path
+                            d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+                    </svg>
+                    <div
+                        class="flex gap-[6px] items-center font-inter text-[18px] md:text-[24px] text-[#98979b] tracking-[-1.42px] leading-[1.6] whitespace-nowrap">
+                        <span id="hotelRating">4.7</span>
+                        <span id="hotelReviews">(12,89 Reviews)</span>
+                    </div>
+                </div>
+            </div>
+                    <div id="addReviewRow" class="flex items-center gap-[14px] mt-[4px]">
+                        <button id="addReviewBtn"
+                            class="btn-explore relative overflow-hidden rounded-[32px] px-[24px] py-[12px] font-inter text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] border-none cursor-pointer bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]">
+                            Add review
+                        </button>
+                        <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px]">Share your experience with other travelers</span>
+                    </div>
+                </div>
+
+                <!-- Room Availability Status -->
+                <div id="availabilitySection"
+                    class="bg-white border-solid border-[#bfbfbf] flex flex-col items-start overflow-hidden w-fit"
+                    style="border-width: 0.544px; border-radius: 34.796px; padding: 8px 22px;">
+                    <div class="flex items-center justify-center w-full" style="gap: 10.874px;">
+                        <div class="flex items-center" style="gap: 8.699px;">
+                            <img src="img/home-icon.svg" alt="" style="width: 26.097px; height: 26.097px; display: block;">
+                            <span
+                                class="font-inter font-normal text-[#98979b] whitespace-nowrap"
+                                style="font-size: 17.718px; line-height: normal;">Available</span>
+                        </div>
+                        <div class="flex items-center justify-center">
+                            <span id="availabilityCount"
+                                class="font-inter font-medium text-black whitespace-nowrap"
+                                style="font-size: 20.249px; line-height: 1.7; letter-spacing: 0.405px; text-shadow: 2.175px 2.175px 9.243px rgba(0,0,0,0.25);">--/--</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex flex-col gap-[18px]">
+                    <h2 class="font-abeezee text-[36px] text-[#22212c] tracking-[-0.5px] leading-[1.05] m-0">
+                        Description
+                    </h2>
+                    <div id="hotelDescription"
+                        class="font-inter text-[18px] text-[#3f3f3f] tracking-[-0.5px] leading-[1.4]">
+                        <p class="m-0 mb-[20px]">Located in the exclusive Marine Drive area of Cox's Bazar, The Azure Bay
+                            Resort redefined tropical elegance. Designed for travelers who seek both adventure and serenity,
+                            our property blends modern architectural brilliance with the natural beauty of the Bay of
+                            Bengal.</p>
+                        <p class="m-0">Whether you are enjoying a sunset dinner at our rooftop terrace or relaxing in our
+                            signature Azure Spa, every moment is crafted to provide a sense of total peace. With 120
+                            high-end suites and 24/7 personalized concierge service, we ensure that your stay is as seamless
+                            as the ocean horizon.</p>
+                    </div>
+                </div>
+
+                <!-- Reviews Section -->
+                <div class="flex flex-col gap-[18px]">
+                    <h2 class="font-abeezee text-[36px] text-[#22212c] tracking-[-0.5px] leading-[1.05] m-0">
+                        Reviews
+                    </h2>
+                    <div id="reviewsList" class="flex flex-col gap-[16px]">
+                        <p class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] m-0">Loading reviews…</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Add Services Section -->
+            <div class="flex flex-col gap-[31px]">
+                <h2 class="font-abeezee text-[36px] text-[#22212c] tracking-[-0.5px] leading-[1.4] m-0">Add services
+                </h2>
+                <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-[20px]" id="servicesGrid">
+
+                    <!-- Spa & Wellness -->
+                    <div class="service-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-service="spa">
+                        <div
+                            class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 22c-4-2.5-8-6-8-11a8 8 0 0 1 16 0c0 5-4 8.5-8 11z" />
+                                <path d="M12 13a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Spa
+                                &amp; Wellness</span>
+                            <span
+                                class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$45/stay</span>
+                        </div>
+                        <div
+                            class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Swimming Pool -->
+                    <div class="service-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-service="pool">
+                        <div
+                            class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M2 12h20" />
+                                <path d="M2 16c1.5 1.5 3 2 5 0s3.5-1.5 5 0 3 2 5 0 3.5-1.5 5 0" />
+                                <path d="M2 20c1.5 1.5 3 2 5 0s3.5-1.5 5 0 3 2 5 0 3.5-1.5 5 0" />
+                                <path d="M8 12V4m8 8V4" />
+                                <path d="M6 4h12" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span
+                                class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Swimming
+                                Pool</span>
+                            <span
+                                class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$30/stay</span>
+                        </div>
+                        <div
+                            class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Airport Pickup -->
+                    <div class="service-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-service="airport">
+                        <div
+                            class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path
+                                    d="M17.8 19.2L16 11l3.5-3.5C20.3 6.7 21 5.1 21 4c0-.5-.2-1-.5-1.3S19.5 2 19 2c-1.1 0-2.7.7-3.5 1.5L12 7 4.2 5.2c-.5-.1-1 .1-1.3.5L1.5 7.1c-.3.4-.2 1 .2 1.3L7 12l-2.5 2.5-2.8-.7c-.4-.1-.8 0-1.1.3l-.7.7c-.3.3-.2.8.1 1.1l3.5 2.5 2.5 3.5c.3.3.8.4 1.1.1l.7-.7c.3-.3.4-.7.3-1.1l-.7-2.8L10 15l3.6 5.3c.3.4.9.5 1.3.2l1.4-1.4c.4-.3.6-.8.5-1.3z" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span
+                                class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Airport
+                                Pickup</span>
+                            <span
+                                class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$25/stay</span>
+                        </div>
+                        <div
+                            class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Breakfast Buffet -->
+                    <div class="service-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-service="breakfast">
+                        <div
+                            class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M18 8h1a4 4 0 0 1 0 8h-1" />
+                                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z" />
+                                <path d="M6 1v3M10 1v3M14 1v3" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span
+                                class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Breakfast
+                                Buffet</span>
+                            <span
+                                class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$20/stay</span>
+                        </div>
+                        <div
+                            class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Gym Access -->
+                    <div class="service-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-service="gym">
+                        <div
+                            class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M6.5 6.5L17.5 17.5M6.5 17.5L17.5 6.5" />
+                                <path d="M2 12h4M18 12h4" />
+                                <path d="M4 8v8M20 8v8" />
+                                <path d="M6 10v4M18 10v4" />
+                                <rect x="8" y="10" width="8" height="4" rx="1" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Gym
+                                Access</span>
+                            <span
+                                class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$15/stay</span>
+                        </div>
+                        <div
+                            class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Laundry Service -->
+                    <div class="service-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-service="laundry">
+                        <div
+                            class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37"
+                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="2" y="2" width="20" height="20" rx="3" />
+                                <circle cx="12" cy="13" r="5" />
+                                <circle cx="12" cy="13" r="2" />
+                                <path d="M6 6h.01M9 6h.01" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span
+                                class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Laundry
+                                Service</span>
+                            <span
+                                class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$18/stay</span>
+                        </div>
+                        <div
+                            class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3"
+                                stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                <path d="M20 6L9 17l-5-5" />
+                            </svg>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Room Type / Bed Style Section -->
+            <div class="flex flex-col gap-[31px]">
+                <div class="flex items-end justify-between">
+                    <h2 class="font-abeezee text-[36px] text-[#22212c] tracking-[-0.5px] leading-[1.4] m-0">Room type &amp; bed style</h2>
+                    <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Choose one option for your stay</span>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-[20px]" id="roomOptionsGrid">
+
+                    <div class="service-card room-option-card active bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-room-option="single_twin">
+                        <div class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 10h18v8H3z" />
+                                <path d="M3 18v3M21 18v3" />
+                                <path d="M6 10V7a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v3" />
+                                <path d="M14 10V7a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v3" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Single / Twin Beds</span>
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Calm standard setup for flexible sleeping</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-[10px] shrink-0">
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$0/night</span>
+                            <div class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-card room-option-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-room-option="king">
+                        <div class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M3 11h18v7H3z" />
+                                <path d="M3 18v3M21 18v3" />
+                                <path d="M5 11V7a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v4" />
+                                <path d="M8 8h8" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">King Bed Room</span>
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">More space and a premium sleeping layout</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-[10px] shrink-0">
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$35/night</span>
+                            <div class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-card room-option-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-room-option="deluxe_suite">
+                        <div class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 18V9l8-4 8 4v9" />
+                                <path d="M2 18h20" />
+                                <path d="M8 18v-4h8v4" />
+                                <path d="M9 10h.01M15 10h.01" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Deluxe Suite</span>
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Elevated interior finish with lounge comfort</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-[10px] shrink-0">
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$65/night</span>
+                            <div class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="service-card room-option-card bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[16px] px-[24px] py-[22px] flex items-center gap-[18px] cursor-pointer select-none"
+                        data-room-option="luxury_suite">
+                        <div class="w-[48px] h-[48px] rounded-[12px] bg-[#f7f6f4] flex items-center justify-center shrink-0">
+                            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#1e2e37" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M12 3l2.2 4.45 4.9.71-3.55 3.46.84 4.88L12 14.9l-4.39 2.6.84-4.88L4.9 8.16l4.9-.71L12 3z" />
+                                <path d="M5 21h14" />
+                            </svg>
+                        </div>
+                        <div class="flex flex-col gap-[4px] flex-1">
+                            <span class="font-abeezee text-[18px] text-[#22212c] tracking-[-0.5px] leading-[1.4]">Luxury Suite</span>
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Signature suite with the highest tier finish</span>
+                        </div>
+                        <div class="flex flex-col items-end gap-[10px] shrink-0">
+                            <span class="font-inter text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">+$120/night</span>
+                            <div class="service-check w-[28px] h-[28px] rounded-[8px] border-[1.5px] border-solid border-[#bfbfbf] flex items-center justify-center shrink-0">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" class="opacity-0">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- Choose Your Room / Booking Section -->
+            <div class="flex flex-col gap-[43px]">
+                <div class="flex flex-col gap-[31px]">
+                    <h2 class="font-abeezee text-[36px] text-[#22212c] tracking-[-0.5px] leading-[1.4] m-0">Choose your
+                        room</h2>
+
+                    <!-- Details Card -->
+                    <div
+                        class="bg-white border-[0.5px] border-solid border-[#bfbfbf] rounded-[22px] pt-[18px] pb-[24px] pl-[41px] pr-[41px]">
+                        <div class="flex flex-col gap-[22px]">
+                            <p class="font-abeezee text-[20px] text-[#22212c] tracking-[-0.5px] leading-[1.4] m-0">
+                                Details</p>
+
+                            <div class="flex flex-col md:flex-row gap-[28px] md:gap-[53px] items-start">
+                                <!-- Dates -->
+                                <div class="flex flex-col gap-[35px] w-full md:w-[445px]">
+                                    <div class="flex gap-[10px] items-end">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#98979b"
+                                            stroke-width="1.5">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+                                            <path d="M16 2v4M8 2v4M3 10h18" />
+                                        </svg>
+                                        <span
+                                            class="font-abeezee text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Dates</span>
+                                    </div>
+
+                                    <!-- Date Display (default view) -->
+                                    <div id="dateDisplay" class="flex gap-[23px] items-center">
+                                        <div class="flex gap-[4px] items-center cursor-pointer date-edit-trigger"
+                                            id="editCheckIn">
+                                            <span id="checkInDate"
+                                                class="font-abeezee text-[20px] text-black tracking-[-0.5px] leading-[1.4] whitespace-nowrap">Mon,03
+                                                Mar 2026</span>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M6 9l6 6 6-6" />
+                                            </svg>
+                                        </div>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000"
+                                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                            class="rotate-180">
+                                            <path d="M19 12H5" />
+                                            <path d="M12 19l-7-7 7-7" />
+                                        </svg>
+                                        <div class="flex gap-[4px] items-center cursor-pointer date-edit-trigger"
+                                            id="editCheckOut">
+                                            <span id="checkOutDate"
+                                                class="font-abeezee text-[20px] text-black tracking-[-0.5px] leading-[1.4] whitespace-nowrap">Thu,06
+                                                Mar 2026</span>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000"
+                                                stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                                <path d="M6 9l6 6 6-6" />
+                                            </svg>
+                                        </div>
+                                    </div>
+
+                                    <!-- Date Edit (hidden by default) -->
+                                    <div id="dateEdit" class="hidden flex-col gap-[14px]">
+                                        <div class="flex gap-[16px] items-center">
+                                            <div class="flex flex-col gap-[6px]">
+                                                <label
+                                                    class="font-inter text-[13px] text-[#98979b] tracking-[-0.5px]">Check-in</label>
+                                                <input type="date" id="checkInInput"
+                                                    class="date-input font-abeezee text-[17px] text-black tracking-[-0.5px] leading-[1.4] bg-[#f7f6f4] border-[1px] border-solid border-[#bfbfbf] rounded-[10px] px-[14px] py-[10px] outline-none">
+                                            </div>
+                                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000"
+                                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
+                                                class="rotate-180 mt-[22px]">
+                                                <path d="M19 12H5" />
+                                                <path d="M12 19l-7-7 7-7" />
+                                            </svg>
+                                            <div class="flex flex-col gap-[6px]">
+                                                <label
+                                                    class="font-inter text-[13px] text-[#98979b] tracking-[-0.5px]">Check-out</label>
+                                                <input type="date" id="checkOutInput"
+                                                    class="date-input font-abeezee text-[17px] text-black tracking-[-0.5px] leading-[1.4] bg-[#f7f6f4] border-[1px] border-solid border-[#bfbfbf] rounded-[10px] px-[14px] py-[10px] outline-none">
+                                            </div>
+                                        </div>
+                                        <div class="flex gap-[10px]">
+                                            <button id="confirmDates"
+                                                class="date-action-btn font-inter text-[13px] font-medium text-white tracking-[-0.5px] bg-[#1e2e37] border-none rounded-[8px] px-[16px] py-[7px] cursor-pointer flex items-center gap-[5px]">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="white" stroke-width="2.5" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path d="M20 6L9 17l-5-5" />
+                                                </svg>
+                                                Confirm
+                                            </button>
+                                            <button id="cancelDates"
+                                                class="date-action-btn font-inter text-[13px] font-medium text-[#666] tracking-[-0.5px] bg-transparent border-[1px] border-solid border-[#bfbfbf] rounded-[8px] px-[16px] py-[7px] cursor-pointer flex items-center gap-[5px]">
+                                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+                                                    stroke="#666" stroke-width="2.5" stroke-linecap="round"
+                                                    stroke-linejoin="round">
+                                                    <path d="M18 6L6 18M6 6l12 12" />
+                                                </svg>
+                                                Cancel
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="hidden md:block w-[1px] h-[139px] bg-[#bfbfbf] shrink-0"></div>
+
+                                <!-- Travelers -->
+                                <div class="flex flex-col gap-[35px] w-full md:w-[180px]">
+                                    <div class="flex gap-[10px] items-end">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#98979b"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                                            <circle cx="12" cy="7" r="4" />
+                                        </svg>
+                                        <span
+                                            class="font-abeezee text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Travelers</span>
+                                    </div>
+                                    <div class="flex gap-[4px] items-center">
+                                        <span id="travelersSummary"
+                                            class="font-abeezee text-[20px] text-black tracking-[-0.5px] leading-[1.4] whitespace-nowrap">1
+                                            Room,2 Adults</span>
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#000"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M6 9l6 6 6-6" />
+                                        </svg>
+                                    </div>
+                                </div>
+
+                                <!-- Divider -->
+                                <div class="hidden md:block w-[1px] h-[139px] bg-[#bfbfbf] shrink-0"></div>
+
+                                <!-- Amount -->
+                                <div class="flex flex-col gap-[19px] w-full md:w-[136px]">
+                                    <div class="flex gap-[10px] items-end">
+                                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#98979b"
+                                            stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                                            <line x1="12" y1="1" x2="12" y2="23" />
+                                            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                                        </svg>
+                                        <span
+                                            class="font-abeezee text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">Amount</span>
+                                    </div>
+                                    <div class="flex flex-col gap-[5px]">
+                                        <div class="relative h-[41px]">
+                                            <span id="totalPrice"
+                                                class="absolute left-0 top-0 font-inter font-medium text-[24px] text-[#0a0915] tracking-[-0.85px] leading-[1.7]">$316</span>
+                                            <span id="perNightPrice"
+                                                class="absolute left-[64px] top-[1px] font-abeezee text-[14px] text-[#98979b] tracking-[-0.5px] leading-[1.4]">100$/Night</span>
+                                        </div>
+                                        <span
+                                            class="font-inter text-[12px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">Include
+                                            taxes &amp; Fees</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Reserve Button -->
+                <button id="reserveBtn"
+                    class="btn-reserve w-full md:w-[306px] h-[75px] rounded-[12px] border-none cursor-pointer flex items-center justify-center bg-[linear-gradient(119deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)]">
+                    <span
+                        class="font-inter font-medium text-[24px] text-white tracking-[-1.2px] leading-[1.8]">Reserve</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="./modal.js?v=20261005b"></script>
+    <script src="./navbar-auth.js?v=20261005b"></script>
+    <script src="./hotel.js?v=20261005b"></script>
+  <script src="./mobile-nav.js?v=20261005db"></script>
+</body>
+
+</html>

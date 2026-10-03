@@ -1,0 +1,501 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoomFound — Book your perfect stay instantly</title>
+  <meta name="description" content="RoomFound is a modern, user-friendly hotel booking platform. Search rooms, compare prices, and book your perfect stay instantly.">
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="./output.css?v=20261005b" rel="stylesheet">
+</head>
+
+<body class="m-0 p-0">
+
+  <div class="hero-box w-full relative overflow-visible mb-[40px]">
+    <img src="hero-bg.jpg" alt="Beautiful beachfront resort" class="w-full h-full object-cover" fetchpriority="high">
+
+    <div
+      class="navbar-box w-full max-w-[1146px] px-4 md:px-0 flex flex-wrap items-center justify-between gap-4 absolute top-[16px] md:top-[42px] left-1/2 -translate-x-1/2">
+      <div class="logo">
+        <img src="Brand Container.png" alt="">
+      </div>
+
+      <div class="bg-white rounded-[49px] flex items-center flex-wrap justify-center gap-[10px] md:gap-[24px] pl-4 md:pl-[32px] pr-[9px] py-[8px]">
+        <div class="flex items-center gap-[10px] md:gap-[24px] text-[14px] font-medium text-[#070200] tracking-[-0.7px]">
+          <a href="./index.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Home</span></a>
+          <a href="./loyalty.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Loyalty Program</span></a>
+          <a href="./support.html" class="no-underline text-[#070200]"><span class="leading-[1.8] w-[68px]">Support</span></a>
+        </div>
+
+        <button id="openSignupBtn" class="rounded-[32px] px-3 md:px-[24px] py-[10px] md:py-[12px] text-[14px] font-medium text-[#070200] tracking-[-0.7px] leading-[1.8] whitespace-nowrap cursor-pointer bg-transparent border-[1.5px] border-solid border-[#1e2e37] transition-opacity duration-200">
+          Sign Up
+        </button>
+
+        <button id="openLoginBtn" class="btn-signin relative overflow-hidden rounded-[32px] px-3 md:px-[24px] py-[10px] md:py-[12px] text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] whitespace-nowrap md:-ml-[8px] bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]">
+          Sign In
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-content absolute left-4 md:left-[112px] top-[110px] md:top-[219px] right-4 md:right-auto md:w-[759px] flex flex-col gap-[24px] md:gap-[45px] items-start">
+      <!-- Heading -->
+      <div class="flex flex-col gap-[12px] w-full">
+        <h1 class="text-white tracking-[-3.5px] leading-[1.15] text-[40px] sm:text-[56px] md:text-[72px] xl:text-[96px] m-0">
+          <span class="font-abeezee">Book your </span><span class="font-instrument italic">perfect </span><span class="font-instrument italic">stay</span><span class="font-abeezee"> instantly and hassle-free</span>
+        </h1>
+        <p class="font-inter text-[#fff9f9] text-[16px] md:text-[20px] tracking-[-0.2px] leading-[1.8] opacity-80 m-0 max-w-[640px]">
+          Compare rooms across Cox's Bazar's finest resorts, check live availability and lock in your booking in minutes — no phone calls, no paperwork.
+        </p>
+      </div>
+
+      <!-- Book Your Stay Button -->
+      <button onclick="document.getElementById('searchBar').scrollIntoView({behavior:'smooth',block:'center'})" class="btn-book font-abeezee italic rounded-[24px] border-[3.593px] border-solid border-[rgba(83,148,180,0.5)] px-[24px] md:px-[39.524px] py-[14px] md:py-[25.151px] flex items-center justify-center bg-[radial-gradient(ellipse_at_center,#ffffff,#efefef)] shadow-[0px_6px_18.1px_-2px_rgba(0,0,0,0.25)]">
+        <span class="text-[#303030] text-[20px] md:text-[32px] tracking-[-0.64px] leading-[1.54]">Book Your Stay</span>
+      </button>
+    </div>
+
+    <!-- Search Bar (no overflow hidden — modals are outside) -->
+    <div class="absolute left-1/2 -translate-x-1/2 bottom-[24px] md:bottom-[40px] w-[calc(100%-24px)] max-w-[1224px] md:w-[1224px] md:h-[172px] bg-white rounded-[28px] z-10" id="searchBar">
+      <div class="md:absolute md:top-1/2 md:-translate-y-1/2 md:left-[29px] md:right-[29px] flex flex-col md:flex-row items-stretch md:items-center gap-[16px] md:gap-[29px] p-4 md:p-0">
+
+        <!-- Location -->
+        <div class="search-section" id="locationSection">
+          <div class="flex flex-col gap-[24px] items-start w-full md:w-[135px]">
+            <div class="flex items-center gap-[22px]">
+              <span class="font-inter text-[#666] text-[20px] font-medium tracking-[-1px] leading-[1.8]">Location</span>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+                <path d="M1 1L7 7L13 1" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="flex items-center gap-[10px] w-full">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#666"/>
+              </svg>
+              <span class="font-inter text-black text-[20px] font-medium tracking-[-1px] leading-[1.8] whitespace-nowrap" id="locationValue">Cox's Bazar</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block w-0 h-[100px] border-r border-[#e5e5e5]"></div>
+
+        <!-- Check in -->
+        <div class="search-section" id="checkinSection">
+          <div class="flex flex-col gap-[26px] items-center w-full md:w-[159px]">
+            <div class="flex items-center gap-[22px]">
+              <span class="font-inter text-[#666] text-[20px] font-medium tracking-[-1px] leading-[1.8]">Check in</span>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+                <path d="M1 1L7 7L13 1" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="flex items-center gap-[10px] w-full">
+              <div class="relative w-[24px] h-[24px] opacity-40 overflow-hidden shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="#333" stroke-width="2"/>
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="#333" stroke-width="2"/>
+                  <line x1="8" y1="2" x2="8" y2="6" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="16" y1="2" x2="16" y2="6" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="font-inter text-[#999] text-[16px] font-medium tracking-[-0.5px] leading-[1.8] whitespace-nowrap" id="checkinValue">Select date</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block w-0 h-[100px] border-r border-[#e5e5e5]"></div>
+
+        <!-- Check out -->
+        <div class="search-section" id="checkoutSection">
+          <div class="flex flex-col gap-[26px] items-center w-full md:w-[161px]">
+            <div class="flex items-center gap-[22px]">
+              <span class="font-inter text-[#666] text-[20px] font-medium tracking-[-1px] leading-[1.8]">Check out</span>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+                <path d="M1 1L7 7L13 1" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="flex items-center gap-[10px] w-full">
+              <div class="relative w-[24px] h-[24px] opacity-40 overflow-hidden shrink-0">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                  <rect x="3" y="4" width="18" height="18" rx="2" stroke="#333" stroke-width="2"/>
+                  <line x1="3" y1="10" x2="21" y2="10" stroke="#333" stroke-width="2"/>
+                  <line x1="8" y1="2" x2="8" y2="6" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                  <line x1="16" y1="2" x2="16" y2="6" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <span class="font-inter text-[#999] text-[16px] font-medium tracking-[-0.5px] leading-[1.8] whitespace-nowrap" id="checkoutValue">Select date</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div class="hidden md:block w-0 h-[100px] border-r border-[#e5e5e5]"></div>
+
+        <!-- Room & Guest -->
+        <div class="search-section" id="roomguestSection">
+          <div class="flex flex-col gap-[24px] items-start w-full md:w-[171px]">
+            <div class="flex items-center gap-[23px] w-full">
+              <span class="font-inter text-[#666] text-[20px] font-medium tracking-[-1px] leading-[1.8] whitespace-nowrap">Room &amp; Guest</span>
+              <svg width="14" height="8" viewBox="0 0 14 8" fill="none">
+                <path d="M1 1L7 7L13 1" stroke="#666" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="flex items-center gap-[38px]">
+              <div class="flex items-center gap-[14px]">
+                <div class="relative w-[24px] h-[24px] opacity-40 overflow-hidden">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M3 21V7a2 2 0 012-2h6v16M3 21h18M21 21V11a2 2 0 00-2-2h-8" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <rect x="7" y="9" width="2" height="2" fill="#333"/><rect x="7" y="13" width="2" height="2" fill="#333"/>
+                  </svg>
+                </div>
+                <span class="font-inter text-[#070200] text-[20px] font-medium tracking-[-1px] leading-[1.8]" id="roomValue">1</span>
+              </div>
+              <div class="flex items-center gap-[14px]">
+                <div class="relative w-[24px] h-[24px] opacity-40 overflow-hidden">
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+                    <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2M9 11a4 4 0 100-8 4 4 0 000 8zM23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" stroke="#333" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </div>
+                <span class="font-inter text-[#070200] text-[20px] font-medium tracking-[-1px] leading-[1.8]" id="guestValue">3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Check Room Availability Button -->
+        <button class="btn-check font-inter rounded-[57.489px] border-[3.593px] border-solid border-white/50 px-[39.524px] py-[25.151px] flex items-center justify-center whitespace-nowrap bg-[linear-gradient(114deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)]"
+          id="checkAvailBtn">
+          <span class="text-white text-[20px] font-medium tracking-[-1px] leading-[1.8]">Check Room Availability</span>
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===== DROPDOWN MODALS (fixed position, placed by JS) ===== -->
+
+  <!-- Location Dropdown -->
+  <div class="dropdown-modal w-[320px]" id="locationModal">
+    <div class="p-4 border-b border-[#eee]">
+      <input type="text" id="locationSearch" placeholder="Search location..." class="w-full px-4 py-[10px] rounded-xl border border-[#e5e5e5] text-[15px] outline-none font-inter box-border">
+    </div>
+    <div id="locationList" class="max-h-[280px] overflow-y-auto"></div>
+  </div>
+
+  <!-- Check-in Calendar -->
+  <div class="dropdown-modal w-[340px] p-5" id="checkinModal">
+    <div class="flex items-center justify-between mb-4">
+      <button class="counter-btn cal-nav !w-8 !h-8 !text-base" data-type="checkin" data-dir="-1">&#8249;</button>
+      <span class="font-inter text-base font-medium text-[#333]" id="checkinMonthYear"></span>
+      <button class="counter-btn cal-nav !w-8 !h-8 !text-base" data-type="checkin" data-dir="1">&#8250;</button>
+    </div>
+    <div class="calendar-grid" id="checkinDaysHeader"></div>
+    <div class="calendar-grid" id="checkinCalendar"></div>
+  </div>
+
+  <!-- Check-out Calendar -->
+  <div class="dropdown-modal w-[340px] p-5" id="checkoutModal">
+    <div class="flex items-center justify-between mb-4">
+      <button class="counter-btn cal-nav !w-8 !h-8 !text-base" data-type="checkout" data-dir="-1">&#8249;</button>
+      <span class="font-inter text-base font-medium text-[#333]" id="checkoutMonthYear"></span>
+      <button class="counter-btn cal-nav !w-8 !h-8 !text-base" data-type="checkout" data-dir="1">&#8250;</button>
+    </div>
+    <div class="calendar-grid" id="checkoutDaysHeader"></div>
+    <div class="calendar-grid" id="checkoutCalendar"></div>
+  </div>
+
+  <!-- Room & Guest Modal -->
+  <div class="dropdown-modal w-[320px] p-6" id="roomguestModal">
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <div class="font-inter text-base font-medium text-[#333]">Rooms</div>
+        <div class="font-inter text-[13px] text-[#999]">Max 5 rooms</div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="counter-btn count-btn" data-counter="room" data-dir="-1">−</button>
+        <span class="font-inter text-lg font-medium text-[#333] w-6 text-center" id="roomCount">1</span>
+        <button class="counter-btn count-btn" data-counter="room" data-dir="1">+</button>
+      </div>
+    </div>
+    <div class="flex items-center justify-between mb-5">
+      <div>
+        <div class="font-inter text-base font-medium text-[#333]">Adults</div>
+        <div class="font-inter text-[13px] text-[#999]">Age 13+</div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="counter-btn count-btn" data-counter="adult" data-dir="-1">−</button>
+        <span class="font-inter text-lg font-medium text-[#333] w-6 text-center" id="adultCount">2</span>
+        <button class="counter-btn count-btn" data-counter="adult" data-dir="1">+</button>
+      </div>
+    </div>
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="font-inter text-base font-medium text-[#333]">Children</div>
+        <div class="font-inter text-[13px] text-[#999]">Age 0-12</div>
+      </div>
+      <div class="flex items-center gap-4">
+        <button class="counter-btn count-btn" data-counter="child" data-dir="-1">−</button>
+        <span class="font-inter text-lg font-medium text-[#333] w-6 text-center" id="childCount">1</span>
+        <button class="counter-btn count-btn" data-counter="child" data-dir="1">+</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LOGIN MODAL ===== -->
+  <div class="login-overlay" id="loginOverlay">
+    <div class="login-card">
+      <!-- Header: Logo + Close -->
+      <div class="flex justify-between items-start mb-10">
+        <div class="flex-1 flex flex-col items-center gap-10">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="40" viewBox="0 0 36 40" fill="none" class="drop-shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)]">
+            <path d="M35.4125 0H0.36875C0.1625 0 0 0.1625 0 0.36875V39.4562C0 39.6562 0.1625 39.825 0.36875 39.825H4.65625C4.65625 39.825 4.69375 39.825 4.7125 39.825L16.2312 37.9875C16.4125 37.9562 16.5437 37.8062 16.5437 37.625V9.4375C16.5437 9.28125 16.45 9.14375 16.3063 9.09375L6.7 5.51875H19.4875V39.4625C19.4875 39.6625 19.65 39.8312 19.8563 39.8312H35.4187C35.625 39.8312 35.7875 39.6687 35.7875 39.4625V0.36875C35.7875 0.1625 35.625 0 35.4187 0H35.4125ZM14.7625 21.1062C14.9625 21.1062 15.1312 21.7125 15.1312 22.4562C15.1312 23.2 14.9688 23.8062 14.7625 23.8062C14.5563 23.8062 14.3938 23.2 14.3938 22.4562C14.3938 21.7125 14.5563 21.1062 14.7625 21.1062ZM20.8625 23.8C20.6625 23.8 20.4938 23.1937 20.4938 22.45C20.4938 21.7062 20.6563 21.1 20.8625 21.1C21.0688 21.1 21.2313 21.7062 21.2313 22.45C21.2313 23.1937 21.0688 23.8 20.8625 23.8Z" fill="#1E2E37"/>
+          </svg>
+          <p class="font-abeezee italic text-[32px] text-black tracking-[-0.5px] leading-[1.05] text-center">Sign In with Email</p>
+        </div>
+        <button id="closeLoginBtn" class="bg-none border-none cursor-pointer p-1 ml-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 6L18 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <div class="flex flex-col gap-[31px]">
+        <div class="flex flex-col gap-2">
+          <!-- Email -->
+          <div class="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+              <rect x="2" y="4" width="20" height="16" rx="3" stroke="#666" stroke-width="1.5"/>
+              <path d="M2 7L12 13L22 7" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="email" id="loginEmail" class="login-input !pl-14" placeholder="Email">
+          </div>
+
+          <!-- Password -->
+          <div class="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+              <rect x="5" y="11" width="14" height="10" rx="2" stroke="#666" stroke-width="1.5"/>
+              <path d="M8 11V7a4 4 0 118 0v4" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="16" r="1.5" fill="#666"/>
+            </svg>
+            <input type="password" id="loginPassword" class="login-input !pl-14 !pr-[50px]" placeholder="Password">
+            <button id="togglePasswordBtn" type="button" class="absolute right-[21px] top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer p-1 opacity-50">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="eyeIcon">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="#666" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="3" stroke="#666" stroke-width="1.5"/>
+                <line x1="4" y1="4" x2="20" y2="20" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Forget password -->
+          <p class="font-inter text-xs text-black text-right tracking-[-0.6px] leading-[1.8] cursor-pointer" id="forgotPasswordLink">Forgot password?</p>
+
+          <!-- Get started button -->
+          <button class="login-btn" id="loginSubmitBtn">Get started</button>
+        </div>
+
+        <!-- Sign up link -->
+        <p class="font-inter text-xs text-black text-center tracking-[-0.6px] leading-[1.8]">
+          Dont have any account? <span id="goToSignup" class="font-medium cursor-pointer">Sign up</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SIGN UP MODAL ===== -->
+  <div class="login-overlay" id="signupOverlay">
+    <div class="login-card">
+      <!-- Header: Logo + Close -->
+      <div class="flex justify-between items-start mb-10">
+        <div class="flex-1 flex flex-col items-center gap-10">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="40" viewBox="0 0 36 40" fill="none" class="drop-shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)]">
+            <path d="M35.4125 0H0.36875C0.1625 0 0 0.1625 0 0.36875V39.4562C0 39.6562 0.1625 39.825 0.36875 39.825H4.65625C4.65625 39.825 4.69375 39.825 4.7125 39.825L16.2312 37.9875C16.4125 37.9562 16.5437 37.8062 16.5437 37.625V9.4375C16.5437 9.28125 16.45 9.14375 16.3063 9.09375L6.7 5.51875H19.4875V39.4625C19.4875 39.6625 19.65 39.8312 19.8563 39.8312H35.4187C35.625 39.8312 35.7875 39.6687 35.7875 39.4625V0.36875C35.7875 0.1625 35.625 0 35.4187 0H35.4125ZM14.7625 21.1062C14.9625 21.1062 15.1312 21.7125 15.1312 22.4562C15.1312 23.2 14.9688 23.8062 14.7625 23.8062C14.5563 23.8062 14.3938 23.2 14.3938 22.4562C14.3938 21.7125 14.5563 21.1062 14.7625 21.1062ZM20.8625 23.8C20.6625 23.8 20.4938 23.1937 20.4938 22.45C20.4938 21.7062 20.6563 21.1 20.8625 21.1C21.0688 21.1 21.2313 21.7062 21.2313 22.45C21.2313 23.1937 21.0688 23.8 20.8625 23.8Z" fill="#1E2E37"/>
+          </svg>
+          <p class="font-abeezee italic text-[32px] text-black tracking-[-0.5px] leading-[1.05] text-center">Sign Up with Email</p>
+        </div>
+        <button id="closeSignupBtn" class="bg-none border-none cursor-pointer p-1 ml-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 6L18 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Form -->
+      <div class="flex flex-col gap-[31px]">
+        <div class="flex flex-col gap-2">
+          <!-- Full Name -->
+          <div class="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+              <path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="12" cy="7" r="4" stroke="#666" stroke-width="1.5"/>
+            </svg>
+            <input type="text" id="signupName" class="login-input !pl-14" placeholder="Full Name">
+          </div>
+
+          <!-- Email -->
+          <div class="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+              <rect x="2" y="4" width="20" height="16" rx="3" stroke="#666" stroke-width="1.5"/>
+              <path d="M2 7L12 13L22 7" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <input type="email" id="signupEmail" class="login-input !pl-14" placeholder="Email">
+          </div>
+
+          <!-- Password -->
+          <div class="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+              <rect x="5" y="11" width="14" height="10" rx="2" stroke="#666" stroke-width="1.5"/>
+              <path d="M8 11V7a4 4 0 118 0v4" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="16" r="1.5" fill="#666"/>
+            </svg>
+            <input type="password" id="signupPassword" class="login-input !pl-14 !pr-[50px]" placeholder="Password">
+            <button id="toggleSignupPwdBtn" type="button" class="absolute right-[21px] top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer p-1 opacity-50">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="signupEyeIcon">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="#666" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="3" stroke="#666" stroke-width="1.5"/>
+                <line x1="4" y1="4" x2="20" y2="20" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Confirm Password -->
+          <div class="relative">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+              <rect x="5" y="11" width="14" height="10" rx="2" stroke="#666" stroke-width="1.5"/>
+              <path d="M8 11V7a4 4 0 118 0v4" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              <circle cx="12" cy="16" r="1.5" fill="#666"/>
+            </svg>
+            <input type="password" id="signupConfirmPassword" class="login-input !pl-14 !pr-[50px]" placeholder="Confirm Password">
+            <button id="toggleSignupConfirmPwdBtn" type="button" class="absolute right-[21px] top-1/2 -translate-y-1/2 bg-none border-none cursor-pointer p-1 opacity-50">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" id="signupConfirmEyeIcon">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7z" stroke="#666" stroke-width="1.5"/>
+                <circle cx="12" cy="12" r="3" stroke="#666" stroke-width="1.5"/>
+                <line x1="4" y1="4" x2="20" y2="20" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+
+          <!-- Get started button -->
+          <button class="login-btn" id="signupSubmitBtn">Get started</button>
+        </div>
+
+        <!-- Sign in link -->
+        <p class="font-inter text-xs text-black text-center tracking-[-0.6px] leading-[1.8]">
+          Already have an account? <span id="goToSignin" class="font-medium cursor-pointer">Sign in</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== VERIFICATION CODE MODAL ===== -->
+  <div class="login-overlay" id="verifyOverlay">
+    <div class="login-card">
+      <!-- Header: Logo + Close -->
+      <div class="flex justify-between items-start mb-10">
+        <div class="flex-1 flex flex-col items-center gap-10">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="40" viewBox="0 0 36 40" fill="none" class="drop-shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)]">
+            <path d="M35.4125 0H0.36875C0.1625 0 0 0.1625 0 0.36875V39.4562C0 39.6562 0.1625 39.825 0.36875 39.825H4.65625C4.65625 39.825 4.69375 39.825 4.7125 39.825L16.2312 37.9875C16.4125 37.9562 16.5437 37.8062 16.5437 37.625V9.4375C16.5437 9.28125 16.45 9.14375 16.3063 9.09375L6.7 5.51875H19.4875V39.4625C19.4875 39.6625 19.65 39.8312 19.8563 39.8312H35.4187C35.625 39.8312 35.7875 39.6687 35.7875 39.4625V0.36875C35.7875 0.1625 35.625 0 35.4187 0H35.4125ZM14.7625 21.1062C14.9625 21.1062 15.1312 21.7125 15.1312 22.4562C15.1312 23.2 14.9688 23.8062 14.7625 23.8062C14.5563 23.8062 14.3938 23.2 14.3938 22.4562C14.3938 21.7125 14.5563 21.1062 14.7625 21.1062ZM20.8625 23.8C20.6625 23.8 20.4938 23.1937 20.4938 22.45C20.4938 21.7062 20.6563 21.1 20.8625 21.1C21.0688 21.1 21.2313 21.7062 21.2313 22.45C21.2313 23.1937 21.0688 23.8 20.8625 23.8Z" fill="#1E2E37"/>
+          </svg>
+          <div class="text-center">
+            <p class="font-abeezee italic text-[32px] text-black tracking-[-0.5px] leading-[1.05] m-0">Verify Your Email</p>
+            <p class="font-inter text-sm text-[#666] tracking-[-0.3px] leading-[1.6] mt-3 mb-0" id="verifySubtext">Enter the 6-digit code sent to your email</p>
+          </div>
+        </div>
+        <button id="closeVerifyBtn" class="bg-none border-none cursor-pointer p-1 ml-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 6L18 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- OTP Inputs -->
+      <div class="flex flex-col gap-[31px]">
+        <div class="flex justify-center gap-[10px]" id="otpContainer">
+          <input type="text" maxlength="1" class="otp-input" data-otp="0" inputmode="numeric" autocomplete="one-time-code">
+          <input type="text" maxlength="1" class="otp-input" data-otp="1" inputmode="numeric">
+          <input type="text" maxlength="1" class="otp-input" data-otp="2" inputmode="numeric">
+          <input type="text" maxlength="1" class="otp-input" data-otp="3" inputmode="numeric">
+          <input type="text" maxlength="1" class="otp-input" data-otp="4" inputmode="numeric">
+          <input type="text" maxlength="1" class="otp-input" data-otp="5" inputmode="numeric">
+        </div>
+
+        <button class="login-btn" id="verifySubmitBtn">Verify Email</button>
+
+        <p class="font-inter text-xs text-black text-center tracking-[-0.6px] leading-[1.8]">
+          Didn't receive the code? <span id="resendCodeBtn" class="font-medium cursor-pointer">Resend Code</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== FORGOT PASSWORD MODAL ===== -->
+  <div class="login-overlay" id="forgotOverlay">
+    <div class="login-card">
+      <!-- Header: Logo + Close -->
+      <div class="flex justify-between items-start mb-10">
+        <div class="flex-1 flex flex-col items-center gap-10">
+          <svg xmlns="http://www.w3.org/2000/svg" width="36" height="40" viewBox="0 0 36 40" fill="none" class="drop-shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)]">
+            <path d="M35.4125 0H0.36875C0.1625 0 0 0.1625 0 0.36875V39.4562C0 39.6562 0.1625 39.825 0.36875 39.825H4.65625C4.65625 39.825 4.69375 39.825 4.7125 39.825L16.2312 37.9875C16.4125 37.9562 16.5437 37.8062 16.5437 37.625V9.4375C16.5437 9.28125 16.45 9.14375 16.3063 9.09375L6.7 5.51875H19.4875V39.4625C19.4875 39.6625 19.65 39.8312 19.8563 39.8312H35.4187C35.625 39.8312 35.7875 39.6687 35.7875 39.4625V0.36875C35.7875 0.1625 35.625 0 35.4187 0H35.4125Z" fill="#1E2E37"/>
+          </svg>
+          <div class="text-center">
+            <p class="font-abeezee italic text-[32px] text-black tracking-[-0.5px] leading-[1.05] m-0">Reset Password</p>
+            <p class="font-inter text-sm text-[#666] tracking-[-0.3px] leading-[1.6] mt-3 mb-0" id="forgotSubtext">Enter your account email and we'll send you a reset code</p>
+          </div>
+        </div>
+        <button id="closeForgotBtn" class="bg-none border-none cursor-pointer p-1 ml-4">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none">
+            <path d="M18 6L6 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+            <path d="M6 6L18 18" stroke="#333" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- Step 1: email -->
+      <div class="flex flex-col gap-[31px]" id="forgotStepEmail">
+        <div class="relative">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+            <rect x="2" y="4" width="20" height="16" rx="3" stroke="#666" stroke-width="1.5"/>
+            <path d="M2 7L12 13L22 7" stroke="#666" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <input type="email" id="forgotEmail" class="login-input !pl-14" placeholder="Email">
+        </div>
+        <button class="login-btn" id="forgotRequestBtn">Send Reset Code</button>
+        <p class="font-inter text-xs text-black text-center tracking-[-0.6px] leading-[1.8]">
+          Remembered it? <span id="backToLogin" class="font-medium cursor-pointer">Back to sign in</span>
+        </p>
+      </div>
+
+      <!-- Step 2: code + new password -->
+      <div class="flex flex-col gap-[24px] hidden" id="forgotStepReset">
+        <input type="text" maxlength="6" inputmode="numeric" id="forgotCode" class="login-input text-center tracking-[8px] font-semibold" placeholder="6-digit code">
+        <div class="relative">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="absolute left-[21px] top-1/2 -translate-y-1/2 opacity-50">
+            <rect x="5" y="11" width="14" height="10" rx="2" stroke="#666" stroke-width="1.5"/>
+            <path d="M8 11V7a4 4 0 118 0v4" stroke="#666" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          <input type="password" id="forgotNewPassword" class="login-input !pl-14" placeholder="New Password">
+        </div>
+        <button class="login-btn" id="forgotResetBtn">Reset Password</button>
+        <p class="font-inter text-xs text-black text-center tracking-[-0.6px] leading-[1.8]">
+          Didn't receive the code? <span id="forgotResendBtn" class="font-medium cursor-pointer">Resend Code</span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast container -->
+  <div id="toastContainer" class="toast"></div>
+
+  <script src="./search-bar.js?v=20261005b"></script>
+  <script src="./auth.js?v=20261005b"></script>
+
+  <script src="./mobile-nav.js?v=20261005db"></script>
+</body>
+
+</html>

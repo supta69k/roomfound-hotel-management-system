@@ -1,0 +1,848 @@
+<!doctype html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loyalty Program - RoomFound</title>
+    <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="./output.css?v=20261005b" rel="stylesheet">
+    <style>
+        .subscription-details-overlay .subscription-details-modal {
+            width: min(640px, calc(100vw - 24px));
+            border-radius: 30px;
+            border: 1px solid #3f3f3f;
+            background: #f7f7f7;
+            box-shadow: none;
+            padding: 28px 28px 24px;
+            gap: 22px;
+        }
+
+        .subscription-details-overlay .subscription-details-modal::before {
+            display: none;
+        }
+
+        .subscription-details-modal .redeem-modal-close {
+            display: none;
+        }
+
+        .subscription-details-modal .redeem-modal-head {
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .subscription-details-modal .redeem-modal-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 999px;
+            border: 1px solid #d8d8d8;
+            box-shadow: none;
+            background: #fff;
+        }
+
+        .subscription-details-modal .redeem-modal-head-copy {
+            gap: 8px;
+            padding-top: 2px;
+        }
+
+        .subscription-details-modal .redeem-modal-title {
+            margin: 0;
+            font-family: ABeeZee, sans-serif;
+            font-size: 30px;
+            line-height: 1.06;
+            letter-spacing: -0.5px;
+            font-weight: 400;
+            color: #111111;
+        }
+
+        .subscription-detail-top-meta {
+            display: flex;
+            align-items: center;
+            gap: 22px;
+        }
+
+        .subscription-detail-tier {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #7098ac;
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+        }
+
+        .subscription-detail-expiry {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .subscription-detail-expiry img {
+            width: 18px;
+            height: 18px;
+        }
+
+        .subscription-detail-expiry span {
+            font-family: Inter, sans-serif;
+            font-size: 16px;
+            font-weight: 500;
+            color: #111111;
+            line-height: 1.2;
+            letter-spacing: -0.3px;
+        }
+
+        .subscription-details-modal .redeem-modal-offers {
+            border-top: 0;
+            padding-top: 0;
+        }
+
+        .subscription-details-modal .redeem-modal-offers-title {
+            margin: 0 0 10px;
+            font-family: Inter, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #111111;
+            line-height: 1.2;
+            letter-spacing: -0.2px;
+        }
+
+        .subscription-details-modal .redeem-modal-offer-list {
+            gap: 14px;
+        }
+
+        .subscription-details-modal .redeem-modal-offer-list li {
+            padding: 0;
+            border: 0;
+            background: transparent;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .subscription-details-modal .redeem-modal-offer-list li img {
+            width: 24px;
+            height: 24px;
+            margin-top: 0;
+            opacity: 1;
+        }
+
+        .subscription-details-modal .redeem-modal-offer-list li span {
+            font-family: Inter, sans-serif;
+            font-size: 16px;
+            line-height: 1.3;
+            color: #3f3f3f;
+            letter-spacing: -0.2px;
+        }
+
+        .subscription-detail-status {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1.2;
+            color: #111111;
+            letter-spacing: -0.2px;
+        }
+
+        .subscription-detail-status strong {
+            color: #3f3f3f;
+            margin-right: 6px;
+            font-weight: 600;
+        }
+
+        .subscription-detail-dates {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 18px;
+        }
+
+        .subscription-detail-date-item {
+            background: transparent;
+            border: 0;
+            padding: 0;
+        }
+
+        .subscription-detail-date-label {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            color: #3f3f3f;
+            line-height: 1.2;
+            letter-spacing: -0.2px;
+            text-transform: none;
+        }
+
+        .subscription-detail-date-value {
+            margin: 6px 0 0;
+            font-family: Inter, sans-serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: #111111;
+            line-height: 1.2;
+            letter-spacing: -0.2px;
+        }
+
+        .subscription-details-modal .redeem-modal-actions {
+            margin-top: 2px;
+            gap: 18px;
+        }
+
+        .subscription-details-modal .redeem-modal-btn {
+            height: 44px;
+            border-radius: 14px;
+            font-family: Inter, sans-serif;
+            font-size: 18px;
+            font-weight: 500;
+            line-height: 1;
+            letter-spacing: -0.3px;
+            border: 1px solid transparent;
+            box-shadow: none;
+        }
+
+        .subscription-details-modal .subscription-detail-close {
+            background: transparent;
+            color: #be6c64;
+            border-color: #d99790;
+        }
+
+        .subscription-details-modal .subscription-detail-cancel {
+            background: linear-gradient(132deg, #414141 0%, #161616 55%, #020917 100%);
+            color: #ffffff;
+            box-shadow: inset 0 8px 18px rgba(21, 35, 62, 0.45);
+        }
+
+        @media (max-width: 980px) {
+            .subscription-details-overlay .subscription-details-modal {
+                padding: 20px 16px 16px;
+                gap: 16px;
+            }
+
+            .subscription-details-modal .redeem-modal-logo {
+                width: 56px;
+                height: 56px;
+            }
+
+            .subscription-details-modal .redeem-modal-title {
+                font-size: 24px;
+            }
+
+            .subscription-detail-tier,
+            .subscription-detail-expiry span {
+                font-size: 14px;
+            }
+
+            .subscription-details-modal .redeem-modal-offers-title,
+            .subscription-detail-status,
+            .subscription-detail-date-label {
+                font-size: 16px;
+            }
+
+            .subscription-details-modal .redeem-modal-offer-list li span,
+            .subscription-detail-date-value,
+            .subscription-details-modal .redeem-modal-btn {
+                font-size: 14px;
+            }
+
+            .subscription-detail-dates {
+                grid-template-columns: 1fr;
+                gap: 12px;
+            }
+        }
+
+        .tier-insight-head {
+            position: relative;
+            width: 100%;
+            padding-right: 200px;
+            margin-bottom: 20px;
+        }
+
+        .tier-insight-head .tier-insight-title {
+            margin: 0;
+        }
+
+        .tier-insight-head .points-history-trigger {
+            position: absolute;
+            right: 28px;
+            top: 0;
+        }
+
+        .points-history-trigger {
+            height: 44px;
+            padding: 0 14px;
+            border-radius: 999px;
+            border: 1px solid #dbe2ec;
+            background: linear-gradient(180deg, #ffffff 0%, #f4f7fb 100%);
+            color: #21303d;
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 10px 18px rgba(17, 29, 42, 0.08);
+            transition: transform 0.18s ease, box-shadow 0.18s ease;
+        }
+
+        .points-history-trigger:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 14px 24px rgba(17, 29, 42, 0.11);
+        }
+
+        .points-history-icon {
+            width: 16px;
+            height: 16px;
+        }
+
+        .points-history-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+        }
+
+        .points-history-stat {
+            border-radius: 12px;
+            background: #f4f7fb;
+            border: 1px solid #e3e9f1;
+            padding: 10px 12px;
+        }
+
+        .points-history-stat-label {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            color: #6d7f92;
+        }
+
+        .points-history-stat-value {
+            margin: 4px 0 0;
+            font-family: Inter, sans-serif;
+            font-size: 20px;
+            font-weight: 700;
+            letter-spacing: -0.35px;
+            color: #1f2f3c;
+        }
+
+        .points-history-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+
+        .points-history-item {
+            border: 1px solid #e8edf3;
+            border-radius: 12px;
+            padding: 10px 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            background: #fff;
+        }
+
+        .points-history-item-copy {
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .points-history-item-title {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1f2f3c;
+        }
+
+        .points-history-item-meta {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 12px;
+            color: #708295;
+        }
+
+        .points-history-item-points {
+            margin: 0;
+            font-family: Inter, sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: -0.3px;
+            white-space: nowrap;
+        }
+
+        .points-history-item-earned .points-history-item-points {
+            color: #19924b;
+        }
+
+        .points-history-item-used .points-history-item-points {
+            color: #d05a63;
+        }
+
+        .loyalty-access-notice {
+            margin: 18px auto 0;
+            max-width: 1146px;
+            padding: 16px 20px;
+            border-radius: 16px;
+            border: 1px solid #d99790;
+            background: #fdf1ef;
+            font-family: Inter, sans-serif;
+            color: #7c3a34;
+        }
+
+        .loyalty-access-notice .loyalty-access-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.2px;
+        }
+
+        .loyalty-access-notice .loyalty-access-copy {
+            margin: 6px 0 0;
+            font-size: 14px;
+            color: #96524b;
+        }
+
+        .loyalty-access-notice .loyalty-access-link {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 8px 16px;
+            border-radius: 999px;
+            border: 1px solid #d99790;
+            background: #fff;
+            color: #be6c64;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        @media (max-width: 980px) {
+            .points-history-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .tier-insight-head {
+                padding-right: 0;
+                margin-bottom: 14px;
+            }
+
+            .tier-insight-head .points-history-trigger {
+                position: static;
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+
+<body class="m-0 p-0 bg-[#f7f6f4] min-h-screen">
+
+    <!-- Navbar -->
+    <div class="w-full max-w-[1146px] mx-auto px-4 pt-[42px] flex items-center justify-between">
+        <a href="./index.html" class="logo no-underline">
+            <img src="./img/logo2.png" alt="RoomFound">
+        </a>
+
+        <div class="bg-white rounded-[49px] flex items-center gap-[24px] pl-[32px] pr-[9px] py-[8px]">
+            <div class="flex items-center gap-[24px] text-[14px] font-medium text-[#070200] tracking-[-0.7px]">
+                <a href="./index.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Home</span></a>
+                <a href="./loyalty.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Loyalty Program</span></a>
+                <a href="./support.html" class="no-underline text-[#070200]"><span class="leading-[1.8] w-[68px]">Support</span></a>
+            </div>
+
+            <button id="openSignupBtn" class="rounded-[32px] px-[24px] py-[12px] text-[14px] font-medium text-[#070200] tracking-[-0.7px] leading-[1.8] whitespace-nowrap cursor-pointer bg-transparent border-[1.5px] border-solid border-[#1e2e37] transition-opacity duration-200" onclick="window.location.href='./index.html'">
+                Sign Up
+            </button>
+
+            <button id="openLoginBtn" class="btn-signin relative overflow-hidden rounded-[32px] px-[24px] py-[12px] text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] whitespace-nowrap -ml-[8px] bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]" onclick="window.location.href='./index.html'">
+                Sign In
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <section class="loyalty-stage">
+        <div class="loyalty-slider" aria-label="Loyalty level cards">
+            <button class="loyalty-nav loyalty-nav-prev" type="button" aria-label="Previous card">&#10094;</button>
+
+            <div class="loyalty-slider-window" tabindex="0" aria-label="Loyalty cards carousel">
+                <div class="loyalty-slider-track" id="loyaltySliderTrack">
+                    <article class="loyalty-card is-silver" data-tier="Silver" style="--progress: 35%;" aria-label="Silver loyalty card">
+                        <div class="loyalty-card-glow" aria-hidden="true"></div>
+                        <div class="loyalty-content">
+                            <div class="loyalty-top-row">
+                                <div class="loyalty-metric">
+                                    <p class="loyalty-metric-label">My Points</p>
+                                    <p class="loyalty-metric-value">160</p>
+                                </div>
+
+                                <div class="loyalty-tier">
+                                    <div class="loyalty-tier-badge loyalty-tier-badge-silver" aria-hidden="true">
+                                        <img src="./Objecsilver.png" alt="">
+                                    </div>
+                                    <p class="loyalty-tier-name">Silver</p>
+                                </div>
+
+                                <div class="loyalty-metric loyalty-metric-right">
+                                    <p class="loyalty-metric-label">Total Earned</p>
+                                    <p class="loyalty-metric-value">1.1k</p>
+                                </div>
+                            </div>
+
+                            <div class="loyalty-bottom-row">
+                                <div class="loyalty-row-text">
+                                    <p class="loyalty-message">Get 900 more points to go Gold</p>
+                                    <p class="loyalty-percent">35%</p>
+                                </div>
+                                <div class="loyalty-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="35" aria-label="Silver progress">
+                                    <div class="loyalty-progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="loyalty-side-circle loyalty-side-circle-left" aria-hidden="true"></div>
+                        <div class="loyalty-side-circle loyalty-side-circle-right" aria-hidden="true"></div>
+                    </article>
+
+                    <article class="loyalty-card is-gold" data-tier="Gold" style="--progress: 64%;" aria-label="Gold loyalty card">
+                        <div class="loyalty-card-glow" aria-hidden="true"></div>
+                        <div class="loyalty-content">
+                            <div class="loyalty-top-row">
+                                <div class="loyalty-metric">
+                                    <p class="loyalty-metric-label">My Points</p>
+                                    <p class="loyalty-metric-value">640</p>
+                                </div>
+
+                                <div class="loyalty-tier">
+                                    <div class="loyalty-tier-badge loyalty-tier-badge-gold" aria-hidden="true">
+                                        <img src="./gold.png" alt="">
+                                    </div>
+                                    <p class="loyalty-tier-name">Gold</p>
+                                </div>
+
+                                <div class="loyalty-metric loyalty-metric-right">
+                                    <p class="loyalty-metric-label">Total Earned</p>
+                                    <p class="loyalty-metric-value">2.2k</p>
+                                </div>
+                            </div>
+
+                            <div class="loyalty-bottom-row">
+                                <div class="loyalty-row-text">
+                                    <p class="loyalty-message">Get 360 more points to go Platinum</p>
+                                    <p class="loyalty-percent">64%</p>
+                                </div>
+                                <div class="loyalty-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="64" aria-label="Gold progress">
+                                    <div class="loyalty-progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="loyalty-side-circle loyalty-side-circle-left" aria-hidden="true"></div>
+                        <div class="loyalty-side-circle loyalty-side-circle-right" aria-hidden="true"></div>
+                    </article>
+
+                    <article class="loyalty-card is-platinum" data-tier="Platinum" style="--progress: 100%;" aria-label="Platinum loyalty card">
+                        <div class="loyalty-card-glow" aria-hidden="true"></div>
+                        <div class="loyalty-content">
+                            <div class="loyalty-top-row">
+                                <div class="loyalty-metric">
+                                    <p class="loyalty-metric-label">My Points</p>
+                                    <p class="loyalty-metric-value">1000</p>
+                                </div>
+
+                                <div class="loyalty-tier">
+                                    <div class="loyalty-tier-badge loyalty-tier-badge-platinum" aria-hidden="true">
+                                        <img src="./Object2.png" alt="">
+                                    </div>
+                                    <p class="loyalty-tier-name">Platinum</p>
+                                </div>
+
+                                <div class="loyalty-metric loyalty-metric-right">
+                                    <p class="loyalty-metric-label">Total Earned</p>
+                                    <p class="loyalty-metric-value">3.5k</p>
+                                </div>
+                            </div>
+
+                            <div class="loyalty-bottom-row">
+                                <div class="loyalty-row-text">
+                                    <p class="loyalty-message">You reached the top tier. Keep earning rewards.</p>
+                                    <p class="loyalty-percent">100%</p>
+                                </div>
+                                <div class="loyalty-progress-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100" aria-label="Platinum progress">
+                                    <div class="loyalty-progress-fill"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="loyalty-side-circle loyalty-side-circle-left" aria-hidden="true"></div>
+                        <div class="loyalty-side-circle loyalty-side-circle-right" aria-hidden="true"></div>
+                    </article>
+                </div>
+            </div>
+
+            <button class="loyalty-nav loyalty-nav-next" type="button" aria-label="Next card">&#10095;</button>
+        </div>
+
+        <div class="loyalty-slider-dots" id="loyaltySliderDots" aria-label="Card indicators"></div>
+    </section>
+
+    <section class="tier-insight-section" aria-label="Tier insight">
+        <div class="tier-insight-wrap">
+            <div class="tier-insight-head">
+                <h2 class="tier-insight-title">From Points to Presence: Unlock Your Tier</h2>
+                <button id="openPointsHistoryBtn" class="points-history-trigger" type="button" aria-label="Open points history">
+                    <svg class="points-history-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                        <path d="M12 7V12L15 14" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M20 12C20 16.4183 16.4183 20 12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <path d="M4 7V4H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Points History</span>
+                </button>
+            </div>
+
+            <article class="tier-insight-card" aria-label="Subscription summary">
+                <div class="tier-insight-icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M8 30.8L26.2 11.8C27.8 10.2 30 9.2 32.4 9.2H52C55.3 9.2 58 11.9 58 15.2V34.8C58 37.1 57.1 39.4 55.4 41L37.2 59C33.8 62.3 28.3 62.3 24.9 59L8 42.6C4.6 39.3 4.5 34.1 8 30.8Z" stroke="white" stroke-width="4.2" stroke-linejoin="round"/>
+                        <circle cx="44" cy="23" r="3.5" fill="white"/>
+                        <path d="M23 40L23 32" stroke="white" stroke-width="4.2" stroke-linecap="round"/>
+                        <path d="M32 46V26" stroke="white" stroke-width="4.2" stroke-linecap="round"/>
+                        <path d="M41 40V34" stroke="white" stroke-width="4.2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+
+                <div class="tier-insight-copy">
+                    <p class="tier-insight-main">Subscriptions: 2</p>
+                    <p class="tier-insight-sub">Expire in 13 days</p>
+                </div>
+            </article>
+        </div>
+    </section>
+
+    <section class="active-subscription-section" aria-label="Active subscriptions">
+        <div class="active-subscription-wrap">
+            <h2 class="active-subscription-title">Active Subscription</h2>
+
+            <div class="active-subscription-grid" id="activeSubscriptionGrid">
+                <article class="subscription-card" data-brand-key="crystal_cup" aria-label="The crytal Cup subscription">
+                    <div class="subscription-card-head">
+                        <div class="subscription-brand-logo">
+                            <img src="./img/loyalty/crytal-cup.png" alt="The crytal Cup logo">
+                        </div>
+
+                        <div class="subscription-head-copy">
+                            <p class="subscription-brand-name">The crytal Cup</p>
+
+                            <div class="subscription-meta-row">
+                                <p class="subscription-tier">Platinum</p>
+
+                                <div class="subscription-date-wrap">
+                                    <img src="./img/loyalty/clock-04.svg" alt="" aria-hidden="true">
+                                    <p class="subscription-date">12 May</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subscription-offers-block">
+                        <p class="subscription-offers-title">Offers:</p>
+
+                        <ul class="subscription-offer-list" aria-label="The crytal Cup offers">
+                            <li>
+                                <img src="./img/loyalty/drink.svg" alt="" aria-hidden="true">
+                                <span>Get 30% off on the all drinks from 3-6 PM only!</span>
+                            </li>
+                            <li>
+                                <img src="./img/loyalty/natural-food.svg" alt="" aria-hidden="true">
+                                <span>get free water with every meal you purches.</span>
+                            </li>
+                            <li>
+                                <img src="./img/loyalty/serving-food.svg" alt="" aria-hidden="true">
+                                <span>None</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="subscription-details-btn" type="button">
+                        <span>Details</span>
+                        <img src="./img/loyalty/arrow-up-01.svg" alt="" aria-hidden="true">
+                    </button>
+                </article>
+
+                <article class="subscription-card" data-brand-key="coffee_house" aria-label="The Coffee House subscription">
+                    <div class="subscription-card-head">
+                        <div class="subscription-brand-logo">
+                            <img src="./img/loyalty/coffee-house.png" alt="The Coffee House logo">
+                        </div>
+
+                        <div class="subscription-head-copy">
+                            <p class="subscription-brand-name">The Coffee House</p>
+
+                            <div class="subscription-meta-row">
+                                <p class="subscription-tier">Platinum</p>
+
+                                <div class="subscription-date-wrap">
+                                    <img src="./img/loyalty/clock-04.svg" alt="" aria-hidden="true">
+                                    <p class="subscription-date">12 May</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="subscription-offers-block">
+                        <p class="subscription-offers-title">Offers:</p>
+
+                        <ul class="subscription-offer-list" aria-label="The Coffee House offers">
+                            <li>
+                                <img src="./img/loyalty/drink.svg" alt="" aria-hidden="true">
+                                <span>Get 30% off on the all drinks from 3-6 PM only!</span>
+                            </li>
+                            <li>
+                                <img src="./img/loyalty/natural-food.svg" alt="" aria-hidden="true">
+                                <span>get free water with every meal you purches.</span>
+                            </li>
+                            <li>
+                                <img src="./img/loyalty/serving-food.svg" alt="" aria-hidden="true">
+                                <span>None</span>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <button class="subscription-details-btn" type="button">
+                        <span>Details</span>
+                        <img src="./img/loyalty/arrow-up-01.svg" alt="" aria-hidden="true">
+                    </button>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="redeem-section" aria-label="Redeem">
+        <div class="redeem-wrap">
+            <h2 class="redeem-title">Redeem</h2>
+
+            <div class="redeem-list" id="redeemList">
+                <article class="redeem-row" data-brand-key="crystal_cup" aria-label="Redeem The crytal Cup">
+                    <div class="redeem-notch redeem-notch-left" aria-hidden="true">
+                        <img src="./img/loyalty/redeem-notch-left-1.svg" alt="">
+                    </div>
+
+                    <div class="redeem-card">
+                        <div class="redeem-main">
+                            <div class="redeem-brand-logo">
+                                <img src="./img/loyalty/crytal-cup.png" alt="The crytal Cup logo">
+                            </div>
+
+                            <div class="redeem-head-copy">
+                                <p class="redeem-brand-name">The crytal Cup</p>
+
+                                <div class="redeem-meta-row">
+                                    <p class="redeem-tier">Platinum</p>
+
+                                    <div class="redeem-time-wrap">
+                                        <img src="./img/loyalty/clock-04.svg" alt="" aria-hidden="true">
+                                        <p class="redeem-time">1 Month</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="redeem-points-btn" type="button" aria-label="Redeem for 600 points">
+                            <img src="./img/loyalty/coins-02.svg" alt="" aria-hidden="true">
+                            <span>600</span>
+                        </button>
+                    </div>
+
+                    <div class="redeem-notch redeem-notch-right" aria-hidden="true">
+                        <img src="./img/loyalty/redeem-notch-right.svg" alt="">
+                    </div>
+                </article>
+
+                <article class="redeem-row" data-brand-key="coffee_house" aria-label="Redeem The Coffee House">
+                    <div class="redeem-notch redeem-notch-left" aria-hidden="true">
+                        <img src="./img/loyalty/redeem-notch-left-2.svg" alt="">
+                    </div>
+
+                    <div class="redeem-card">
+                        <div class="redeem-main">
+                            <div class="redeem-brand-logo">
+                                <img src="./img/loyalty/coffee-house.png" alt="The Coffee House logo">
+                            </div>
+
+                            <div class="redeem-head-copy">
+                                <p class="redeem-brand-name">The Coffee House</p>
+
+                                <div class="redeem-meta-row">
+                                    <p class="redeem-tier">Platinum</p>
+
+                                    <div class="redeem-time-wrap">
+                                        <img src="./img/loyalty/clock-04.svg" alt="" aria-hidden="true">
+                                        <p class="redeem-time">1 Month</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="redeem-points-btn" type="button" aria-label="Redeem for 600 points">
+                            <img src="./img/loyalty/coins-02.svg" alt="" aria-hidden="true">
+                            <span>600</span>
+                        </button>
+                    </div>
+
+                    <div class="redeem-notch redeem-notch-right" aria-hidden="true">
+                        <img src="./img/loyalty/redeem-notch-right.svg" alt="">
+                    </div>
+                </article>
+
+                <article class="redeem-row" data-brand-key="java_cafe" aria-label="Redeem The java Cafe">
+                    <div class="redeem-notch redeem-notch-left" aria-hidden="true">
+                        <img src="./img/loyalty/redeem-notch-left-2.svg" alt="">
+                    </div>
+
+                    <div class="redeem-card">
+                        <div class="redeem-main">
+                            <div class="redeem-brand-logo">
+                                <img src="./img/loyalty/java-cafe.png" alt="The java Cafe logo">
+                            </div>
+
+                            <div class="redeem-head-copy">
+                                <p class="redeem-brand-name">The java Cafe</p>
+
+                                <div class="redeem-meta-row">
+                                    <p class="redeem-tier">Platinum</p>
+
+                                    <div class="redeem-time-wrap">
+                                        <img src="./img/loyalty/clock-04.svg" alt="" aria-hidden="true">
+                                        <p class="redeem-time">1 Month</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button class="redeem-points-btn" type="button" aria-label="Redeem for 600 points">
+                            <img src="./img/loyalty/coins-02.svg" alt="" aria-hidden="true">
+                            <span>600</span>
+                        </button>
+                    </div>
+
+                    <div class="redeem-notch redeem-notch-right" aria-hidden="true">
+                        <img src="./img/loyalty/redeem-notch-right.svg" alt="">
+                    </div>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <script src="./navbar-auth.js?v=20261005b"></script>
+    <script src="./loyalty.js?v=20261005b"></script>
+  <script src="./mobile-nav.js?v=20261005db"></script>
+</body>
+
+</html>

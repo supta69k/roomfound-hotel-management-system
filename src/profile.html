@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Profile - RoomFound</title>
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="./output.css?v=20261005b" rel="stylesheet">
+  <style>
+    /* Fluid inputs: fill the column, capped at the original desktop width */
+    .field-input {
+      width: 100%;
+      max-width: 220px;
+    }
+
+    /* Access denied card (non-guest roles) */
+    .denied-card {
+      background: #fff;
+      border: 1px solid #e0e0e0;
+      border-radius: 16px;
+      padding: 48px 32px;
+      text-align: center;
+    }
+    .denied-card h2 {
+      font-family: 'ABeeZee', sans-serif;
+      font-size: 24px;
+      letter-spacing: -0.43px;
+      color: #000;
+      margin: 0 0 12px;
+    }
+    .denied-card p {
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      color: #666;
+      margin: 0 0 24px;
+    }
+
+    /* Stack the sidebar + content and the side-by-side fields on small screens */
+    @media (max-width: 1023px) {
+      .profile-fields-row {
+        flex-direction: column;
+        gap: 16px;
+      }
+      .profile-sidebar {
+        width: 100%;
+        padding-right: 0;
+        border-right: none;
+        border-bottom: 1px solid #e0e0e0;
+      }
+      .profile-content {
+        padding-left: 0;
+      }
+    }
+  </style>
+</head>
+
+<body class="m-0 p-0 bg-[#f7f6f4] min-h-screen">
+  <!-- Navbar -->
+  <div class="w-full max-w-[1146px] mx-auto px-4 pt-[42px] flex items-center justify-between">
+    <a href="./index.html" class="logo no-underline">
+      <img src="./img/logo2.png" alt="RoomFound">
+    </a>
+
+    <div class="bg-white rounded-[49px] flex items-center gap-[24px] pl-[32px] pr-[9px] py-[8px]">
+      <div class="flex items-center gap-[24px] text-[14px] font-medium text-[#070200] tracking-[-0.7px]">
+        <a href="./index.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Home</span></a>
+        <a href="./loyalty.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Loyalty Program</span></a>
+        <a href="./support.html" class="no-underline text-[#070200]"><span class="leading-[1.8] w-[68px]">Support</span></a>
+      </div>
+
+      <button id="openSignupBtn" class="rounded-[32px] px-[24px] py-[12px] text-[14px] font-medium text-[#070200] tracking-[-0.7px] leading-[1.8] whitespace-nowrap cursor-pointer bg-transparent border-[1.5px] border-solid border-[#1e2e37] transition-opacity duration-200" onclick="window.location.href='./index.html'">
+        Sign Up
+      </button>
+
+      <button id="openLoginBtn" class="btn-signin relative overflow-hidden rounded-[32px] px-[24px] py-[12px] text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] whitespace-nowrap -ml-[8px] bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]" onclick="window.location.href='./index.html'">
+        Sign In
+      </button>
+    </div>
+  </div>
+
+  <!-- Profile Layout -->
+  <div id="profileLayout" class="w-full max-w-[1146px] mx-auto px-4 mt-[60px] flex flex-col lg:flex-row min-h-[580px]">
+    <!-- Sidebar -->
+    <div class="profile-sidebar w-[230px] pr-10 border-r border-[#e0e0e0] flex flex-col">
+      <div class="sidebar-item active" data-tab="profile">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="8" r="4"/>
+          <path d="M20 21a8 8 0 10-16 0"/>
+        </svg>
+        Profile
+      </div>
+      <div class="sidebar-item" data-tab="reservations">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3" y="4" width="18" height="18" rx="2"/>
+          <line x1="3" y1="10" x2="21" y2="10"/>
+          <line x1="8" y1="2" x2="8" y2="6"/>
+          <line x1="16" y1="2" x2="16" y2="6"/>
+        </svg>
+        Reservations
+      </div>
+      <div class="sidebar-item" data-tab="security">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 2l7 4v5c0 5.25-3.5 10-7 12-3.5-2-7-6.75-7-12V6l7-4z"/>
+        </svg>
+        Account Security
+      </div>
+      <div class="sidebar-item" data-tab="help">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="10"/>
+          <path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/>
+          <line x1="12" y1="17" x2="12.01" y2="17"/>
+        </svg>
+        Help and support
+      </div>
+    </div>
+
+    <!-- Content Area -->
+    <div class="profile-content flex-1 pl-[60px]">
+      <!-- Profile Tab -->
+      <div id="tab-profile" class="tab-content">
+        <div class="flex items-center justify-between mb-[50px]">
+          <h2 class="font-abeezee text-2xl text-black tracking-[-0.43px] leading-[1.05] m-0">Personal Details</h2>
+          <button class="edit-btn" id="editProfileBtn">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 3a2.828 2.828 0 114 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+            </svg>
+            Edit
+          </button>
+        </div>
+
+        <!-- View Mode -->
+        <div id="profileViewMode">
+          <div class="profile-fields-row flex gap-[104px] mb-10">
+            <div class="flex flex-col gap-4">
+              <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">FirstName</p>
+              <p class="font-abeezee text-xl text-black leading-[1.05] tracking-[-0.43px] m-0" id="viewFirstName">—</p>
+            </div>
+            <div class="flex flex-col gap-4">
+              <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">LastName</p>
+              <p class="font-abeezee text-xl text-black leading-[1.05] tracking-[-0.43px] m-0" id="viewLastName">—</p>
+            </div>
+          </div>
+          <div class="flex flex-col gap-4 mb-10">
+            <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">Email Address</p>
+            <p class="font-abeezee text-xl text-black leading-[1.05] tracking-[-0.43px] m-0" id="viewEmail">—</p>
+          </div>
+          <div class="flex flex-col gap-4 mb-10">
+            <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">Mobile Number</p>
+            <p class="font-abeezee text-xl text-black leading-[1.05] tracking-[-0.43px] m-0" id="viewPhone">—</p>
+          </div>
+          <div class="flex flex-col gap-4">
+            <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">Location</p>
+            <p class="font-abeezee text-xl text-black leading-[1.05] tracking-[-0.43px] m-0" id="viewLocation">—</p>
+          </div>
+        </div>
+
+        <!-- Edit Mode (hidden by default) -->
+        <div id="profileEditMode" class="hidden">
+          <div class="profile-fields-row flex gap-[104px] mb-10">
+            <div class="flex flex-col gap-4">
+              <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">FirstName</p>
+              <input type="text" class="field-input" id="editFirstName">
+            </div>
+            <div class="flex flex-col gap-4">
+              <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">LastName</p>
+              <input type="text" class="field-input" id="editLastName">
+            </div>
+          </div>
+          <div class="flex flex-col gap-4 mb-6">
+            <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">Email Address</p>
+            <p class="font-abeezee text-xl text-black leading-[1.05] tracking-[-0.43px] m-0 opacity-50" id="editEmailDisplay">—</p>
+          </div>
+          <div class="flex flex-col gap-4 mb-6">
+            <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">Mobile Number</p>
+            <input type="text" class="field-input" id="editPhone" placeholder="+1 (555) 012-3456">
+          </div>
+          <div class="flex flex-col gap-4 mb-8">
+            <p class="font-inter font-normal text-lg text-[#3f3f3f] leading-[1.05] tracking-[-0.43px] m-0">Location</p>
+            <input type="text" class="field-input" id="editLocation" placeholder="City, Country">
+          </div>
+          <div class="flex gap-3">
+            <button class="save-btn" id="saveProfileBtn">Save Changes</button>
+            <button class="cancel-btn" id="cancelEditBtn">Cancel</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reservations Tab -->
+      <div id="tab-reservations" class="tab-content hidden">
+        <div class="flex items-center justify-between mb-[50px]">
+          <h2 class="font-abeezee text-2xl text-black tracking-[-0.43px] leading-[1.05] m-0">My Reservations</h2>
+        </div>
+        <div id="reservationsList" class="flex flex-col gap-[20px]">
+          <p class="font-inter text-[#999] text-base">Loading reservations...</p>
+        </div>
+      </div>
+
+      <!-- Security Tab -->
+      <div id="tab-security" class="tab-content hidden">
+        <div class="flex items-center justify-between mb-[50px]">
+          <h2 class="font-abeezee text-2xl text-black tracking-[-0.43px] leading-[1.05] m-0">Account Security</h2>
+        </div>
+        <div class="mb-10">
+          <h3 class="font-abeezee text-lg text-black m-0 mb-4">Change Password</h3>
+          <div class="password-fields flex flex-col gap-3 max-w-[360px]">
+            <input type="password" id="currentPassword" placeholder="Current Password">
+            <input type="password" id="newPassword" placeholder="New Password">
+            <input type="password" id="confirmNewPassword" placeholder="Confirm New Password">
+            <p id="passwordError" class="hidden" style="font-family:'Inter',sans-serif;font-size:13px;color:#c0392b;margin:0;"></p>
+            <button class="save-btn w-fit" id="changePasswordBtn">Update Password</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Help Tab -->
+      <div id="tab-help" class="tab-content hidden">
+        <div class="flex items-center justify-between mb-[50px]">
+          <h2 class="font-abeezee text-2xl text-black tracking-[-0.43px] leading-[1.05] m-0">Help and Support</h2>
+        </div>
+        <div class="help-item">
+          <div class="w-10 h-10 rounded-xl bg-[#1e2e37] flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+          </div>
+          <div class="help-item-text">
+            <h4 class="font-abeezee text-base text-black m-0 mb-1">Frequently Asked Questions</h4>
+            <p class="font-inter text-sm text-[#666] m-0 leading-[1.5]">Find answers to common questions about bookings, payments, and more.</p>
+          </div>
+        </div>
+        <div class="help-item">
+          <div class="w-10 h-10 rounded-xl bg-[#1e2e37] flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+          </div>
+          <div class="help-item-text">
+            <h4 class="font-abeezee text-base text-black m-0 mb-1">Contact Support</h4>
+            <p class="font-inter text-sm text-[#666] m-0 leading-[1.5]">Reach our support team via email at hello@roomfound.com or call (907) 357-4333.</p>
+          </div>
+        </div>
+        <div class="help-item">
+          <div class="w-10 h-10 rounded-xl bg-[#1e2e37] flex items-center justify-center shrink-0">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="4" width="20" height="16" rx="3"/><path d="M2 7l10 6 10-6"/>
+            </svg>
+          </div>
+          <div class="help-item-text">
+            <h4 class="font-abeezee text-base text-black m-0 mb-1">Email Us</h4>
+            <p class="font-inter text-sm text-[#666] m-0 leading-[1.5]">Send us a message and we'll get back to you within 24 hours.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Access denied (non-guest roles) -->
+  <div id="accessDenied" class="hidden w-full max-w-[1146px] mx-auto px-4 mt-[60px]">
+    <div class="denied-card">
+      <h2>Employee and admin accounts use a different dashboard</h2>
+      <p>This profile page is only available to guest accounts. Use the button below to return to the homepage.</p>
+      <a href="./index.html" class="save-btn no-underline" style="display:inline-block;">Back to Home</a>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toastContainer" class="toast"></div>
+
+  <script src="./modal.js?v=20261005b"></script>
+  <script src="./navbar-auth.js?v=20261005b"></script>
+  <script src="./profile.js?v=20261005b"></script>
+  <script src="./mobile-nav.js?v=20261005db"></script>
+</body>
+
+</html>

@@ -1,0 +1,496 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Waiter Dashboard — RoomFound</title>
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="./output.css?v=20261005b" rel="stylesheet">
+  <style>
+    body { margin: 0; background: #f0f2f5; font-family: Inter, sans-serif; }
+
+    /* ─── Sidebar ─────────────────────────────────────────── */
+    .sidebar {
+      width: 260px; background: #1e2e37; min-height: 100vh;
+      position: fixed; left: 0; top: 0; display: flex; flex-direction: column;
+    }
+    .sidebar-brand {
+      padding: 28px 28px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      display: flex; align-items: center;
+    }
+    .sidebar-role-chip {
+      margin: 16px 28px 0;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(201,123,58,0.15); border: 1px solid rgba(201,123,58,0.3);
+      border-radius: 20px; padding: 4px 12px;
+      font-size: 11px; font-weight: 600; color: #c97b3a;
+      text-transform: uppercase; letter-spacing: 1px;
+    }
+    .sidebar-nav { padding: 24px 0; flex: 1; }
+    .nav-label {
+      font-size: 10px; font-weight: 600; text-transform: uppercase;
+      letter-spacing: 1.2px; color: rgba(255,255,255,0.25);
+      padding: 12px 28px 6px;
+    }
+    .nav-item {
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 28px; font-size: 14px; font-weight: 500;
+      color: rgba(255,255,255,0.5); cursor: pointer;
+      transition: all 0.15s; border-left: 3px solid transparent;
+    }
+    .nav-item:hover { color: rgba(255,255,255,0.85); background: rgba(255,255,255,0.04); }
+    .nav-item.active { color: #fff; background: rgba(255,255,255,0.08); border-left-color: #c97b3a; }
+    .nav-item svg { width: 18px; height: 18px; flex-shrink: 0; }
+    .nav-badge {
+      margin-left: auto; background: #c97b3a; color: #fff;
+      font-size: 10px; font-weight: 700; padding: 2px 7px;
+      border-radius: 10px; display: none;
+    }
+    .sidebar-bottom {
+      padding: 20px 28px; border-top: 1px solid rgba(255,255,255,0.08);
+    }
+    .emp-info { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+    .emp-avatar {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: linear-gradient(135deg, #c97b3a, #a85e28);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; color: #fff; flex-shrink: 0;
+    }
+    .emp-name { font-size: 13px; font-weight: 600; color: #fff; }
+    .emp-email { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 1px; }
+    .logout-btn {
+      width: 100%; padding: 10px; border-radius: 10px;
+      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1);
+      color: rgba(255,255,255,0.6); font-size: 13px; font-weight: 500;
+      cursor: pointer; transition: all 0.15s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+    .logout-btn:hover { background: rgba(255,255,255,0.1); color: #fff; }
+
+    /* ─── Main ───────────────────────────────────────────── */
+    .main { margin-left: 260px; padding: 36px 40px; min-height: 100vh; }
+    .page-header {
+      display: flex; align-items: center; justify-content: space-between;
+      margin-bottom: 32px;
+    }
+    .page-title {
+      font-family: ABeeZee, sans-serif; font-size: 26px;
+      color: #1e2e37; letter-spacing: -0.5px; margin: 0;
+    }
+    .page-date { font-size: 13px; color: #999; }
+
+    /* ─── Summary Chips ──────────────────────────────────── */
+    .summary-row { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+    .summary-chip {
+      display: flex; align-items: center; gap: 10px;
+      background: #fff; border: 1px solid #eee; border-radius: 12px;
+      padding: 12px 18px; cursor: pointer; transition: all 0.15s;
+    }
+    .summary-chip:hover { border-color: #c97b3a; }
+    .summary-chip.active { border-color: #c97b3a; background: #fdf5ee; }
+    .summary-chip .chip-count { font-size: 24px; font-weight: 700; color: #1e2e37; line-height: 1; }
+    .summary-chip .chip-label { font-size: 11px; color: #999; font-weight: 500; margin-top: 2px; }
+    .summary-chip.chip-all .chip-count { color: #1e2e37; }
+    .summary-chip.chip-pending .chip-count { color: #b08040; }
+    .summary-chip.chip-approved .chip-count { color: #3a5a6a; }
+    .summary-chip.chip-paid .chip-count { color: #3d8b6e; }
+    .summary-chip.chip-cancelled .chip-count { color: #8b5e5e; }
+
+    /* ─── Toolbar ────────────────────────────────────────── */
+    .toolbar { display: flex; flex-wrap: wrap; gap: 12px; margin-bottom: 20px; align-items: center; }
+    .search-box {
+      flex: 1 1 200px; min-width: 160px; display: flex; align-items: center; gap: 10px;
+      background: #fff; border: 1px solid #e0e0e0; border-radius: 12px;
+      padding: 10px 16px;
+    }
+    .search-box svg { color: #aaa; flex-shrink: 0; }
+    .search-box input {
+      border: none; outline: none; font-size: 14px; color: #333;
+      width: 100%; background: transparent; font-family: Inter, sans-serif;
+    }
+    .search-box input::placeholder { color: #bbb; }
+    .refresh-btn {
+      padding: 10px 18px; border-radius: 12px; border: 1px solid #e0e0e0;
+      background: #fff; cursor: pointer; display: flex; align-items: center; gap: 6px;
+      font-size: 13px; font-weight: 500; color: #666; transition: all 0.15s;
+    }
+    .refresh-btn:hover { border-color: #1e2e37; color: #1e2e37; }
+
+    /* ─── Bookings Table ─────────────────────────────────── */
+    .table-wrap { background: #fff; border-radius: 16px; border: 1px solid #eee; overflow-x: auto; }
+    .bookings-table { width: 100%; border-collapse: collapse; }
+    .bookings-table th {
+      font-size: 11px; font-weight: 600; color: #aaa; text-transform: uppercase;
+      letter-spacing: 0.5px; padding: 14px 16px; text-align: left;
+      border-bottom: 1px solid #f0f0f0; white-space: nowrap;
+    }
+    .bookings-table td {
+      font-size: 13px; color: #333; padding: 14px 16px;
+      border-bottom: 1px solid #f7f7f7; vertical-align: middle;
+    }
+    .bookings-table tr:last-child td { border-bottom: none; }
+    .bookings-table tr:hover td { background: #fdf5ee; }
+
+    .guest-cell { display: flex; align-items: center; gap: 10px; }
+    .guest-avatar {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: linear-gradient(135deg, #1e2e37, #3a5a6a);
+      color: #fff; font-size: 13px; font-weight: 600;
+      display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .guest-name { font-weight: 500; color: #1e2e37; }
+    .guest-email { font-size: 11px; color: #aaa; margin-top: 1px; }
+
+    .status-badge { font-size: 11px; font-weight: 500; padding: 4px 12px; border-radius: 20px; display: inline-block; white-space: nowrap; }
+    .status-paid { background: #e6f4ef; color: #3d8b6e; }
+    .status-approved { background: #e8f0f3; color: #3a5a6a; }
+    .status-pending { background: #f5f0e8; color: #8b6e3a; }
+    .status-cancelled { background: #f0eaea; color: #8b5e5e; }
+
+    .hotel-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 12px; color: #666;
+    }
+
+    /* ─── Pagination ─────────────────────────────────────── */
+    .pagination { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; border-top: 1px solid #f0f0f0; }
+    .pagination-info { font-size: 13px; color: #aaa; }
+    .pagination-btns { display: flex; gap: 6px; }
+    .page-btn {
+      width: 34px; height: 34px; border-radius: 8px; border: 1px solid #eee;
+      background: #fff; cursor: pointer; font-size: 13px; font-weight: 500;
+      color: #666; display: flex; align-items: center; justify-content: center;
+      transition: all 0.15s;
+    }
+    .page-btn:hover { border-color: #c97b3a; color: #c97b3a; }
+    .page-btn.active { background: #c97b3a; border-color: #c97b3a; color: #fff; }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+    /* ─── Loader ─────────────────────────────────────────── */
+    .loader-wrap { display: flex; align-items: center; justify-content: center; padding: 60px; }
+    .loader { width: 36px; height: 36px; border: 3px solid #eee; border-top-color: #c97b3a; border-radius: 50%; animation: spin 0.7s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─── Empty state ────────────────────────────────────── */
+    .empty-state { text-align: center; padding: 60px 20px; }
+    .empty-state svg { color: #ddd; margin-bottom: 16px; }
+    .empty-state p { font-size: 14px; color: #aaa; margin: 0; }
+
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #f0f2f5; }
+    ::-webkit-scrollbar-thumb { background: #d0d5db; border-radius: 3px; }
+
+    /* ─── Responsive ─────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .sidebar { position: static; width: 100%; min-height: 0; }
+      .sidebar-nav { display: flex; flex-wrap: wrap; padding: 12px 16px; }
+      .sidebar-bottom { padding: 12px 16px; }
+      .main { margin-left: 0; padding: 24px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ SIDEBAR ════════════════════════════════════════════ -->
+<aside class="sidebar">
+  <div class="sidebar-brand">
+    <img src="Brand Container.png" alt="RoomFound" style="height:32px;filter:brightness(0) invert(1);">
+  </div>
+  <div class="sidebar-role-chip">
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+    <span id="sidebarRole">Waiter</span>
+  </div>
+
+  <nav class="sidebar-nav">
+    <div class="nav-label">My Work</div>
+    <div class="nav-item active" data-section="bookings">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>
+      All Bookings
+      <span class="nav-badge" id="pendingBadge"></span>
+    </div>
+  </nav>
+
+  <div class="sidebar-bottom">
+    <div class="emp-info">
+      <div class="emp-avatar" id="sidebarAvatar">W</div>
+      <div>
+        <div class="emp-name" id="sidebarName">Waiter</div>
+        <div class="emp-email" id="sidebarEmail">—</div>
+      </div>
+    </div>
+    <button class="logout-btn" id="logoutBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      Log Out
+    </button>
+  </div>
+</aside>
+
+<!-- ═══ MAIN ════════════════════════════════════════════════ -->
+<main class="main">
+
+  <!-- Header -->
+  <div class="page-header">
+    <div>
+      <h1 class="page-title" id="pageGreeting">All Bookings</h1>
+      <p class="page-date" id="pageDate"></p>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px;">
+      <div style="width:10px;height:10px;border-radius:50%;background:#c97b3a;box-shadow:0 0 0 3px rgba(201,123,58,0.25);"></div>
+      <span style="font-size:13px;color:#c97b3a;font-weight:500;">Live</span>
+    </div>
+  </div>
+
+  <!-- Summary Chips -->
+  <div class="summary-row" id="summaryRow">
+    <div class="summary-chip chip-all active" data-filter="all">
+      <div><div class="chip-count" id="count-all">—</div><div class="chip-label">All Bookings</div></div>
+    </div>
+    <div class="summary-chip chip-pending" data-filter="pending">
+      <div><div class="chip-count" id="count-pending">—</div><div class="chip-label">Pending</div></div>
+    </div>
+    <div class="summary-chip chip-approved" data-filter="approved">
+      <div><div class="chip-count" id="count-approved">—</div><div class="chip-label">Approved</div></div>
+    </div>
+    <div class="summary-chip chip-paid" data-filter="paid">
+      <div><div class="chip-count" id="count-paid">—</div><div class="chip-label">Paid / Confirmed</div></div>
+    </div>
+    <div class="summary-chip chip-cancelled" data-filter="cancelled">
+      <div><div class="chip-count" id="count-cancelled">—</div><div class="chip-label">Cancelled</div></div>
+    </div>
+  </div>
+
+  <!-- Toolbar -->
+  <div class="toolbar">
+    <div class="search-box">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="Search by guest name, hotel, or email…">
+    </div>
+    <button class="refresh-btn" id="refreshBtn">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 102.13-9.36L1 10"/></svg>
+      Refresh
+    </button>
+  </div>
+
+  <!-- Table -->
+  <div class="table-wrap" id="tableWrap">
+    <div class="loader-wrap"><div class="loader"></div></div>
+  </div>
+
+</main>
+
+<script>
+(function () {
+  var API = '../api';
+  var currentFilter = 'all';
+  var allBookings = [];
+  var searchQuery = '';
+  var currentPage = 1;
+  var PAGE_SIZE = 15;
+  var searchTimer;
+
+  // ─── Auth check ──────────────────────────────────────────
+  fetch(API + '/session.php', { credentials: 'include' })
+    .then(function (r) { return r.json(); })
+    .then(function (d) {
+      if (!d.success || !d.user || d.user.role !== 'waiter') {
+        alert('Access denied. Waiter only.');
+        window.location.href = './index.html';
+        return;
+      }
+      var u = d.user;
+      document.getElementById('sidebarRole').textContent = capitalize(u.role);
+      document.getElementById('sidebarName').textContent = u.name;
+      document.getElementById('sidebarEmail').textContent = u.email;
+      document.getElementById('sidebarAvatar').textContent = u.name.charAt(0).toUpperCase();
+
+      var hour = new Date().getHours();
+      var greet = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
+      document.getElementById('pageGreeting').textContent = greet + ', ' + u.name.split(' ')[0] + ' 👋';
+
+      loadBookings();
+    })
+    .catch(function () { window.location.href = './index.html'; });
+
+  // ─── Date ────────────────────────────────────────────────
+  var now = new Date();
+  document.getElementById('pageDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+  // ─── Filter chips ────────────────────────────────────────
+  document.querySelectorAll('.summary-chip').forEach(function (chip) {
+    chip.addEventListener('click', function () {
+      currentFilter = this.getAttribute('data-filter');
+      document.querySelectorAll('.summary-chip').forEach(function (c) { c.classList.remove('active'); });
+      this.classList.add('active');
+      currentPage = 1;
+      loadBookings();
+    });
+  });
+
+  // ─── Search ──────────────────────────────────────────────
+  document.getElementById('searchInput').addEventListener('input', function () {
+    clearTimeout(searchTimer);
+    searchQuery = this.value.trim();
+    searchTimer = setTimeout(function () {
+      currentPage = 1;
+      loadBookings();
+    }, 350);
+  });
+
+  // ─── Refresh ─────────────────────────────────────────────
+  document.getElementById('refreshBtn').addEventListener('click', function () {
+    loadBookings();
+  });
+
+  // ─── Logout ──────────────────────────────────────────────
+  document.getElementById('logoutBtn').addEventListener('click', function () {
+    fetch(API + '/logout.php', { method: 'POST', credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d && d.success) { window.location.href = './index.html'; }
+        else { alert(d && d.message ? d.message : 'Logout failed. Please try again.'); }
+      })
+      .catch(function () { alert('Logout failed. Please try again.'); });
+  });
+
+  // ─── Load bookings ───────────────────────────────────────
+  function loadBookings() {
+    document.getElementById('tableWrap').innerHTML = '<div class="loader-wrap"><div class="loader"></div></div>';
+
+    var url = API + '/employee.php?action=bookings';
+    if (currentFilter !== 'all') url += '&status=' + currentFilter;
+    if (searchQuery) url += '&search=' + encodeURIComponent(searchQuery);
+
+    fetch(url, { credentials: 'include' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d.success) { renderError(d.message); return; }
+        allBookings = d.bookings || [];
+        var summary = d.summary || {};
+
+        // Update counts
+        document.getElementById('count-all').textContent = summary.all || 0;
+        document.getElementById('count-pending').textContent = summary.pending || 0;
+        document.getElementById('count-approved').textContent = summary.approved || 0;
+        document.getElementById('count-paid').textContent = summary.paid || 0;
+        document.getElementById('count-cancelled').textContent = summary.cancelled || 0;
+
+        // Pending badge in sidebar
+        var pBadge = document.getElementById('pendingBadge');
+        if (summary.pending > 0) {
+          pBadge.textContent = summary.pending;
+          pBadge.style.display = 'inline-block';
+        } else {
+          pBadge.style.display = 'none';
+        }
+
+        renderTable();
+      })
+      .catch(function () { renderError('Failed to load bookings.'); });
+  }
+
+  // ─── Render table ────────────────────────────────────────
+  function renderTable() {
+    var wrap = document.getElementById('tableWrap');
+
+    if (allBookings.length === 0) {
+      wrap.innerHTML = '<div class="empty-state">' +
+        '<svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="3" y1="10" x2="21" y2="10"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="16" y1="2" x2="16" y2="6"/></svg>' +
+        '<p>No bookings found.</p></div>';
+      return;
+    }
+
+    var total = allBookings.length;
+    var totalPages = Math.ceil(total / PAGE_SIZE);
+    if (currentPage > totalPages) currentPage = 1;
+    var start = (currentPage - 1) * PAGE_SIZE;
+    var pageRows = allBookings.slice(start, start + PAGE_SIZE);
+
+    var html = '<table class="bookings-table"><thead><tr>' +
+      '<th>#</th>' +
+      '<th>Guest</th>' +
+      '<th>Hotel</th>' +
+      '<th>Check-in</th>' +
+      '<th>Check-out</th>' +
+      '<th>Nights</th>' +
+      '<th>Guests</th>' +
+      '<th>Rooms</th>' +
+      '<th>Status</th>' +
+      '<th>Booked On</th>' +
+    '</tr></thead><tbody>';
+
+    pageRows.forEach(function (b, idx) {
+      var guestInitial = b.guest_name ? b.guest_name.charAt(0).toUpperCase() : '?';
+      var services = '';
+      if (b.services) {
+        try {
+          var sArr = JSON.parse(b.services);
+          if (sArr && sArr.length > 0) {
+            services = '<div style="font-size:11px;color:#aaa;margin-top:2px;">' + escHtml(sArr.slice(0,2).join(', ')) + (sArr.length > 2 ? ' +' + (sArr.length - 2) : '') + '</div>';
+          }
+        } catch(e) {}
+      }
+      html += '<tr>' +
+        '<td style="color:#bbb;font-size:12px;">#' + b.id + '</td>' +
+        '<td><div class="guest-cell"><div class="guest-avatar">' + guestInitial + '</div><div><div class="guest-name">' + escHtml(b.guest_name) + '</div><div class="guest-email">' + escHtml(b.guest_email) + '</div></div></div></td>' +
+        '<td><div class="hotel-tag"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#c97b3a" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>' + escHtml(b.hotel_name) + '</div>' + services + '</td>' +
+        '<td style="white-space:nowrap;">' + formatDate(b.check_in) + '</td>' +
+        '<td style="white-space:nowrap;">' + formatDate(b.check_out) + '</td>' +
+        '<td style="text-align:center;">' + b.nights + '</td>' +
+        '<td style="text-align:center;">' + b.guests + '</td>' +
+        '<td style="text-align:center;">' + b.rooms_count + '</td>' +
+        '<td><span class="status-badge status-' + b.status + '">' + capitalize(b.status) + '</span></td>' +
+        '<td style="color:#aaa;font-size:12px;white-space:nowrap;">' + formatDate(b.created_at) + '</td>' +
+      '</tr>';
+    });
+
+    html += '</tbody></table>';
+
+    // Pagination
+    html += '<div class="pagination">' +
+      '<div class="pagination-info">Showing ' + (start + 1) + '–' + Math.min(start + PAGE_SIZE, total) + ' of ' + total + ' bookings</div>' +
+      '<div class="pagination-btns">' +
+        '<button class="page-btn" id="prevPage" ' + (currentPage <= 1 ? 'disabled' : '') + '>‹</button>';
+
+    var startPage = Math.max(1, currentPage - 2);
+    var endPage = Math.min(totalPages, startPage + 4);
+    for (var p = startPage; p <= endPage; p++) {
+      html += '<button class="page-btn' + (p === currentPage ? ' active' : '') + '" data-page="' + p + '">' + p + '</button>';
+    }
+
+    html += '<button class="page-btn" id="nextPage" ' + (currentPage >= totalPages ? 'disabled' : '') + '>›</button>' +
+      '</div></div>';
+
+    wrap.innerHTML = html;
+
+    // Pagination events
+    var prev = document.getElementById('prevPage');
+    var next = document.getElementById('nextPage');
+    if (prev) prev.addEventListener('click', function () { if (currentPage > 1) { currentPage--; renderTable(); } });
+    if (next) next.addEventListener('click', function () { if (currentPage < totalPages) { currentPage++; renderTable(); } });
+    document.querySelectorAll('.page-btn[data-page]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        currentPage = parseInt(this.getAttribute('data-page'));
+        renderTable();
+      });
+    });
+  }
+
+  function renderError(msg) {
+    document.getElementById('tableWrap').innerHTML = '<div class="empty-state"><p style="color:#e44;">' + escHtml(msg) + '</p></div>';
+  }
+
+  // ─── Helpers ─────────────────────────────────────────────
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function formatDate(d) {
+    if (!d) return '—';
+    return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  }
+  function capitalize(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+})();
+</script>
+</body>
+</html>

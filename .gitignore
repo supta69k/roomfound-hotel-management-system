@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Local configuration with real credentials — never commit
+api/mail_config.php
+
+# OS / editor noise
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs & temp files
+*.log
+_tmp*
+*.tmp

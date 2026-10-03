@@ -1,0 +1,297 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Search Results - RoomFound</title>
+  <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="./output.css?v=20261005b" rel="stylesheet">
+</head>
+
+<body class="m-0 p-0 bg-[#f7f6f4] min-h-screen">
+
+  <!-- Navbar -->
+  <div class="w-full max-w-[1146px] mx-auto px-4 xl:px-0 pt-[42px] flex flex-wrap items-center justify-between gap-4">
+    <a href="./index.html" class="logo no-underline">
+      <img src="./img/logo2.png" alt="RoomFound">
+    </a>
+
+    <div class="bg-white rounded-[49px] flex items-center flex-wrap justify-center gap-[10px] md:gap-[24px] pl-4 md:pl-[32px] pr-[9px] py-[8px]">
+      <div class="flex items-center gap-[10px] md:gap-[24px] text-[14px] font-medium text-[#070200] tracking-[-0.7px]">
+        <a href="./index.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Home</span></a>
+        <a href="./loyalty.html" class="no-underline text-[#070200]"><span class="leading-[1.8]">Loyalty Program</span></a>
+        <a href="./support.html" class="no-underline text-[#070200]"><span class="leading-[1.8] w-[68px]">Support</span></a>
+      </div>
+
+      <button id="openSignupBtn" class="rounded-[32px] px-3 md:px-[24px] py-[12px] text-[14px] font-medium text-[#070200] tracking-[-0.7px] leading-[1.8] whitespace-nowrap cursor-pointer bg-transparent border-[1.5px] border-solid border-[#1e2e37] transition-opacity duration-200" onclick="window.location.href='./index.html?signup=1'">
+        Sign Up
+      </button>
+
+      <button id="openLoginBtn" class="btn-signin relative overflow-hidden rounded-[32px] px-3 md:px-[24px] py-[12px] text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] whitespace-nowrap md:-ml-[8px] bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]" onclick="window.location.href='./index.html?login=1'">
+        Sign In
+      </button>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="w-full max-w-[1224px] mx-auto px-4 xl:px-0 mt-[60px] mb-[80px]">
+
+    <!-- Back link -->
+    <a href="./index.html" class="inline-flex items-center gap-[8px] font-inter text-[14px] text-[#666] tracking-[-0.5px] no-underline mb-[30px] hover:text-[#1e2e37] transition-colors duration-150">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M19 12H5"/>
+        <path d="M12 19l-7-7 7-7"/>
+      </svg>
+      Back to search
+    </a>
+
+    <!-- Header -->
+    <div class="flex flex-wrap items-center justify-between gap-4 mb-[66px]">
+      <h1 class="font-abeezee text-[26px] md:text-[38px] text-black tracking-[-0.95px] leading-[1.2] m-0" id="resultsTitle">6 results found for Cox's Bazar</h1>
+
+      <div class="flex items-center gap-[12px] md:gap-[28px]">
+        <!-- Sort Dropdown -->
+        <div class="sort-box relative bg-[#f7f6f4] border border-solid border-[#1e2e37] rounded-[39px] px-[21px] py-[12px] flex items-center gap-[11px] cursor-pointer w-[210px] md:w-[285px] transition-colors duration-150" id="sortBox">
+          <div class="flex items-center justify-center gap-[10px] md:gap-[18px] flex-1 min-w-0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="-rotate-90 shrink-0">
+              <path d="M4 6h16M4 12h10M4 18h4" stroke="#000" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <span class="font-inter text-[14px] md:text-[18px] text-black tracking-[-0.45px] leading-[1.56] whitespace-nowrap truncate" id="sortLabel">Sort by: Our top Picks</span>
+          </div>
+          <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="-rotate-90 shrink-0">
+            <path d="M3 4.5L6 7.5L9 4.5" stroke="#000" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+
+          <div id="sortMenu" class="hidden absolute right-0 top-[calc(100%+8px)] left-auto w-full bg-white rounded-[16px] shadow-[0_8px_40px_rgba(0,0,0,0.15)] overflow-hidden z-30">
+            <div class="sort-option px-5 py-3 font-inter text-[15px] text-[#333] cursor-pointer hover:bg-[#f5f5f5]" data-sort="top">Our top picks</div>
+            <div class="sort-option px-5 py-3 font-inter text-[15px] text-[#333] cursor-pointer hover:bg-[#f5f5f5]" data-sort="price_asc">Price: low to high</div>
+            <div class="sort-option px-5 py-3 font-inter text-[15px] text-[#333] cursor-pointer hover:bg-[#f5f5f5]" data-sort="price_desc">Price: high to low</div>
+            <div class="sort-option px-5 py-3 font-inter text-[15px] text-[#333] cursor-pointer hover:bg-[#f5f5f5]" data-sort="rating">Highest rated</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Room Cards Grid -->
+    <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-[24px] xl:gap-[46px]" id="roomsGrid">
+
+      <!-- Card 1 -->
+      <div class="flex flex-col gap-[5px] room-card" data-hotel-id="1">
+        <div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">
+          <img src="img/rooms/room1.jpg" alt="The Azure Bay Resort" class="w-full h-full object-cover">
+          <div class="absolute bottom-[12px] left-[8px] bg-white rounded-[26px] py-[7px] px-[14px] flex items-center gap-[8.5px]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="#000" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" stroke="#000" stroke-width="1.5"/>
+            </svg>
+            <span class="font-inter text-[13.6px] text-black tracking-[-0.85px] leading-[1.6] whitespace-nowrap">Marine Drive, Cox's Bazar</span>
+          </div>
+        </div>
+        <div class="flex items-end justify-between p-[8.5px]">
+          <div class="flex flex-col gap-[5px]">
+            <p class="font-abeezee text-[20.4px] text-[rgba(10,9,21,0.9)] tracking-[-0.85px] leading-[1.4] m-0">The Azure Bay Resort</p>
+            <div class="flex items-center gap-[7px]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB800">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">4.7</span>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">(1,289 Reviews)</span>
+            </div>
+            <div>
+              <p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$150</p>
+              <p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p>
+            </div>
+          </div>
+          <button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="-rotate-45">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 2 -->
+      <div class="flex flex-col gap-[5px] room-card" data-hotel-id="2">
+        <div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">
+          <img src="img/rooms/room2.jpg" alt="Tea Garden Retreat" class="w-full h-full object-cover">
+          <div class="absolute bottom-[12px] left-[8px] bg-white rounded-[26px] py-[7px] px-[14px] flex items-center gap-[8.5px]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="#000" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" stroke="#000" stroke-width="1.5"/>
+            </svg>
+            <span class="font-inter text-[13.6px] text-black tracking-[-0.85px] leading-[1.6] whitespace-nowrap">Sugandha, Cox's Bazar</span>
+          </div>
+        </div>
+        <div class="flex items-end justify-between p-[8.5px]">
+          <div class="flex flex-col gap-[5px]">
+            <p class="font-abeezee text-[20.4px] text-[rgba(10,9,21,0.9)] tracking-[-0.85px] leading-[1.4] m-0">Tea Garden Retreat</p>
+            <div class="flex items-center gap-[7px]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB800">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">4.8</span>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">(9,880 Reviews)</span>
+            </div>
+            <div>
+              <p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$190</p>
+              <p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p>
+            </div>
+          </div>
+          <button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="-rotate-45">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 3 -->
+      <div class="flex flex-col gap-[5px] room-card" data-hotel-id="3">
+        <div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">
+          <img src="img/rooms/room3.jpg" alt="Queen Garden" class="w-full h-full object-cover">
+          <div class="absolute bottom-[12px] left-[8px] bg-white rounded-[26px] py-[7px] px-[14px] flex items-center gap-[8.5px]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="#000" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" stroke="#000" stroke-width="1.5"/>
+            </svg>
+            <span class="font-inter text-[13.6px] text-black tracking-[-0.85px] leading-[1.6] whitespace-nowrap">Inani, Cox's Bazar</span>
+          </div>
+        </div>
+        <div class="flex items-end justify-between p-[8.5px]">
+          <div class="flex flex-col gap-[5px]">
+            <p class="font-abeezee text-[20.4px] text-[rgba(10,9,21,0.9)] tracking-[-0.85px] leading-[1.4] m-0">Queen Garden</p>
+            <div class="flex items-center gap-[7px]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB800">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">4.5</span>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">(7,610 Reviews)</span>
+            </div>
+            <div>
+              <p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$110</p>
+              <p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p>
+            </div>
+          </div>
+          <button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="-rotate-45">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 4 -->
+      <div class="flex flex-col gap-[5px] room-card" data-hotel-id="4">
+        <div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">
+          <img src="img/rooms/room4.jpg" alt="Azure Crest Resort" class="w-full h-full object-cover">
+          <div class="absolute bottom-[12px] left-[8px] bg-white rounded-[26px] py-[7px] px-[14px] flex items-center gap-[8.5px]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="#000" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" stroke="#000" stroke-width="1.5"/>
+            </svg>
+            <span class="font-inter text-[13.6px] text-black tracking-[-0.85px] leading-[1.6] whitespace-nowrap">Kolatoli, Cox's Bazar</span>
+          </div>
+        </div>
+        <div class="flex items-end justify-between p-[8.5px]">
+          <div class="flex flex-col gap-[5px]">
+            <p class="font-abeezee text-[20.4px] text-[rgba(10,9,21,0.9)] tracking-[-0.85px] leading-[1.4] m-0">Azure Crest Resort</p>
+            <div class="flex items-center gap-[7px]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB800">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">4.7</span>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">(1,289 Reviews)</span>
+            </div>
+            <div>
+              <p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$150</p>
+              <p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p>
+            </div>
+          </div>
+          <button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="-rotate-45">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 5 -->
+      <div class="flex flex-col gap-[5px] room-card" data-hotel-id="5">
+        <div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">
+          <img src="img/rooms/room5.jpg" alt="Tea Garden Cove" class="w-full h-full object-cover">
+          <div class="absolute bottom-[12px] left-[8px] bg-white rounded-[26px] py-[7px] px-[14px] flex items-center gap-[8.5px]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="#000" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" stroke="#000" stroke-width="1.5"/>
+            </svg>
+            <span class="font-inter text-[13.6px] text-black tracking-[-0.85px] leading-[1.6] whitespace-nowrap">Laboni, Cox's Bazar</span>
+          </div>
+        </div>
+        <div class="flex items-end justify-between p-[8.5px]">
+          <div class="flex flex-col gap-[5px]">
+            <p class="font-abeezee text-[20.4px] text-[rgba(10,9,21,0.9)] tracking-[-0.85px] leading-[1.4] m-0">Tea Garden Cove</p>
+            <div class="flex items-center gap-[7px]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB800">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">4.8</span>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">(9,880 Reviews)</span>
+            </div>
+            <div>
+              <p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$190</p>
+              <p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p>
+            </div>
+          </div>
+          <button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="-rotate-45">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Card 6 -->
+      <div class="flex flex-col gap-[5px] room-card" data-hotel-id="6">
+        <div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">
+          <img src="img/rooms/room6.jpg" alt="The Nature Royal" class="w-full h-full object-cover">
+          <div class="absolute bottom-[12px] left-[8px] bg-white rounded-[26px] py-[7px] px-[14px] flex items-center gap-[8.5px]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+              <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" stroke="#000" stroke-width="1.5"/>
+              <circle cx="12" cy="9" r="2.5" stroke="#000" stroke-width="1.5"/>
+            </svg>
+            <span class="font-inter text-[13.6px] text-black tracking-[-0.85px] leading-[1.6] whitespace-nowrap">Moheshkhali, Cox's Bazar</span>
+          </div>
+        </div>
+        <div class="flex items-end justify-between p-[8.5px]">
+          <div class="flex flex-col gap-[5px]">
+            <p class="font-abeezee text-[20.4px] text-[rgba(10,9,21,0.9)] tracking-[-0.85px] leading-[1.4] m-0">The Nature Royal</p>
+            <div class="flex items-center gap-[7px]">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="#FFB800">
+                <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+              </svg>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">4.5</span>
+              <span class="font-inter text-[13.6px] text-[#98979b] tracking-[-0.85px] leading-[1.6]">(7,610 Reviews)</span>
+            </div>
+            <div>
+              <p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$110</p>
+              <p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p>
+            </div>
+          </div>
+          <button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" class="-rotate-45">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke="#000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="./navbar-auth.js?v=20261005b"></script>
+  <script src="./rooms.js?v=20261005b"></script>
+  <script src="./mobile-nav.js?v=20261005db"></script>
+</body>
+
+</html>
