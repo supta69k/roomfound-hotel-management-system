@@ -7,7 +7,7 @@
   <title>RoomFound — Book your perfect stay instantly</title>
   <meta name="description" content="RoomFound is a modern, user-friendly hotel booking platform. Search rooms, compare prices, and book your perfect stay instantly.">
   <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-  <link href="./output.css?v=20261005b" rel="stylesheet">
+  <link href="./output.css?v=20261007" rel="stylesheet">
 </head>
 
 <body class="m-0 p-0">
@@ -173,6 +173,385 @@
     </div>
 
   </div>
+
+  <!-- ===== SECTION: Our top rated Hotels ===== -->
+  <div class="bg-[#f7f6f4] w-full">
+    <div class="max-w-[1224px] mx-auto px-4 md:px-0 pt-[60px] md:pt-[126px]">
+      <div class="flex flex-wrap items-start justify-between gap-[24px]">
+        <div class="flex flex-col gap-[16px] md:gap-[38px] w-full md:w-[784px]">
+          <h2 class="font-abeezee text-black tracking-[-1.5px] leading-[1.2] text-[34px] md:text-[60px] m-0">Our top rated Hotels</h2>
+          <p class="font-inter text-[#666] text-[16px] md:text-[18px] tracking-[-0.05px] leading-[1.7] m-0">The rooms our guests love most. Whether you're here for business or a weekend getaway, discover our most popular stays that perfectly balance comfort, style, and affordability.</p>
+        </div>
+        <div class="hidden md:flex items-center gap-[46px]">
+          <button id="hotelsPrev" aria-label="Previous hotels" class="bg-[#1e2e37] rounded-[30px] size-[60px] flex items-center justify-center cursor-pointer border-none transition-opacity duration-200 hover:opacity-85">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M19 12H5m0 0l6 6m-6-6l6-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button id="hotelsNext" aria-label="Next hotels" class="bg-[#1e2e37] rounded-[30px] size-[60px] flex items-center justify-center cursor-pointer border-none transition-opacity duration-200 hover:opacity-85">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 12h14m0 0l-6-6m6 6l-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hotel cards -->
+    <div class="max-w-[1224px] mx-auto px-4 md:px-0 mt-[40px] md:mt-[42px]">
+      <div id="hotelsRow" class="flex gap-[24px] md:gap-[54px] overflow-x-auto pb-[10px] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+        <!-- Card 1 -->
+        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="1" onclick="window.location.href='./hotel.html?id=1'">
+          <div class="relative h-[240px] md:h-[348px] rounded-[16px] overflow-hidden">
+            <img src="img/rooms/room1.jpg" alt="The Azure Bay Resort" class="w-full h-full object-cover" loading="lazy">
+            <div class="absolute left-[9px] bottom-[11px] bg-white rounded-[31px] px-[16px] py-[8px] flex items-center gap-[10px]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 21s-7-5.1-7-11a7 7 0 1114 0c0 5.9-7 11-7 11z" fill="#0a0915"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+              <span class="font-inter text-[16px] text-black tracking-[-1px] leading-[1.6] whitespace-nowrap">Marine Drive, Cox's Bazar</span>
+            </div>
+          </div>
+          <div class="p-[10px] flex flex-col gap-[6px]">
+            <p class="font-abeezee text-[24px] text-[rgba(10,9,21,0.9)] tracking-[-1px] leading-[1.4] m-0">The Azure Bay Resort</p>
+            <div class="flex items-center gap-[8px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#98979b" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              <span class="font-inter text-[16px] text-[#98979b] tracking-[-1px] leading-[1.6]">4.7 <span class="ml-[4px]">(1,289 Reviews)</span></span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div class="flex flex-col">
+                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$150</span>
+                <span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span>
+              </div>
+              <span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="#0a0915" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 2 -->
+        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="2" onclick="window.location.href='./hotel.html?id=2'">
+          <div class="relative h-[240px] md:h-[348px] rounded-[16px] overflow-hidden">
+            <img src="img/rooms/room2.jpg" alt="Tea Garden Retreat" class="w-full h-full object-cover" loading="lazy">
+            <div class="absolute left-[9px] bottom-[11px] bg-white rounded-[31px] px-[16px] py-[8px] flex items-center gap-[10px]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 21s-7-5.1-7-11a7 7 0 1114 0c0 5.9-7 11-7 11z" fill="#0a0915"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+              <span class="font-inter text-[16px] text-black tracking-[-1px] leading-[1.6] whitespace-nowrap">Sugandha, Cox's Bazar</span>
+            </div>
+          </div>
+          <div class="p-[10px] flex flex-col gap-[6px]">
+            <p class="font-abeezee text-[24px] text-[rgba(10,9,21,0.9)] tracking-[-1px] leading-[1.4] m-0">Tea Garden Retreat</p>
+            <div class="flex items-center gap-[8px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#98979b" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              <span class="font-inter text-[16px] text-[#98979b] tracking-[-1px] leading-[1.6]">4.8 <span class="ml-[4px]">(9,880 Reviews)</span></span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div class="flex flex-col">
+                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$190</span>
+                <span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span>
+              </div>
+              <span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="#0a0915" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+        <!-- Card 3 -->
+        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="3" onclick="window.location.href='./hotel.html?id=3'">
+          <div class="relative h-[240px] md:h-[348px] rounded-[16px] overflow-hidden">
+            <img src="img/rooms/room3.jpg" alt="Queen Garden" class="w-full h-full object-cover" loading="lazy">
+            <div class="absolute left-[9px] bottom-[11px] bg-white rounded-[31px] px-[16px] py-[8px] flex items-center gap-[10px]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 21s-7-5.1-7-11a7 7 0 1114 0c0 5.9-7 11-7 11z" fill="#0a0915"/><circle cx="12" cy="10" r="2.6" fill="#fff"/></svg>
+              <span class="font-inter text-[16px] text-black tracking-[-1px] leading-[1.6] whitespace-nowrap">Inani, Cox's Bazar</span>
+            </div>
+          </div>
+          <div class="p-[10px] flex flex-col gap-[6px]">
+            <p class="font-abeezee text-[24px] text-[rgba(10,9,21,0.9)] tracking-[-1px] leading-[1.4] m-0">Queen Garden</p>
+            <div class="flex items-center gap-[8px]">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" stroke="#98979b" stroke-width="1.5" stroke-linejoin="round"/></svg>
+              <span class="font-inter text-[16px] text-[#98979b] tracking-[-1px] leading-[1.6]">4.5 <span class="ml-[4px]">(7,610 Reviews)</span></span>
+            </div>
+            <div class="flex items-end justify-between">
+              <div class="flex flex-col">
+                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$110</span>
+                <span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span>
+              </div>
+              <span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M7 17L17 7M9 7h8v8" stroke="#0a0915" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Categories ===== -->
+    <div class="max-w-[1216px] mx-auto px-4 md:px-0 mt-[60px] md:mt-[129px] pb-[60px] md:pb-[153px]">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-[24px]">
+        <!-- Beachfront (tall left tile) -->
+        <a href="./rooms.html?location=Cox's%20Bazar" class="group relative h-[420px] md:h-[800px] rounded-[8px] overflow-hidden block no-underline">
+          <img src="img/home/cat-beachfront.jpg" alt="White sand beach with turquoise water" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+          <div class="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent"></div>
+          <div class="absolute left-[32px] md:left-[40px] bottom-[32px] md:bottom-[40px] flex flex-col gap-[8px]">
+            <p class="font-instrument italic text-white text-[32px] md:text-[36px] leading-[40px] m-0">Beachfront</p>
+            <p class="font-inter font-light text-[16px] text-[rgba(255,255,255,0.8)] leading-[24px] m-0">Serenity by the tide.</p>
+          </div>
+        </a>
+        <!-- Right column -->
+        <div class="flex flex-col gap-[24px]">
+          <!-- Family-Friendly -->
+          <a href="./rooms.html?location=Cox's%20Bazar" class="group relative h-[300px] md:h-[388px] rounded-[8px] overflow-hidden block no-underline">
+            <img src="img/home/cat-family.jpg" alt="Family having breakfast by a pool" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+            <div class="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent"></div>
+            <div class="absolute left-[24px] md:left-[32px] bottom-[24px] md:bottom-[32px] flex flex-col gap-[8px]">
+              <p class="font-instrument italic text-white text-[30px] md:text-[36px] leading-[36px] md:leading-[40px] m-0">Family-Friendly</p>
+              <p class="font-inter font-light text-[16px] text-[rgba(255,255,255,0.8)] leading-[24px] m-0">Memories built together.</p>
+            </div>
+          </a>
+          <div class="flex gap-[24px]">
+            <!-- Luxury Resorts -->
+            <a href="./rooms.html?location=Cox's%20Bazar" class="group relative flex-1 h-[300px] md:h-[388px] rounded-[8px] overflow-hidden block no-underline">
+              <img src="img/home/cat-luxury.jpg" alt="Luxury hotel suite bedroom" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent"></div>
+              <div class="absolute left-[24px] md:left-[32px] bottom-[24px] md:bottom-[32px]">
+                <p class="font-instrument italic text-white text-[30px] md:text-[36px] leading-[36px] m-0">Luxury Resorts</p>
+              </div>
+            </a>
+            <!-- Nature -->
+            <a href="./rooms.html?location=Cox's%20Bazar" class="group relative flex-1 h-[300px] md:h-[388px] rounded-[8px] overflow-hidden block no-underline">
+              <img src="img/home/cat-nature.jpg" alt="Mountain cabin in a forest" class="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+              <div class="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.6)] to-transparent"></div>
+              <div class="absolute left-[24px] md:left-[32px] bottom-[24px] md:bottom-[32px]">
+                <p class="font-instrument italic text-white text-[30px] md:text-[36px] leading-[36px] m-0">Nature</p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Secure & Instant Booking ===== -->
+    <div class="max-w-[1224px] mx-auto px-4 md:px-0 pb-[70px] md:pb-[153px]">
+      <div class="flex flex-col lg:flex-row items-start gap-[40px] lg:gap-[86px]">
+        <div class="flex flex-col gap-[38px] w-full lg:w-[582px] lg:pt-[62px]">
+          <div class="flex flex-col gap-[38px]">
+            <h2 class="font-abeezee text-black tracking-[-1.5px] leading-[1.2] text-[34px] md:text-[60px] m-0">Secure &amp; Instant Best-Rate <span class="italic">Booking</span></h2>
+            <p class="font-inter text-[#666] text-[16px] md:text-[16px] tracking-[-0.05px] leading-[1.7] m-0 max-w-[592px]">Skip the wait with our real-time booking system that guarantees the best prices in the market. Your data is always safe with our secure, encrypted payment processing.</p>
+          </div>
+          <div class="flex flex-wrap md:flex-nowrap gap-[36px] md:gap-[40px]">
+            <div class="flex flex-col gap-[0px]">
+              <div class="flex items-center gap-[10px]">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 1.5l2.6 2 3.3-.3 1 3.1 2.8 1.8-1.2 3.1 1.2 3.1-2.8 1.8-1 3.1-3.3-.3-2.6 2-2.6-2-3.3.3-1-3.1-2.8-1.8 1.2-3.1-1.2-3.1 2.8-1.8 1-3.1 3.3.3 2.6-2z" fill="#1e2e37"/><path d="M8.5 12l2.4 2.4 4.6-4.8" stroke="#f7f6f4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="font-abeezee italic text-[#1e2e37] text-[38px] md:text-[50px] tracking-[-1.25px] leading-[1.7]">250+</span>
+              </div>
+              <span class="font-inter font-light text-[14px] text-[#3f3f3f] tracking-[-0.14px] leading-[1.7] whitespace-nowrap">Luxury Hotel Partners</span>
+            </div>
+            <div class="flex flex-col gap-[0px]">
+              <div class="flex items-center gap-[10px]">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="shrink-0"><circle cx="12" cy="12" r="9" stroke="#1e2e37" stroke-width="2"/><circle cx="9" cy="10" r="1.2" fill="#1e2e37"/><circle cx="15" cy="10" r="1.2" fill="#1e2e37"/><path d="M8.5 14.5c.9 1.2 2.1 1.9 3.5 1.9s2.6-.7 3.5-1.9" stroke="#1e2e37" stroke-width="1.8" stroke-linecap="round"/></svg>
+                <span class="font-abeezee italic text-[#1e2e37] text-[38px] md:text-[50px] tracking-[-1.25px] leading-[1.7]">50K+</span>
+              </div>
+              <span class="font-inter font-light text-[14px] text-[#3f3f3f] tracking-[-0.14px] leading-[1.7] whitespace-nowrap">Happy Guests Worldwide</span>
+            </div>
+            <div class="flex flex-col gap-[0px]">
+              <div class="flex items-center gap-[10px]">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" fill="#1e2e37"/></svg>
+                <span class="font-abeezee italic text-[#1e2e37] text-[38px] md:text-[50px] tracking-[-1.25px] leading-[1.7]">4.7/5</span>
+              </div>
+              <span class="font-inter font-light text-[14px] text-[#3f3f3f] tracking-[-0.14px] leading-[1.7] pl-[42px] whitespace-nowrap">Average Guest Rating</span>
+            </div>
+          </div>
+        </div>
+        <div class="relative w-full lg:w-[556px] h-[360px] lg:h-[578px] rounded-[25.69px] overflow-hidden shrink-0">
+          <img src="img/home/booking-secure.jpg" alt="Secure encrypted booking" class="absolute inset-0 w-full h-full object-cover object-bottom" loading="lazy">
+          <div class="absolute inset-0 rounded-[inherit] shadow-[inset_0px_0px_2.8px_87px_rgba(0,0,0,0.47)]" aria-hidden="true"></div>
+          <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 size-[120px] md:size-[150px] rounded-[24px] bg-white/25 backdrop-blur-[6px] flex items-center justify-center">
+            <svg width="70" height="70" viewBox="0 0 24 24" fill="none"><path d="M12 2.5l7.5 3v5.2c0 4.8-3.2 8.6-7.5 10.8-4.3-2.2-7.5-6-7.5-10.8V5.5l7.5-3z" stroke="#fff" stroke-width="1.4" stroke-linejoin="round"/><path d="M8.8 12l2.3 2.3 4.3-4.6" stroke="#fff" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: Testimonials ===== -->
+  <div class="bg-white w-full">
+    <div class="max-w-[1216px] mx-auto px-4 md:px-0 pt-[60px] md:pt-[246px]">
+      <div class="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-[40px]">
+        <div class="flex flex-wrap items-start gap-[22px] lg:shrink-0 lg:pt-[54px]">
+          <div class="flex w-[274px] flex-col items-center gap-[11px]">
+            <img src="img/home/google-logo.svg" alt="Google" class="h-[43px] w-auto">
+            <p class="font-inter text-[#676565] text-[15px] tracking-[-0.3px] leading-[1.8] m-0">4.6/5 Stars! Based on 2000+ reviews</p>
+          </div>
+          <div class="flex w-[267px] flex-col items-center gap-[11px]">
+            <div class="flex items-center gap-[8px] h-[43px]">
+              <img src="img/home/trustpilot-star.svg" alt="" class="size-[28px]">
+              <span class="text-[22px] font-bold tracking-[-0.5px]" style="font-family:'Inter',sans-serif;color:#191919">Trustpilot</span>
+            </div>
+            <p class="font-inter text-[#676565] text-[15px] tracking-[-0.3px] leading-[1.8] m-0">4.4/5 Stars! Based on 500+ reviews</p>
+          </div>
+        </div>
+        <h2 class="font-abeezee text-[#081717] tracking-[-1.5px] leading-[1.2] text-[34px] md:text-[60px] lg:w-[492px] m-0 text-center lg:text-left">Trusted by <span class="italic">50,000+</span> Travelers</h2>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-[24px] md:gap-[37px] mt-[40px] md:mt-[54px]">
+        <div class="bg-[#f7f6f4] rounded-[18.77px] p-[28px] md:px-[37px] md:pt-[47px] md:pb-[14px]">
+          <img src="img/home/quote-icon.svg" alt="" class="w-[50px] h-[38px]" loading="lazy">
+          <p class="font-abeezee italic text-[#081717] text-[19px] md:text-[22.5px] md:max-w-[487px] tracking-[-0.22px] leading-[1.5] mt-[28px] mb-0">From the transparent pricing to the robust data security, this platform makes booking totally stress-free. It has become an essential tool for my frequent business trips, and I now feel fully in control of my travel.</p>
+          <div class="flex items-center gap-[11px] mt-[28px]">
+            <span class="inline-block w-[30px] h-[2px] bg-[#0a0915]"></span>
+            <span class="font-inter font-semibold text-[17px] text-[#526061] tracking-[-0.2px] leading-[1.7]">Olivia Wattson, CMO @ BlazeX</span>
+          </div>
+        </div>
+        <div class="bg-[#f7f6f4] rounded-[18.77px] p-[28px] md:px-[37px] md:pt-[47px] md:pb-[14px]">
+          <img src="img/home/quote-icon.svg" alt="" class="w-[50px] h-[38px]" loading="lazy">
+          <p class="font-abeezee italic text-[#081717] text-[19px] md:text-[22.5px] md:max-w-[487px] tracking-[-0.22px] leading-[1.5] mt-[28px] mb-0">From the intuitive search filters to the lightning-fast checkout, this system has completely transformed how I travel. It is now my go-to choice for every vacation, and I feel confident.</p>
+          <div class="flex items-center gap-[11px] mt-[28px]">
+            <span class="inline-block w-[30px] h-[2px] bg-[#0a0915]"></span>
+            <span class="font-inter font-semibold text-[17px] text-[#526061] tracking-[-0.2px] leading-[1.7]">James Paterson, CEO @ CreditX</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex items-center justify-center gap-[8px] mt-[48px] md:mt-[85px]">
+        <span class="size-[12px] rounded-full bg-[#1e2e37] inline-block"></span>
+        <span class="size-[12px] rounded-full bg-[#d9d9d9] inline-block"></span>
+        <span class="size-[12px] rounded-full bg-[#d9d9d9] inline-block"></span>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: News / Blog ===== -->
+    <div id="news" class="max-w-[1280px] mx-auto px-4 md:px-0 pt-[60px] md:pt-[153px]">
+      <h2 class="text-black tracking-[-1.5px] leading-[1.2] text-[34px] md:text-[60px] m-0">
+        <span class="font-abeezee italic">Where Your Next</span>
+        <span class="font-instrument italic"> Story Begins</span>
+      </h2>
+
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-[40px] lg:gap-[64px] mt-[40px] md:mt-[48px]">
+        <!-- Left column: featured + one item -->
+        <div class="flex flex-col">
+          <a href="#news" class="group block no-underline">
+            <div class="overflow-hidden">
+              <img src="img/home/news-featured.jpg" alt="Traveler leaning against a stone fence" class="w-full h-[200px] object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
+            </div>
+            <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] mt-[16px] mb-0">Blog</p>
+            <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">The Hidden Trails of Sreemangal: A Journey Through the Green.</p>
+          </a>
+          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] mt-[35px]">
+            <div class="max-w-[404px]">
+              <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
+              <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">Sunset Serenity: Why Cox's Bazar Remains the Crown Jewel of the Coast.</p>
+            </div>
+            <img src="img/home/news-2.jpg" alt="" class="w-[120px] md:w-[170px] h-[92px] md:h-[122px] object-cover shrink-0" loading="lazy">
+          </a>
+        </div>
+        <!-- Right column: three items -->
+        <div class="flex flex-col">
+          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px]">
+            <div class="max-w-[404px]">
+              <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
+              <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">Beyond the Lobby: Discovering the Secret History of Heritage Hotels.</p>
+            </div>
+            <img src="img/home/news-2.jpg" alt="" class="w-[120px] md:w-[170px] h-[92px] md:h-[122px] object-cover shrink-0" loading="lazy">
+          </a>
+          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] pt-[32px]">
+            <div class="max-w-[404px]">
+              <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
+              <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">Urban Oasis: Finding Peace and Quiet in the Heart of Dhaka.</p>
+            </div>
+            <img src="img/home/news-3.jpg" alt="" class="w-[120px] md:w-[170px] h-[92px] md:h-[122px] object-cover shrink-0" loading="lazy">
+          </a>
+          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] pt-[32px]">
+            <div class="max-w-[404px]">
+              <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
+              <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">The Anatomy of a Five-Star Suite: What Makes a Room Truly Grand?</p>
+            </div>
+            <img src="img/rooms/hotel-interior1.jpg" alt="" class="w-[120px] md:w-[170px] h-[92px] md:h-[122px] object-cover shrink-0" loading="lazy">
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- ===== SECTION: Newsletter ===== -->
+    <div class="max-w-[1221px] mx-auto px-4 md:px-0 pt-[60px] md:pt-[275px] pb-[35px]">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-[32px]">
+        <div class="w-full lg:w-[454px]">
+          <h2 class="font-abeezee text-black tracking-[-1.5px] leading-[1.2] text-[34px] md:text-[60px] m-0">Join Our <span class="italic">Newsletter</span></h2>
+          <p class="font-inter text-[#676565] text-[18px] leading-[1.6] mt-[16px] mb-0">Subscribe to our newsletter for latest development and offers.</p>
+        </div>
+        <form id="newsletterForm" class="flex flex-col sm:flex-row items-stretch gap-[18px] w-full lg:w-[606px]" novalidate>
+          <input type="email" id="newsletterEmail" placeholder="Enter your e-mail" class="flex-1 h-[68px] bg-white border border-[#e2e1df] rounded-[20px] px-[24px] font-inter text-[18px] text-[#535358] tracking-[-0.3px] outline-none placeholder:opacity-80 focus:border-[#1e2e37] transition-colors duration-200 box-border min-w-0">
+          <button type="submit" class="h-[68px] px-[28px] rounded-[41px] border-none cursor-pointer text-[#f7f6f4] font-inter font-medium text-[18px] tracking-[-0.9px] whitespace-nowrap bg-[linear-gradient(109.6deg,rgb(63,63,63)_18%,rgb(21,21,21)_76.6%)] transition-transform duration-200 hover:scale-[1.03]">Subscribe Now</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== SECTION: Footer ===== -->
+  <footer class="bg-white w-full">
+    <div class="max-w-[1320px] mx-auto px-4 md:px-[60px] pt-[60px] md:pt-[96px]">
+      <div class="flex flex-wrap gap-[48px] md:gap-0 justify-between">
+        <div class="w-full md:w-[288px] flex flex-col gap-[36px]">
+          <div class="flex flex-col gap-[24px]">
+            <div class="flex items-center gap-[16px]">
+              <img src="img/home/footer-brand.svg" alt="" class="h-[36px] w-auto">
+              <span class="font-abeezee italic text-black text-[30px] tracking-[-0.5px] leading-[1.1]">RoomFound</span>
+            </div>
+            <div class="flex flex-col gap-[4px]">
+              <a href="tel:+19073574333" class="font-inter text-[16px] text-[#0a0915] tracking-[-0.2px] leading-[1.7] underline underline-offset-[3px] no-underline hover:underline">(907) 357-4333</a>
+              <a href="mailto:hello@roomfound.com" class="font-inter text-[16px] text-[#0a0915] tracking-[-0.2px] leading-[1.7] no-underline hover:underline">hello@roomfound.com</a>
+            </div>
+          </div>
+          <div class="flex items-center gap-[8px]">
+            <a href="https://facebook.com" target="_blank" rel="noopener" aria-label="Facebook" class="size-[48px] rounded-[14px] bg-[#1e2e37] flex items-center justify-center transition-opacity duration-200 hover:opacity-85">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M13.5 21v-7h2.4l.4-3h-2.8V9.1c0-.9.3-1.5 1.6-1.5h1.3V4.9c-.3 0-1.1-.1-2.1-.1-2.1 0-3.6 1.3-3.6 3.7V11H8.3v3h2.4v7h2.8z" fill="#fff"/></svg>
+            </a>
+            <a href="https://linkedin.com" target="_blank" rel="noopener" aria-label="LinkedIn" class="size-[48px] rounded-[14px] border-[1.5px] border-[#1e2e37] flex items-center justify-center transition-colors duration-200 hover:bg-[#f2f1ef]">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none"><path d="M6.9 8.6H4.2V20h2.7V8.6zM5.6 7.4a1.6 1.6 0 100-3.2 1.6 1.6 0 000 3.2zM12 8.6H9.4V20H12v-6c0-1.3.6-2.2 1.9-2.2 1.2 0 1.7.9 1.7 2.2v6h2.7v-6.6c0-2.6-1.4-3.9-3.4-3.9-1.6 0-2.4.9-2.9 1.6V8.6z" fill="#1e2e37"/></svg>
+            </a>
+            <a href="https://youtube.com" target="_blank" rel="noopener" aria-label="YouTube" class="size-[48px] rounded-[14px] border-[1.5px] border-[#1e2e37] flex items-center justify-center transition-colors duration-200 hover:bg-[#f2f1ef]">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M21.6 7.2a2.5 2.5 0 00-1.8-1.8C18.2 5 12 5 12 5s-6.2 0-7.8.4A2.5 2.5 0 002.4 7.2 26 26 0 002 12c0 1.6.1 3.2.4 4.8a2.5 2.5 0 001.8 1.8c1.6.4 7.8.4 7.8.4s6.2 0 7.8-.4a2.5 2.5 0 001.8-1.8c.3-1.6.4-3.2.4-4.8s-.1-3.2-.4-4.8zM10 15.2V8.8l5.2 3.2-5.2 3.2z" fill="#1e2e37"/></svg>
+            </a>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap gap-[48px] md:gap-[88px]">
+          <div class="flex flex-col gap-[16px] w-[136px]">
+            <p class="font-inter font-medium text-[18px] text-[#0a0915] tracking-[-0.2px] leading-[1.8] m-0">Navigation</p>
+            <div class="flex flex-col gap-[8px]">
+              <a href="./index.html" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">About Us</a>
+              <a href="./rooms.html" class="font-inter font-medium text-[16px] text-[#203f30] tracking-[-0.2px] leading-[1.8] no-underline">Properties</a>
+              <a href="./hotel.html?id=1" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">Services</a>
+              <a href="./support.html" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">Contact Us</a>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[16px] w-[136px]">
+            <p class="font-inter font-medium text-[18px] text-[#0a0915] tracking-[-0.2px] leading-[1.8] m-0">Resources</p>
+            <div class="flex flex-col gap-[8px]">
+              <a href="./loyalty.html" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">Pricing</a>
+              <a href="./support.html" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">FAQs</a>
+              <a href="./index.html" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">How it works</a>
+              <a href="#news" class="font-inter text-[16px] text-[#52525a] tracking-[-0.4px] leading-[1.7] no-underline hover:text-[#203f30] transition-colors duration-150">Blog</a>
+            </div>
+          </div>
+          <div class="flex flex-col gap-[16px] w-full md:w-[312px]">
+            <p class="font-inter font-medium text-[18px] text-[#0a0915] tracking-[-0.2px] leading-[1.8] m-0">Office Location</p>
+            <div class="flex flex-col gap-[12px]">
+              <p class="font-inter text-[16px] text-[#52525a] tracking-[-0.2px] leading-[1.7] m-0">Emily Hattson<br>940 Goldendale Dr, Wasilla, Alaska<br>99654, USA</p>
+              <a href="https://maps.google.com/?q=Wasilla,Alaska" target="_blank" rel="noopener" class="flex items-center gap-[8px] no-underline">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" class="shrink-0"><path d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7z" fill="#0a0915"/><circle cx="12" cy="9" r="2.6" fill="#fff"/></svg>
+                <span class="font-inter text-[16px] text-[#0a0915] tracking-[-0.2px] leading-[1.8]">See on Map</span>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="border-t border-[#e5e5e5] mt-[56px] md:mt-[80px] py-[24px] flex flex-wrap items-center justify-between gap-[12px]">
+        <div class="flex items-center gap-[16px]">
+          <span class="font-inter text-[14px] text-[#52525a] tracking-[-0.3px] leading-[1.8]">&copy; RoomFound 2026</span>
+          <span class="size-[8px] rounded-full bg-[#d9d9d9] inline-block"></span>
+          <span class="font-inter text-[14px] text-[#52525a] tracking-[-0.3px] leading-[1.8]">All right reserved</span>
+        </div>
+        <div class="flex items-center gap-[16px]">
+          <a href="./support.html" class="font-inter text-[14px] text-[#52525a] tracking-[-0.3px] leading-[1.8] no-underline hover:text-[#203f30] transition-colors duration-150">Terms &amp; Conditions</a>
+          <span class="size-[8px] rounded-full bg-[#d9d9d9] inline-block"></span>
+          <a href="./support.html" class="font-inter text-[14px] text-[#52525a] tracking-[-0.3px] leading-[1.8] no-underline hover:text-[#203f30] transition-colors duration-150">Privacy Policy</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <!-- ===== DROPDOWN MODALS (fixed position, placed by JS) ===== -->
 
@@ -496,6 +875,45 @@
   <script src="./auth.js?v=20261005b"></script>
 
   <script src="./mobile-nav.js?v=20261005db"></script>
+
+  <script>
+    // ===== Homepage sections: carousel arrows + newsletter =====
+    (function () {
+      // Hotel cards carousel
+      var row = document.getElementById('hotelsRow');
+      var prev = document.getElementById('hotelsPrev');
+      var next = document.getElementById('hotelsNext');
+      if (row && prev && next) {
+        var step = function () {
+          var card = row.querySelector('.room-card');
+          return card ? card.getBoundingClientRect().width + 24 : 360;
+        };
+        prev.addEventListener('click', function () { row.scrollBy({ left: -step(), behavior: 'smooth' }); });
+        next.addEventListener('click', function () { row.scrollBy({ left: step(), behavior: 'smooth' }); });
+      }
+
+      // Newsletter subscribe
+      var form = document.getElementById('newsletterForm');
+      if (form) {
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var input = document.getElementById('newsletterEmail');
+          var email = (input.value || '').trim();
+          var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+          var toastEl = document.getElementById('toastContainer');
+          if (!toastEl) return;
+          toastEl.textContent = valid
+            ? 'Subscribed! Watch your inbox for offers.'
+            : 'Please enter a valid e-mail address.';
+          toastEl.className = 'toast ' + (valid ? 'success' : 'error');
+          void toastEl.offsetWidth;
+          toastEl.classList.add('show');
+          setTimeout(function () { toastEl.classList.remove('show'); }, 3200);
+          if (valid) input.value = '';
+        });
+      }
+    })();
+  </script>
 </body>
 
 </html>
