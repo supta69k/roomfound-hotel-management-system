@@ -10,9 +10,13 @@
     titleEl.textContent = cards.length + ' results found for ' + location;
   }
 
-  // Navigate to hotel detail page on card click
-  cards.forEach(function (card) {
-    card.addEventListener('click', function () {
+  // Navigate to hotel detail page on card click.
+  // Delegated on the grid so cards rendered dynamically by rooms-data.js work too.
+  var grid = document.getElementById('roomsGrid');
+  if (grid) {
+    grid.addEventListener('click', function (e) {
+      var card = e.target.closest('.room-card');
+      if (!card) return;
       var hotelId = card.getAttribute('data-hotel-id');
       var loc = location || '';
       var url = './hotel.html?id=' + encodeURIComponent(hotelId);
@@ -28,7 +32,7 @@
       });
       window.location.href = url;
     });
-  });
+  }
 
   // ===== Sort dropdown =====
   var sortBox = document.getElementById('sortBox');

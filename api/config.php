@@ -122,5 +122,34 @@ function setReservationStatus(PDO $db, $reservationId, $newStatus) {
     $stmt = $db->prepare('UPDATE reservations SET status = ?, updated_at = NOW() WHERE id = ?');
     $stmt->execute([$newStatus, $reservationId]);
 
+    // Becoming paid: email the guest their booking confirmation.
+    // Mail is best-effort - a SMTP failure must never block the payment flow.
+    if ($newStatus === 'paid') {
+        try {
+            require_once __DIR__ . '/send_mail.php';
+            $info = $db->prepare('
+                SELECT hotel_name, check_in, check_out, nights, rooms_count, guests, total_price,
+                       (SELECT email FROM users WHERE id = r.user_id) AS user_email,
+                       (SELECT full_name FROM users WHERE id = r.user_id) AS user_name
+                FROM reservations r WHERE r.id = ?
+            ');
+            $info->execute([$reservationId]);
+            $booking = $info->fetch();
+            if ($booking && $booking['user_email']) {
+                sendBookingConfirmationEmail($booking['user_email'], $booking['user_name'], [
+                    'hotel_name'  => $booking['hotel_name'],
+                    'check_in'    => $booking['check_in'],
+                    'check_out'   => $booking['check_out'],
+                    'nights'      => $booking['nights'],
+                    'rooms_count' => $booking['rooms_count'],
+                    'guests'      => $booking['guests'],
+                    'total_price' => $booking['total_price'],
+                ]);
+            }
+        } catch (\Throwable $e) {
+            // Ignore: confirmation email is a side effect, not part of the transaction.
+        }
+    }
+
     return [true, 'Status updated to ' . $newStatus . '.'];
 }

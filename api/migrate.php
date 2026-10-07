@@ -219,6 +219,15 @@ $db->exec("
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
 
+// 12. Newsletter subscribers (public homepage form).
+$db->exec("
+    CREATE TABLE IF NOT EXISTS subscribers (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        email VARCHAR(255) NOT NULL UNIQUE,
+        created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+");
+
 jsonResponse(true, 'Migration completed successfully.');
 
 // Keep user-level counters at least as high as paid booking totals.

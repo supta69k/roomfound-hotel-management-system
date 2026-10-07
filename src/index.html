@@ -871,6 +871,7 @@
   <!-- Toast container -->
   <div id="toastContainer" class="toast"></div>
 
+  <script src="./rooms-data.js?v=20261007"></script>
   <script src="./search-bar.js?v=20261005b"></script>
   <script src="./auth.js?v=20261005b"></script>
 
@@ -892,24 +893,49 @@
         next.addEventListener('click', function () { row.scrollBy({ left: step(), behavior: 'smooth' }); });
       }
 
-      // Newsletter subscribe
+      // Newsletter subscribe - posts to the backend (api/subscribe.php)
       var form = document.getElementById('newsletterForm');
       if (form) {
-        form.addEventListener('submit', function (e) {
-          e.preventDefault();
-          var input = document.getElementById('newsletterEmail');
-          var email = (input.value || '').trim();
-          var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
-          var toastEl = document.getElementById('toastContainer');
+        var toastEl = document.getElementById('toastContainer');
+        var showToast = function (message, type) {
           if (!toastEl) return;
-          toastEl.textContent = valid
-            ? 'Subscribed! Watch your inbox for offers.'
-            : 'Please enter a valid e-mail address.';
-          toastEl.className = 'toast ' + (valid ? 'success' : 'error');
+          toastEl.textContent = message;
+          toastEl.className = 'toast ' + type;
           void toastEl.offsetWidth;
           toastEl.classList.add('show');
           setTimeout(function () { toastEl.classList.remove('show'); }, 3200);
-          if (valid) input.value = '';
+        };
+
+        form.addEventListener('submit', function (e) {
+          e.preventDefault();
+          var input = document.getElementById('newsletterEmail');
+          var button = form.querySelector('button[type="submit"]');
+          var email = (input.value || '').trim();
+          var valid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+          if (!valid) {
+            showToast('Please enter a valid e-mail address.', 'error');
+            return;
+          }
+          if (button) button.disabled = true;
+          fetch('../api/subscribe.php', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email: email })
+          })
+            .then(function (res) { return res.json(); })
+            .then(function (data) {
+              showToast(
+                (data && data.message) || 'Subscribed! Watch your inbox for offers.',
+                data && data.success ? 'success' : 'error'
+              );
+              if (data && data.success) input.value = '';
+            })
+            .catch(function () {
+              showToast('Could not subscribe right now. Please try again.', 'error');
+            })
+            .finally(function () {
+              if (button) button.disabled = false;
+            });
         });
       }
     })();

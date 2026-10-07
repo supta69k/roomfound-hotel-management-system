@@ -142,3 +142,10 @@ CREATE TABLE IF NOT EXISTS support_inquiries (
     status ENUM('new','read','replied','closed') DEFAULT 'new',
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- Newsletter subscribers (public homepage form)
+CREATE TABLE IF NOT EXISTS subscribers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
