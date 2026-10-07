@@ -14,3 +14,6 @@ Thumbs.db
 *.log
 _tmp*
 *.tmp
+
+# Local payment gateway keys (never commit)
+api/payment_config.php

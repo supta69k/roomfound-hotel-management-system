@@ -353,6 +353,11 @@
         })
           .then(function (r) { return r.json(); })
           .then(function (d) {
+            // Stripe gateway: the API hands back a hosted-checkout URL.
+            if (d.success && d.checkout_url) {
+              window.location.href = d.checkout_url;
+              return;
+            }
             if (d.success) {
               rfModal.success({
                 title: 'Payment Successful!',
@@ -380,5 +385,59 @@
       }
     });
   };
+
+  // ===== Stripe return handling =====
+  // Comes back to profile.html?payment=success&session_id=cs_... (or ?payment=cancelled).
+  (function handlePaymentReturn() {
+    var params = new URLSearchParams(window.location.search);
+    var payment = params.get('payment');
+    if (!payment) return;
+
+    // Clean the URL first so a refresh doesn't re-confirm the payment.
+    window.history.replaceState({}, '', window.location.pathname);
+
+    if (payment === 'cancelled') {
+      rfModal.error({
+        title: 'Payment Cancelled',
+        message: 'No charge was made. You can pay for the reservation any time from this page.'
+      });
+      loadReservations();
+      return;
+    }
+
+    if (payment !== 'success') return;
+
+    var sessionId = params.get('session_id') || '';
+    fetch(API_BASE + '/payment_confirm.php', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({ session_id: sessionId })
+    })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (d.success) {
+          rfModal.success({
+            title: 'Payment Successful!',
+            message: 'Your payment was verified and your room is booked. We look forward to welcoming you!'
+                + (d.loyalty_points_awarded ? ' You earned ' + d.loyalty_points_awarded + ' loyalty points!' : ''),
+            btnText: 'Great',
+            onClose: function () { loadReservations(); }
+          });
+        } else {
+          rfModal.error({
+            title: 'Payment Verification Failed',
+            message: d.message || 'We could not verify this payment. Please contact support before retrying.'
+          });
+          loadReservations();
+        }
+      })
+      .catch(function () {
+        rfModal.error({
+          title: 'Connection Error',
+          message: 'Could not verify the payment. Please refresh the page — if the status did not update, contact support.'
+        });
+      });
+  })();
 
 })();
