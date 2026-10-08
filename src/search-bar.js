@@ -301,11 +301,7 @@
     var query = new URLSearchParams(params).toString();
 
     // Navigate to search results page
-    if (state.location.toLowerCase().includes("cox")) {
-      window.location.href = "rooms.html?" + query;
-    } else {
-      alert("Currently only Cox's Bazar rooms are available. More locations coming soon!");
-    }
+    window.location.href = "rooms.html?" + query;
   }
 
   // ===== EVENT LISTENERS =====

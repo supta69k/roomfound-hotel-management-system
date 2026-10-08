@@ -87,10 +87,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
             GROUP BY status
         ")->fetchAll();
 
+        // Newsletter subscribers count
+        $totalSubscribers = 0;
+        try {
+            $totalSubscribers = intval($db->query('SELECT COUNT(*) FROM subscribers')->fetchColumn());
+        } catch (PDOException $e) {
+            $totalSubscribers = 0;
+        }
+
         jsonResponse(true, 'Stats loaded.', [
             'stats' => [
                 'total_users' => intval($totalUsers),
                 'total_reservations' => intval($totalReservations),
+                'total_subscribers' => $totalSubscribers,
                 'today_checkins' => intval($todayCheckins),
                 'today_checkouts' => intval($todayCheckouts),
                 'total_booked' => intval($totalBooked),

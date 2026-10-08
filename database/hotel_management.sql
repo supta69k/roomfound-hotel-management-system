@@ -107,8 +107,32 @@ INSERT INTO rooms (id, name, location, price_per_night, rating, reviews_count, i
 (3, 'Queen Garden', 'Inani, Cox''s Bazar', 110.00, 4.5, 7610, 'img/rooms/room3.jpg', 24),
 (4, 'Azure Crest Resort', 'Kolatoli, Cox''s Bazar', 150.00, 4.7, 1289, 'img/rooms/room4.jpg', 24),
 (5, 'Tea Garden Cove', 'Laboni, Cox''s Bazar', 190.00, 4.8, 9880, 'img/rooms/room5.jpg', 24),
-(6, 'The Nature Royal', 'Moheshkhali, Cox''s Bazar', 110.00, 4.5, 7610, 'img/rooms/room6.jpg', 24)
-ON DUPLICATE KEY UPDATE name=VALUES(name), total_rooms=VALUES(total_rooms);
+(6, 'The Nature Royal', 'Moheshkhali, Cox''s Bazar', 110.00, 4.5, 7610, 'img/rooms/room6.jpg', 24),
+(7, 'The Grand Dhaka Palace', 'Gulshan, Dhaka', 180.00, 4.6, 5420, 'img/rooms/room1.jpg', 24),
+(8, 'Dhaka River View Hotel', 'Sadarghat, Dhaka', 120.00, 4.3, 3210, 'img/rooms/room2.jpg', 24),
+(9, 'Sylhet Tea Resort', 'Sreemangal, Sylhet', 160.00, 4.8, 6780, 'img/rooms/room3.jpg', 24),
+(10, 'Jaflong Valley Lodge', 'Jaflong, Sylhet', 140.00, 4.5, 4350, 'img/rooms/room4.jpg', 24),
+(11, 'Saint Martin Beach Resort', 'Saint Martin Island', 220.00, 4.9, 8920, 'img/rooms/room5.jpg', 24),
+(12, 'Coral View Inn', 'Chera Dwip, Saint Martin', 170.00, 4.6, 5100, 'img/rooms/room6.jpg', 24),
+(13, 'Sundarbans Safari Lodge', 'Mongla, Sundarbans', 200.00, 4.7, 7240, 'img/rooms/room1.jpg', 24),
+(14, 'Mangrove Eco Resort', 'Harbaria, Sundarbans', 155.00, 4.4, 3890, 'img/rooms/room2.jpg', 24)
+ON DUPLICATE KEY UPDATE name=VALUES(name), location=VALUES(location), price_per_night=VALUES(price_per_night), rating=VALUES(rating), reviews_count=VALUES(reviews_count), total_rooms=VALUES(total_rooms);
+
+-- Add descriptions to default rooms
+UPDATE rooms SET description = 'Located in the exclusive Marine Drive area of Cox''s Bazar, The Azure Bay Resort redefines tropical elegance. Designed for travelers who seek both adventure and serenity, our property blends modern architectural brilliance with the natural beauty of the Bay of Bengal.' WHERE id = 1 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Nestled in the serene Sugandha area of Cox''s Bazar, Tea Garden Retreat offers a unique blend of nature and luxury. Surrounded by lush tea gardens and rolling hills, the resort provides a tranquil escape from the hustle and bustle of city life.' WHERE id = 2 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Perched along the pristine shores of Inani Beach, Queen Garden is a haven of elegance and relaxation. The resort features stunning ocean views, lush tropical gardens, and architecture inspired by the region''s rich cultural heritage.' WHERE id = 3 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Azure Crest Resort at Kolatoli brings world-class hospitality to the vibrant heart of Cox''s Bazar. Situated just steps from the famous Kolatoli Beach, this property combines urban convenience with beachfront luxury.' WHERE id = 4 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Tea Garden Cove sits at the gateway to Cox''s Bazar''s most iconic beach stretch in Laboni. This boutique property offers an intimate atmosphere with personalized service that sets it apart from larger resorts.' WHERE id = 5 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Located on the enchanting island of Moheshkhali, The Nature Royal offers a truly unique island getaway. Accessible by a scenic boat ride, the resort is surrounded by mangrove forests, traditional fishing villages, and untouched natural beauty.' WHERE id = 6 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Experience luxury in the heart of Dhaka. The Grand Dhaka Palace offers world-class amenities, rooftop dining with city views, and easy access to diplomatic zones and business districts.' WHERE id = 7 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Overlooking the historic Buriganga River, this boutique hotel combines old Dhaka charm with modern comfort. Enjoy river cruises, local cuisine tours, and proximity to Ahsan Manzil and Lalbagh Fort.' WHERE id = 8 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Nestled among endless tea gardens of Sreemangal, this eco-resort offers breathtaking views of rolling green hills. Wake up to misty mornings, explore Lawachara rainforest, and savor world-famous Sylheti tea.' WHERE id = 9 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Located at the gateway to Jaflong, this mountain lodge offers stunning views of crystal-clear rivers and the Khasi Hills of Meghalaya. Perfect for nature lovers and adventure seekers.' WHERE id = 10 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Bangladesh''s only coral island paradise. Enjoy pristine turquoise waters, snorkeling, fresh seafood, and spectacular sunsets from your private beachfront cottage on Narikel Jinjira.' WHERE id = 11 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'A charming seaside inn on the southern tip of Saint Martin. Coral View Inn offers intimate cottage stays, guided snorkeling tours, and the freshest seafood dining on the island.' WHERE id = 12 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'Your gateway to the world''s largest mangrove forest. The Safari Lodge offers guided boat tours to spot Royal Bengal Tigers, spotted deer, and exotic birds in their natural habitat.' WHERE id = 13 AND (description IS NULL OR description = '');
+UPDATE rooms SET description = 'An eco-friendly resort deep in the Sundarbans. Experience the magic of the mangrove forest with night safaris, kayaking through narrow creeks, and sleeping to the sounds of the wilderness.' WHERE id = 14 AND (description IS NULL OR description = '');
 
 -- Default admin account (email: admin@roomfound.com) is created by api/migrate.php
 -- on first run, so no credentials are stored in this schema file.
