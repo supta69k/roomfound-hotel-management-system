@@ -6,6 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RoomFound — Book your perfect stay instantly</title>
   <meta name="description" content="RoomFound is a modern, user-friendly hotel booking platform. Search rooms, compare prices, and book your perfect stay instantly.">
+  <meta property="og:title" content="RoomFound — Book Your Perfect Stay Instantly">
+  <meta property="og:description" content="Search luxury and boutique hotels across Bangladesh, compare real prices, and book seamlessly with RoomFound.">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="./hero-bg.jpg">
+  <meta name="twitter:card" content="summary_large_image">
   <link href="https://fonts.googleapis.com/css2?family=ABeeZee:ital@0;1&family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <link href="./output.css?v=20261007" rel="stylesheet">
 </head>
@@ -421,14 +426,14 @@
       <div class="grid grid-cols-1 lg:grid-cols-2 gap-[40px] lg:gap-[64px] mt-[40px] md:mt-[48px]">
         <!-- Left column: featured + one item -->
         <div class="flex flex-col">
-          <a href="#news" class="group block no-underline">
+          <a href="#news" data-blog-id="1" class="group block no-underline cursor-pointer">
             <div class="overflow-hidden">
               <img src="img/home/news-featured.jpg" alt="Traveler leaning against a stone fence" class="w-full h-[200px] object-cover transition-transform duration-500 group-hover:scale-105" loading="lazy">
             </div>
             <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] mt-[16px] mb-0">Blog</p>
             <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">The Hidden Trails of Sreemangal: A Journey Through the Green.</p>
           </a>
-          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] mt-[35px]">
+          <a href="#news" data-blog-id="2" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] mt-[35px] cursor-pointer">
             <div class="max-w-[404px]">
               <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
               <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">Sunset Serenity: Why Cox's Bazar Remains the Crown Jewel of the Coast.</p>
@@ -438,21 +443,21 @@
         </div>
         <!-- Right column: three items -->
         <div class="flex flex-col">
-          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px]">
+          <a href="#news" data-blog-id="3" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] cursor-pointer">
             <div class="max-w-[404px]">
               <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
               <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">Beyond the Lobby: Discovering the Secret History of Heritage Hotels.</p>
             </div>
             <img src="img/home/news-2.jpg" alt="" class="w-[120px] md:w-[170px] h-[92px] md:h-[122px] object-cover shrink-0" loading="lazy">
           </a>
-          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] pt-[32px]">
+          <a href="#news" data-blog-id="4" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] pt-[32px] cursor-pointer">
             <div class="max-w-[404px]">
               <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
               <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">Urban Oasis: Finding Peace and Quiet in the Heart of Dhaka.</p>
             </div>
             <img src="img/home/news-3.jpg" alt="" class="w-[120px] md:w-[170px] h-[92px] md:h-[122px] object-cover shrink-0" loading="lazy">
           </a>
-          <a href="#news" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] pt-[32px]">
+          <a href="#news" data-blog-id="5" class="group flex items-start justify-between gap-[24px] no-underline border-b border-[#e5e5e5] pb-[24px] pt-[32px] cursor-pointer">
             <div class="max-w-[404px]">
               <p class="font-inter text-[16px] text-[#98979b] tracking-[-0.5px] leading-[1.7] m-0">Blog</p>
               <p class="font-inter font-medium text-[22px] md:text-[24px] text-[#010101] tracking-[-0.5px] leading-[1.4] mt-[4px] mb-0 group-hover:underline">The Anatomy of a Five-Star Suite: What Makes a Room Truly Grand?</p>
@@ -872,6 +877,7 @@
   <div id="toastContainer" class="toast"></div>
 
   <script src="./rooms-data.js?v=20261007"></script>
+  <script src="./blog-modal.js?v=20261009"></script>
   <script src="./search-bar.js?v=20261005b"></script>
   <script src="./auth.js?v=20261005b"></script>
 

@@ -17,3 +17,7 @@
 <FilesMatch "^(composer\.(phar|json|lock)|package(-lock)?\.json|\.+[^/]*|.*\.phar)$">
   Require all denied
 </FilesMatch>
+
+# Custom 404 handler matching design system
+ErrorDocument 404 /Hotel%20Management/src/404.html
+

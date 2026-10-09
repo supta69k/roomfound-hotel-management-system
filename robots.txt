@@ -1,0 +1,18 @@
+User-agent: *
+Allow: /
+Allow: /src/
+Allow: /src/index.html
+Allow: /src/rooms.html
+Allow: /src/hotel.html
+Allow: /src/loyalty.html
+Allow: /src/support.html
+
+# Disallow private user & administrative panels
+Disallow: /api/
+Disallow: /src/admin.html
+Disallow: /src/manager.html
+Disallow: /src/waiter.html
+Disallow: /src/profile.html
+
+# Sitemap
+Sitemap: http://localhost/Hotel%20Management/sitemap.xml
