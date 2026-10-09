@@ -133,7 +133,20 @@
       break;
     }
   }
-  if (!hotel) hotel = hotels[0];
+  if (!hotel) {
+    hotel = {
+      id: isNaN(hotelId) ? 1 : hotelId,
+      name: 'Loading...',
+      location: locationParam || 'Bangladesh',
+      rating: '4.8',
+      reviews: '',
+      price: 150,
+      image: 'img/rooms/room1.jpg',
+      sideImage1: 'img/rooms/hotel-interior1.jpg',
+      sideImage2: 'img/rooms/hotel-interior2.jpg',
+      description: '<p class="m-0">Loading hotel information...</p>'
+    };
+  }
 
   // Date helpers
   var dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
@@ -156,17 +169,46 @@
   }
 
   // ===== Populate page =====
-  document.getElementById('pageTitle').textContent = hotel.name + ' - RoomFound';
-  document.getElementById('hotelName').textContent = hotel.name;
-  document.getElementById('hotelLocation').textContent = hotel.location;
-  document.getElementById('hotelRating').textContent = hotel.rating;
-  document.getElementById('hotelReviews').textContent = hotel.reviews;
-  document.getElementById('hotelDescription').innerHTML = hotel.description;
-  document.getElementById('mainImage').src = hotel.image;
-  document.getElementById('mainImage').alt = hotel.name;
-  document.getElementById('sideImage1').src = hotel.sideImage1;
-  document.getElementById('sideImage2').src = hotel.sideImage2;
-  document.getElementById('perNightPrice').textContent = hotel.price + '$/Night';
+  function populateHotelInfo() {
+    document.getElementById('pageTitle').textContent = hotel.name + ' - RoomFound';
+    document.getElementById('hotelName').textContent = hotel.name;
+    document.getElementById('hotelLocation').textContent = hotel.location;
+    document.getElementById('hotelRating').textContent = hotel.rating;
+    document.getElementById('hotelReviews').textContent = hotel.reviews;
+    document.getElementById('hotelDescription').innerHTML = hotel.description;
+    document.getElementById('mainImage').src = hotel.image;
+    document.getElementById('mainImage').alt = hotel.name;
+    document.getElementById('sideImage1').src = hotel.sideImage1;
+    document.getElementById('sideImage2').src = hotel.sideImage2;
+    document.getElementById('perNightPrice').textContent = hotel.price + '$/Night';
+  }
+  populateHotelInfo();
+
+  // Dynamically fetch hotel from API to support any newly added hotels (e.g. IDs 7-14 or admin-added)
+  fetch('../api/rooms.php?id=' + hotel.id)
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (data && data.success && data.room) {
+        var r = data.room;
+        hotel.name = r.name;
+        hotel.location = r.location;
+        hotel.rating = parseFloat(r.rating).toFixed(1);
+        hotel.reviews = '(' + Number(r.reviews_count).toLocaleString() + ' Reviews)';
+        hotel.price = parseFloat(r.price_per_night);
+        hotel.image = r.image;
+        var desc = r.description || '';
+        if (desc && desc.indexOf('<') === -1) {
+          desc = '<p class="m-0">' + desc + '</p>';
+        }
+        if (desc) hotel.description = desc;
+        populateHotelInfo();
+        if (typeof updatePrice === 'function') updatePrice();
+        if (typeof fetchAvailability === 'function') fetchAvailability();
+      }
+    })
+    .catch(function () {
+      // Fallback data remains in place
+    });
 
   var addReviewBtnClass = 'btn-explore relative overflow-hidden rounded-[32px] px-[24px] py-[12px] font-inter text-[14px] font-medium text-white tracking-[-0.7px] leading-[1.8] border-none cursor-pointer bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738]';
   var addReviewRowClass = 'flex items-center gap-[14px] mt-[4px]';

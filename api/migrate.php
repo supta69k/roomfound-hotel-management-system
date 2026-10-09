@@ -125,6 +125,28 @@ if ($count == 0) {
     ");
 }
 
+// 4b. Seed additional multi-location hotels (idempotent via ON DUPLICATE KEY)
+$db->exec("
+    INSERT INTO rooms (id, name, location, price_per_night, rating, reviews_count, description, image, total_rooms) VALUES
+    (7, 'The Grand Dhaka Palace', 'Gulshan, Dhaka', 180.00, 4.6, 5420, 'Experience luxury in the heart of Dhaka. The Grand Dhaka Palace offers world-class amenities, rooftop dining with city views, and easy access to diplomatic zones and business districts.', 'img/rooms/room1.jpg', 24),
+    (8, 'Dhaka River View Hotel', 'Sadarghat, Dhaka', 120.00, 4.3, 3210, 'Overlooking the historic Buriganga River, this boutique hotel combines old Dhaka charm with modern comfort.', 'img/rooms/room2.jpg', 24),
+    (9, 'Sylhet Tea Resort', 'Sreemangal, Sylhet', 160.00, 4.8, 6780, 'Nestled among endless tea gardens of Sreemangal, this eco-resort offers breathtaking views of rolling green hills.', 'img/rooms/room3.jpg', 24),
+    (10, 'Jaflong Valley Lodge', 'Jaflong, Sylhet', 140.00, 4.5, 4350, 'Located at the gateway to Jaflong, this mountain lodge offers stunning views of crystal-clear rivers and the Khasi Hills of Meghalaya.', 'img/rooms/room4.jpg', 24),
+    (11, 'Saint Martin Beach Resort', 'Saint Martin Island', 220.00, 4.9, 8920, 'Bangladesh''s only coral island paradise. Enjoy pristine turquoise waters, snorkeling, fresh seafood, and spectacular sunsets.', 'img/rooms/room5.jpg', 24),
+    (12, 'Coral View Inn', 'Chera Dwip, Saint Martin', 170.00, 4.6, 5100, 'A charming seaside inn on the southern tip of Saint Martin with intimate cottage stays and guided snorkeling tours.', 'img/rooms/room6.jpg', 24),
+    (13, 'Sundarbans Safari Lodge', 'Mongla, Sundarbans', 200.00, 4.7, 7240, 'Your gateway to the world''s largest mangrove forest with guided boat tours to spot Royal Bengal Tigers.', 'img/rooms/room1.jpg', 24),
+    (14, 'Mangrove Eco Resort', 'Harbaria, Sundarbans', 155.00, 4.4, 3890, 'An eco-friendly resort deep in the Sundarbans with night safaris, kayaking through narrow creeks.', 'img/rooms/room2.jpg', 24)
+    ON DUPLICATE KEY UPDATE name=VALUES(name), location=VALUES(location), price_per_night=VALUES(price_per_night), rating=VALUES(rating), reviews_count=VALUES(reviews_count), description=VALUES(description)
+");
+
+// 4c. Backfill descriptions for original Cox's Bazar hotels
+$db->exec("UPDATE rooms SET description = 'Located in the exclusive Marine Drive area of Cox''s Bazar, The Azure Bay Resort redefines tropical elegance.' WHERE id = 1 AND (description IS NULL OR description = '')");
+$db->exec("UPDATE rooms SET description = 'Nestled in the serene Sugandha area of Cox''s Bazar, Tea Garden Retreat offers a unique blend of nature and luxury.' WHERE id = 2 AND (description IS NULL OR description = '')");
+$db->exec("UPDATE rooms SET description = 'Perched along the pristine shores of Inani Beach, Queen Garden is a haven of elegance and relaxation.' WHERE id = 3 AND (description IS NULL OR description = '')");
+$db->exec("UPDATE rooms SET description = 'Azure Crest Resort at Kolatoli brings world-class hospitality to the vibrant heart of Cox''s Bazar.' WHERE id = 4 AND (description IS NULL OR description = '')");
+$db->exec("UPDATE rooms SET description = 'Tea Garden Cove sits at the gateway to Cox''s Bazar''s most iconic beach stretch in Laboni.' WHERE id = 5 AND (description IS NULL OR description = '')");
+$db->exec("UPDATE rooms SET description = 'Located on the enchanting island of Moheshkhali, The Nature Royal offers a truly unique island getaway.' WHERE id = 6 AND (description IS NULL OR description = '')");
+
 // 5. Ensure all hotels have 24 rooms
 $db->exec("UPDATE rooms SET total_rooms = 24 WHERE total_rooms IS NULL OR total_rooms != 24");
 
