@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCSRF();
     $input = json_decode(file_get_contents('php://input'), true);
 
     $firstName = trim($input['first_name'] ?? '');

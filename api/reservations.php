@@ -28,6 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
 
 // POST - Create new reservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    requireCSRF();
     $input = json_decode(file_get_contents('php://input'), true);
 
     $roomId = intval($input['room_id'] ?? 0);

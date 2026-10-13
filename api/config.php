@@ -12,9 +12,12 @@ define('SMTP_FROM_NAME', 'Hotel Management');
 // App config
 define('VERIFICATION_CODE_EXPIRY_MINUTES', 10);
 
-// CORS headers for same-origin requests
+// Enterprise Security Headers
 header('Content-Type: application/json');
 header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: SAMEORIGIN');
+header('Referrer-Policy: strict-origin-when-cross-origin');
+header('Permissions-Policy: geolocation=(), camera=(), microphone=()');
 
 // Secure session cookie settings (must be set before session_start)
 if (session_status() === PHP_SESSION_NONE) {
@@ -25,6 +28,21 @@ if (session_status() === PHP_SESSION_NONE) {
         'samesite' => 'Lax',
     ]);
     session_start();
+}
+
+// Generate & distribute CSRF token for this session
+if (empty($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
+// Refresh client-side accessible CSRF cookie on each request (Double Submit Cookie Defense)
+if (!headers_sent()) {
+    setcookie('rf_csrf_token', $_SESSION['csrf_token'], [
+        'expires' => 0,
+        'path' => '/',
+        'samesite' => 'Lax',
+        'httponly' => false,
+    ]);
 }
 
 // Database connection
@@ -65,6 +83,40 @@ function requireUserRole() {
     if (($_SESSION['user_role'] ?? '') !== 'user') {
         http_response_code(403);
         jsonResponse(false, 'This area is for guest accounts only.');
+    }
+}
+
+// Verify CSRF token from header or body
+function verifyCSRFToken() {
+    $token = $_SERVER['HTTP_X_CSRF_TOKEN'] ?? null;
+    if (!$token && isset($_POST['csrf_token'])) {
+        $token = $_POST['csrf_token'];
+    }
+    if (!$token) {
+        $raw = file_get_contents('php://input');
+        if (!empty($raw)) {
+            $parsed = json_decode($raw, true);
+            if (is_array($parsed) && !empty($parsed['csrf_token'])) {
+                $token = $parsed['csrf_token'];
+            }
+        }
+    }
+    $sessionToken = $_SESSION['csrf_token'] ?? '';
+    if (empty($token) || empty($sessionToken)) {
+        return false;
+    }
+    return hash_equals($sessionToken, (string) $token);
+}
+
+// Enforce CSRF check on state-changing requests
+function requireCSRF() {
+    $method = $_SERVER['REQUEST_METHOD'] ?? 'GET';
+    if ($method === 'GET' || $method === 'HEAD' || $method === 'OPTIONS') {
+        return;
+    }
+    if (!verifyCSRFToken()) {
+        http_response_code(403);
+        jsonResponse(false, 'Security verification failed: invalid or missing CSRF token. Please refresh the page and try again.');
     }
 }
 

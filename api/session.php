@@ -32,8 +32,11 @@ if (isset($_SESSION['user_id'])) {
     }
 
     jsonResponse(true, 'Logged in.', [
-        'user' => $userData
+        'user' => $userData,
+        'csrf_token' => $_SESSION['csrf_token'] ?? ''
     ]);
 } else {
-    jsonResponse(false, 'Not logged in.');
+    jsonResponse(false, 'Not logged in.', [
+        'csrf_token' => $_SESSION['csrf_token'] ?? ''
+    ]);
 }

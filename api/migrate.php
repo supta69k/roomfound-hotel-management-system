@@ -250,9 +250,18 @@ $db->exec("
     ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
 ");
 
-jsonResponse(true, 'Migration completed successfully.');
+// 13. Rate limits table for login/OTP throttling
+$db->exec("
+    CREATE TABLE IF NOT EXISTS rate_limits (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        identifier VARCHAR(255) NOT NULL,
+        action VARCHAR(50) NOT NULL,
+        attempted_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+        INDEX idx_rate_limits_lookup (identifier, action, attempted_at)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4
+");
 
-// Keep user-level counters at least as high as paid booking totals.
+// 14. Keep user-level counters at least as high as paid booking totals.
 $db->exec("
     UPDATE users u
     LEFT JOIN (
@@ -264,5 +273,27 @@ $db->exec("
         u.loyalty_points_earned = GREATEST(u.loyalty_points_earned, COALESCE(r.earned_points, 0)),
         u.loyalty_points_balance = GREATEST(u.loyalty_points_balance, COALESCE(r.earned_points, 0))
 ");
+
+// 15. High-performance composite indexes for scaling availability & history queries
+try {
+    $idx = $db->query("SHOW INDEX FROM reservations WHERE Key_name = 'idx_reservations_availability'")->fetch();
+    if (!$idx) {
+        $db->exec("ALTER TABLE reservations ADD INDEX idx_reservations_availability (room_id, status, check_in, check_out)");
+    }
+} catch (PDOException $e) { /* index already exists or table empty */ }
+
+try {
+    $idx = $db->query("SHOW INDEX FROM reservations WHERE Key_name = 'idx_reservations_user_created'")->fetch();
+    if (!$idx) {
+        $db->exec("ALTER TABLE reservations ADD INDEX idx_reservations_user_created (user_id, created_at)");
+    }
+} catch (PDOException $e) { }
+
+try {
+    $idx = $db->query("SHOW INDEX FROM reviews WHERE Key_name = 'idx_reviews_room_created'")->fetch();
+    if (!$idx) {
+        $db->exec("ALTER TABLE reviews ADD INDEX idx_reviews_room_created (room_id, created_at)");
+    }
+} catch (PDOException $e) { }
 
 jsonResponse(true, 'Migration completed successfully.');

@@ -9,5 +9,6 @@ if (ini_get('session.use_cookies')) {
         $params['secure'], $params['httponly']
     );
 }
+setcookie('rf_csrf_token', '', time() - 42000, '/');
 session_destroy();
 jsonResponse(true, 'Logged out successfully.');

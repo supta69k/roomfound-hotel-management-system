@@ -11,6 +11,7 @@ if (!isset($_SESSION['user_id'])) {
     jsonResponse(false, 'Not logged in.');
 }
 requireUserRole();
+requireCSRF();
 
 $input = json_decode(file_get_contents('php://input'), true);
 

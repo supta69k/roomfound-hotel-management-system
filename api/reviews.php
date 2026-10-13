@@ -55,6 +55,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         jsonResponse(false, 'Please log in to add a review.');
     }
     requireUserRole();
+    requireCSRF();
 
     $input = json_decode(file_get_contents('php://input'), true);
     $roomId = intval($input['room_id'] ?? 0);
