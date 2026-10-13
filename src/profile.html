@@ -357,7 +357,10 @@
               <td class="py-1 text-right text-xs text-[#333]" id="invTaxPrice">$0.00</td>
             </tr>
             <tr class="border-t border-[#1e2e37] text-base font-bold text-[#1e2e37]">
-              <td class="pt-3">Total Amount Paid</td>
+              <td class="pt-3">
+                Total Amount Paid
+                <div class="text-[11px] text-[#888] font-normal mt-0.5" id="invCurrencyNote">Currency: USD ($)</div>
+              </td>
               <td class="pt-3 text-right text-xl" id="invTotalPrice">$0.00</td>
             </tr>
           </tfoot>
@@ -395,6 +398,7 @@
   <div id="toastContainer" class="toast"></div>
 
   <script src="./csrf.js?v=20261013"></script>
+  <script src="./currency.js?v=20261013"></script>
   <script src="./modal.js?v=20261005b"></script>
   <script src="./navbar-auth.js?v=20261005b"></script>
   <script src="./profile.js?v=20261005b"></script>

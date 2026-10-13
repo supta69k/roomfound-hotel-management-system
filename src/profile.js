@@ -310,7 +310,10 @@
         }
         html += '</div>';
         html += '<div style="text-align:right;shrink:0;">';
-        html += '<div style="font-family:Inter,sans-serif;font-weight:600;font-size:22px;color:#000;">$' + parseFloat(r.total_price).toFixed(0) + '</div>';
+        var formattedTotal = window.RFCurrency
+          ? window.RFCurrency.format(r.total_price)
+          : '$' + parseFloat(r.total_price).toFixed(0);
+        html += '<div style="font-family:Inter,sans-serif;font-weight:600;font-size:22px;color:#000;" data-price-usd="' + r.total_price + '">' + formattedTotal + '</div>';
         html += '<div style="font-family:Inter,sans-serif;font-size:12px;color:#999;">' + dateStr + '</div>';
 
         html += '<div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">';
@@ -342,9 +345,14 @@
 
   // Pay for reservation (global function for onclick)
   window.payReservation = function (reservationId, btn) {
+    var isBdt = window.RFCurrency && window.RFCurrency.getCurrency() === 'BDT';
+    var confirmMsg = 'You are about to complete the payment for this reservation. This action cannot be undone.';
+    if (isBdt) {
+      confirmMsg += ' Note: Online card checkout will be processed in USD at the current exchange rate.';
+    }
     rfModal.confirm({
       title: 'Confirm Payment',
-      message: 'You are about to complete the payment for this reservation. This action cannot be undone.',
+      message: confirmMsg,
       confirmText: 'Pay Now',
       cancelText: 'Not Yet',
       onConfirm: function () {
@@ -481,18 +489,34 @@
       document.getElementById('invCheckOut').textContent = inv.stay.check_out;
       document.getElementById('invNights').textContent = inv.stay.nights;
       document.getElementById('invOccupancy').textContent = inv.stay.guests + ' guest(s), ' + inv.stay.rooms_count + ' room(s)';
-      document.getElementById('invBasePrice').textContent = '$' + inv.line_items.base_price.toFixed(2);
-      document.getElementById('invServicesPrice').textContent = '$' + inv.line_items.services_price.toFixed(2);
-      document.getElementById('invTaxPrice').textContent = '$' + inv.line_items.taxes.toFixed(2);
-      document.getElementById('invTotalPrice').textContent = '$' + inv.line_items.total_price.toFixed(2);
+      var formatMoney = function (amt) {
+        return window.RFCurrency
+          ? window.RFCurrency.format(amt, { decimals: 2 })
+          : '$' + Number(amt).toFixed(2);
+      };
+
+      document.getElementById('invBasePrice').textContent = formatMoney(inv.line_items.base_price);
+      document.getElementById('invServicesPrice').textContent = formatMoney(inv.line_items.services_price);
+      document.getElementById('invTaxPrice').textContent = formatMoney(inv.line_items.taxes);
+      document.getElementById('invTotalPrice').textContent = formatMoney(inv.line_items.total_price);
       document.getElementById('invPointsBadge').textContent = '+' + inv.loyalty_points + ' pts';
+
+      var invCurrEl = document.getElementById('invCurrencyNote');
+      if (invCurrEl) {
+        var activeCurr = window.RFCurrency ? window.RFCurrency.getCurrency() : 'USD';
+        if (activeCurr === 'BDT') {
+          invCurrEl.textContent = 'Currency: BDT (৳) · Converted at 1 USD = 120 BDT';
+        } else {
+          invCurrEl.textContent = 'Currency: USD ($)';
+        }
+      }
 
       var itemsTbody = document.getElementById('invLineItems');
       var linesHtml = '';
-      linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2.5">Room Stay (' + inv.stay.nights + ' night(s) × ' + inv.stay.rooms_count + ' room(s))</td><td class="py-2.5 text-right font-medium">$' + inv.line_items.base_price.toFixed(2) + '</td></tr>';
+      linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2.5">Room Stay (' + inv.stay.nights + ' night(s) × ' + inv.stay.rooms_count + ' room(s))</td><td class="py-2.5 text-right font-medium">' + formatMoney(inv.line_items.base_price) + '</td></tr>';
       if (inv.line_items.services_details && inv.line_items.services_details.length > 0) {
         inv.line_items.services_details.forEach(function (s) {
-          linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2 text-xs text-[#666] pl-3">• ' + s.label + '</td><td class="py-2 text-right text-xs text-[#666]">$' + s.price.toFixed(2) + '</td></tr>';
+          linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2 text-xs text-[#666] pl-3">• ' + s.label + '</td><td class="py-2 text-right text-xs text-[#666]">' + formatMoney(s.price) + '</td></tr>';
         });
       }
       itemsTbody.innerHTML = linesHtml;
@@ -557,5 +581,10 @@
         });
       });
   })();
+
+  // Re-render reservations list dynamically when currency is toggled
+  window.addEventListener('rf_currency_change', function () {
+    loadReservations();
+  });
 
 })();

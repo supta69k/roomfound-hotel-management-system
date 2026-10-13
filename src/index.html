@@ -218,7 +218,7 @@
             </div>
             <div class="flex items-end justify-between">
               <div class="flex flex-col">
-                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$150</span>
+                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]" data-price-usd="150">$150</span>
                 <span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span>
               </div>
               <span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">
@@ -228,7 +228,7 @@
           </div>
         </div>
         <!-- Card 2 -->
-        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="2" onclick="window.location.href='./hotel.html?id=2'">
+        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="2" data-price-usd="190" onclick="window.location.href='./hotel.html?id=2'">
           <div class="relative h-[240px] md:h-[348px] rounded-[16px] overflow-hidden">
             <img src="img/rooms/room2.jpg" alt="Tea Garden Retreat" class="w-full h-full object-cover" loading="lazy">
             <div class="absolute left-[9px] bottom-[11px] bg-white rounded-[31px] px-[16px] py-[8px] flex items-center gap-[10px]">
@@ -244,7 +244,7 @@
             </div>
             <div class="flex items-end justify-between">
               <div class="flex flex-col">
-                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$190</span>
+                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]" data-price-usd="190">$190</span>
                 <span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span>
               </div>
               <span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">
@@ -254,7 +254,7 @@
           </div>
         </div>
         <!-- Card 3 -->
-        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="3" onclick="window.location.href='./hotel.html?id=3'">
+        <div class="room-card shrink-0 w-[300px] md:w-[444px] cursor-pointer" data-hotel-id="3" data-price-usd="110" onclick="window.location.href='./hotel.html?id=3'">
           <div class="relative h-[240px] md:h-[348px] rounded-[16px] overflow-hidden">
             <img src="img/rooms/room3.jpg" alt="Queen Garden" class="w-full h-full object-cover" loading="lazy">
             <div class="absolute left-[9px] bottom-[11px] bg-white rounded-[31px] px-[16px] py-[8px] flex items-center gap-[10px]">
@@ -270,7 +270,7 @@
             </div>
             <div class="flex items-end justify-between">
               <div class="flex flex-col">
-                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$110</span>
+                <span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]" data-price-usd="110">$110</span>
                 <span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span>
               </div>
               <span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">
@@ -877,6 +877,7 @@
   <div id="toastContainer" class="toast"></div>
 
   <script src="./csrf.js?v=20261013"></script>
+  <script src="./currency.js?v=20261013"></script>
   <script src="./rooms-data.js?v=20261007"></script>
   <script src="./blog-modal.js?v=20261009"></script>
   <script src="./search-bar.js?v=20261005b"></script>

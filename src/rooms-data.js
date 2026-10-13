@@ -88,7 +88,13 @@
               " Reviews)</span></span></div>" +
               '<div class="flex items-end justify-between">' +
               '<div class="flex flex-col">' +
-              '<span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]">$' + Math.round(room.price_per_night) + "</span>" +
+              '<span class="font-inter font-medium text-[24px] text-[#0a0915] tracking-[-1px] leading-[1.7]" data-price-usd="' +
+              room.price_per_night +
+              '">' +
+              (window.RFCurrency
+                ? window.RFCurrency.format(room.price_per_night)
+                : "$" + Math.round(room.price_per_night)) +
+              "</span>" +
               '<span class="font-inter text-[12px] text-[#98979b] leading-[1.6]">Include taxes &amp; Fees</span></div>' +
               '<span class="room-arrow-btn bg-white rounded-full size-[56px] flex items-center justify-center shadow-[2px_2px_8.5px_rgba(0,0,0,0.25)] cursor-pointer">' +
               ARROW_UP_RIGHT_SVG +
@@ -118,6 +124,8 @@
             return (
               '<div class="flex flex-col gap-[5px] room-card" data-hotel-id="' +
               room.id +
+              '" data-price-usd="' +
+              room.price_per_night +
               '">' +
               '<div class="relative h-[296px] rounded-[14px] overflow-hidden shadow-[1.7px_1.7px_7.2px_0px_rgba(0,0,0,0.25)]">' +
               '<img src="' +
@@ -144,7 +152,13 @@
               formatReviews(room.reviews_count) +
               " Reviews)</span></div>" +
               "<div>" +
-              '<p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0">$' + Math.round(room.price_per_night) + "</p>" +
+              '<p class="font-inter text-[20.4px] font-medium text-[#0a0915] tracking-[-0.85px] leading-[1.7] m-0" data-price-usd="' +
+              room.price_per_night +
+              '">' +
+              (window.RFCurrency
+                ? window.RFCurrency.format(room.price_per_night)
+                : "$" + Math.round(room.price_per_night)) +
+              "</p>" +
               '<p class="font-inter text-[10.2px] text-[#98979b] tracking-[-0.85px] leading-[1.6] m-0">Include taxes &amp; Fees</p></div></div>' +
               '<button class="room-arrow-btn w-[48px] h-[48px] bg-white rounded-[24px] flex items-center justify-center cursor-pointer border-none shrink-0 shadow-[0_2px_8px_rgba(0,0,0,0.08)]">' +
               ARROW_RIGHT_SVG +
@@ -165,4 +179,11 @@
         /* keep static fallback grid */
       });
   }
+
+  // Listen for currency switch to update all room cards dynamically
+  window.addEventListener("rf_currency_change", function () {
+    if (window.RFCurrency && typeof window.RFCurrency.updateAllPrices === "function") {
+      window.RFCurrency.updateAllPrices();
+    }
+  });
 })();

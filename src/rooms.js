@@ -72,8 +72,12 @@
     var list = Array.prototype.slice.call(grid.querySelectorAll('.room-card'));
 
     function priceOf(card) {
-      var match = card.textContent.match(/\$(\d+)/);
-      return match ? parseInt(match[1], 10) : 0;
+      var usdAttr = card.getAttribute('data-price-usd');
+      if (usdAttr) return parseFloat(usdAttr);
+      var priceEl = card.querySelector('[data-price-usd]');
+      if (priceEl) return parseFloat(priceEl.getAttribute('data-price-usd'));
+      var match = card.textContent.match(/(?:\$|৳)\s*([\d,]+)/);
+      return match ? parseInt(match[1].replace(/,/g, ''), 10) : 0;
     }
     function ratingOf(card) {
       var match = card.textContent.match(/★?\s*(\d\.\d)\s*\(?\d/);

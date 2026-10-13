@@ -180,7 +180,9 @@
     document.getElementById('mainImage').alt = hotel.name;
     document.getElementById('sideImage1').src = hotel.sideImage1;
     document.getElementById('sideImage2').src = hotel.sideImage2;
-    document.getElementById('perNightPrice').textContent = hotel.price + '$/Night';
+    document.getElementById('perNightPrice').textContent = window.RFCurrency
+      ? window.RFCurrency.format(hotel.price, { suffix: '/Night' })
+      : hotel.price + '$/Night';
   }
   populateHotelInfo();
 
@@ -477,11 +479,28 @@
     var addOnsCost = roomOptionCost + servicesCost;
     var taxes = Math.round((roomCost + addOnsCost) * 0.05);
     var total = roomCost + addOnsCost + taxes;
-    document.getElementById('totalPrice').textContent = '$' + total;
-    document.getElementById('perNightPrice').textContent = getEffectiveNightlyRate() + '$/Night';
+
+    if (window.RFCurrency) {
+      document.getElementById('totalPrice').textContent = window.RFCurrency.format(total);
+      document.getElementById('perNightPrice').textContent = window.RFCurrency.format(getEffectiveNightlyRate(), { suffix: '/Night' });
+    } else {
+      document.getElementById('totalPrice').textContent = '$' + total;
+      document.getElementById('perNightPrice').textContent = getEffectiveNightlyRate() + '$/Night';
+    }
   }
 
   updatePrice();
+
+  // Listen for currency switcher updates to recalculate rates and badges
+  window.addEventListener('rf_currency_change', function () {
+    updatePrice();
+    if (window.RFCurrency && typeof window.RFCurrency.updateAllPrices === 'function') {
+      window.RFCurrency.updateAllPrices();
+    }
+  });
+  if (window.RFCurrency && typeof window.RFCurrency.updateAllPrices === 'function') {
+    window.RFCurrency.updateAllPrices();
+  }
 
   // ===== Services toggle =====
   var serviceCards = document.querySelectorAll('.service-card');
