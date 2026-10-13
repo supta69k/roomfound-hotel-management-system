@@ -313,10 +313,16 @@
         html += '<div style="font-family:Inter,sans-serif;font-weight:600;font-size:22px;color:#000;">$' + parseFloat(r.total_price).toFixed(0) + '</div>';
         html += '<div style="font-family:Inter,sans-serif;font-size:12px;color:#999;">' + dateStr + '</div>';
 
-        // Show Pay button when admin approved
+        html += '<div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">';
         if (r.status === 'approved') {
-          html += '<button onclick="payReservation(' + r.id + ', this)" style="margin-top:10px;padding:8px 24px;border-radius:10px;border:none;color:white;font-family:Inter,sans-serif;font-weight:500;font-size:13px;cursor:pointer;background:linear-gradient(119deg,#3f3f3f 18%,#151515 77%);box-shadow:inset 0 4px 12px #081738;">Pay Now</button>';
+          html += '<button onclick="cancelReservation(' + r.id + ', \'' + (r.hotel_name || '').replace(/'/g, "\\'") + '\', this)" style="padding:8px 16px;border-radius:10px;border:1px solid #ddd;color:#666;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;">Cancel</button>';
+          html += '<button onclick="payReservation(' + r.id + ', this)" style="padding:8px 20px;border-radius:10px;border:none;color:white;font-family:Inter,sans-serif;font-weight:500;font-size:13px;cursor:pointer;background:linear-gradient(119deg,#3f3f3f 18%,#151515 77%);box-shadow:inset 0 4px 12px #081738;">Pay Now</button>';
+        } else if (r.status === 'pending') {
+          html += '<button onclick="cancelReservation(' + r.id + ', \'' + (r.hotel_name || '').replace(/'/g, "\\'") + '\', this)" style="padding:8px 16px;border-radius:10px;border:1px solid #ddd;color:#888;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;">Cancel Booking</button>';
+        } else if (r.status === 'paid') {
+          html += '<button onclick="viewInvoice(' + r.id + ')" style="padding:8px 18px;border-radius:10px;border:1px solid #1e2e37;color:#1e2e37;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>View Receipt</button>';
         }
+        html += '</div>';
 
         html += '</div></div>';
       });
@@ -383,6 +389,118 @@
             btn.textContent = 'Pay Now';
           });
       }
+    });
+  };
+
+  // Cancel reservation
+  window.cancelReservation = function (reservationId, hotelName, btn) {
+    rfModal.confirm({
+      title: 'Cancel Reservation',
+      message: 'Are you sure you want to cancel your reservation for "' + hotelName + '"? This will release your rooms.',
+      confirmText: 'Yes, Cancel',
+      cancelText: 'Keep Reservation',
+      onConfirm: function () {
+        if (btn) {
+          btn.disabled = true;
+          btn.textContent = 'Cancelling...';
+        }
+        apiCall('reservations.php', 'POST', {
+          action: 'cancel',
+          reservation_id: reservationId
+        }, function (err, data) {
+          if (err || !data || !data.success) {
+            rfModal.error({
+              title: 'Cancellation Failed',
+              message: (data && data.message) || 'Could not cancel reservation. Please try again.'
+            });
+            if (btn) {
+              btn.disabled = false;
+              btn.textContent = 'Cancel';
+            }
+            return;
+          }
+          rfModal.success({
+            title: 'Reservation Cancelled',
+            message: 'Your reservation has been cancelled and your room has been released.',
+            btnText: 'Done',
+            onClose: function () { loadReservations(); }
+          });
+        });
+      }
+    });
+  };
+
+  // View & Print Invoice
+  var invoiceOverlay = document.getElementById('invoiceOverlay');
+  var closeInvoiceBtn = document.getElementById('closeInvoiceBtn');
+  var printInvoiceBtn = document.getElementById('printInvoiceBtn');
+
+  function closeInvoice() {
+    if (!invoiceOverlay) return;
+    invoiceOverlay.classList.remove('rf-show');
+    setTimeout(function () {
+      invoiceOverlay.style.display = 'none';
+      invoiceOverlay.classList.add('hidden');
+    }, 200);
+  }
+
+  if (closeInvoiceBtn) closeInvoiceBtn.addEventListener('click', closeInvoice);
+  if (invoiceOverlay) {
+    invoiceOverlay.addEventListener('click', function (e) {
+      if (e.target === invoiceOverlay) closeInvoice();
+    });
+  }
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && invoiceOverlay && invoiceOverlay.classList.contains('rf-show')) {
+      closeInvoice();
+    }
+  });
+  if (printInvoiceBtn) {
+    printInvoiceBtn.addEventListener('click', function () {
+      window.print();
+    });
+  }
+
+  window.viewInvoice = function (reservationId) {
+    apiCall('invoice.php?id=' + reservationId, 'GET', null, function (err, data) {
+      if (err || !data || !data.success || !data.invoice) {
+        showToast((data && data.message) || 'Failed to load invoice.', 'error');
+        return;
+      }
+      var inv = data.invoice;
+      document.getElementById('invNumber').textContent = inv.invoice_number;
+      document.getElementById('invDate').textContent = 'Date: ' + inv.date_issued;
+      document.getElementById('invStatusBadge').textContent = (inv.booking_status || 'PAID').toUpperCase() + ' IN FULL';
+      document.getElementById('invGuestName').textContent = inv.guest.name || '—';
+      document.getElementById('invGuestEmail').textContent = inv.guest.email || '—';
+      document.getElementById('invGuestPhone').textContent = inv.guest.phone || '—';
+      document.getElementById('invHotelName').textContent = inv.hotel.name || '—';
+      document.getElementById('invHotelLocation').textContent = inv.hotel.location || '—';
+      document.getElementById('invStayDates').textContent = inv.stay.check_in + ' → ' + inv.stay.check_out;
+      document.getElementById('invCheckIn').textContent = inv.stay.check_in;
+      document.getElementById('invCheckOut').textContent = inv.stay.check_out;
+      document.getElementById('invNights').textContent = inv.stay.nights;
+      document.getElementById('invOccupancy').textContent = inv.stay.guests + ' guest(s), ' + inv.stay.rooms_count + ' room(s)';
+      document.getElementById('invBasePrice').textContent = '$' + inv.line_items.base_price.toFixed(2);
+      document.getElementById('invServicesPrice').textContent = '$' + inv.line_items.services_price.toFixed(2);
+      document.getElementById('invTaxPrice').textContent = '$' + inv.line_items.taxes.toFixed(2);
+      document.getElementById('invTotalPrice').textContent = '$' + inv.line_items.total_price.toFixed(2);
+      document.getElementById('invPointsBadge').textContent = '+' + inv.loyalty_points + ' pts';
+
+      var itemsTbody = document.getElementById('invLineItems');
+      var linesHtml = '';
+      linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2.5">Room Stay (' + inv.stay.nights + ' night(s) × ' + inv.stay.rooms_count + ' room(s))</td><td class="py-2.5 text-right font-medium">$' + inv.line_items.base_price.toFixed(2) + '</td></tr>';
+      if (inv.line_items.services_details && inv.line_items.services_details.length > 0) {
+        inv.line_items.services_details.forEach(function (s) {
+          linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2 text-xs text-[#666] pl-3">• ' + s.label + '</td><td class="py-2 text-right text-xs text-[#666]">$' + s.price.toFixed(2) + '</td></tr>';
+        });
+      }
+      itemsTbody.innerHTML = linesHtml;
+
+      invoiceOverlay.style.display = 'flex';
+      invoiceOverlay.classList.remove('hidden');
+      void invoiceOverlay.offsetWidth;
+      invoiceOverlay.classList.add('rf-show');
     });
   };
 

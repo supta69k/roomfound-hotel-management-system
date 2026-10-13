@@ -14,11 +14,13 @@ $userId = $_SESSION['user_id'];
 // GET - List user's reservations
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt = $db->prepare('
-        SELECT id, room_id, hotel_name, check_in, check_out, nights, guests, rooms_count,
-               services, base_price, services_price, taxes, total_price, status, admin_note, created_at
-        FROM reservations
-        WHERE user_id = ?
-        ORDER BY created_at DESC
+        SELECT r.id, r.room_id, r.hotel_name, r.check_in, r.check_out, r.nights, r.guests, r.rooms_count,
+               r.services, r.base_price, r.services_price, r.taxes, r.total_price, r.status, r.loyalty_points_awarded,
+               r.admin_note, r.created_at, rm.location, rm.image
+        FROM reservations r
+        LEFT JOIN rooms rm ON rm.id = r.room_id
+        WHERE r.user_id = ?
+        ORDER BY r.created_at DESC
     ');
     $stmt->execute([$userId]);
     $reservations = $stmt->fetchAll();
@@ -26,10 +28,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     jsonResponse(true, 'Reservations loaded.', ['reservations' => $reservations]);
 }
 
-// POST - Create new reservation
+// POST - Create new reservation OR cancel existing reservation
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     requireCSRF();
     $input = json_decode(file_get_contents('php://input'), true);
+
+    // Guest Self-Service Cancellation
+    if (($input['action'] ?? '') === 'cancel') {
+        $reservationId = intval($input['reservation_id'] ?? 0);
+        if ($reservationId < 1) {
+            jsonResponse(false, 'Invalid reservation ID.');
+        }
+
+        $stmt = $db->prepare('SELECT id, user_id, status FROM reservations WHERE id = ? AND user_id = ?');
+        $stmt->execute([$reservationId, $userId]);
+        $res = $stmt->fetch();
+
+        if (!$res) {
+            jsonResponse(false, 'Reservation not found or access denied.');
+        }
+
+        if ($res['status'] === 'cancelled') {
+            jsonResponse(false, 'Reservation is already cancelled.');
+        }
+
+        if (!in_array($res['status'], ['pending', 'approved'])) {
+            jsonResponse(false, 'Only pending or approved reservations can be cancelled self-service. For paid stays, please contact customer support.');
+        }
+
+        $adminNote = 'Cancelled by guest on ' . date('M j, Y H:i');
+        $stmt = $db->prepare('UPDATE reservations SET admin_note = ? WHERE id = ?');
+        $stmt->execute([$adminNote, $reservationId]);
+
+        list($ok, $msg) = setReservationStatus($db, $reservationId, 'cancelled');
+        if (!$ok) {
+            jsonResponse(false, $msg);
+        }
+
+        jsonResponse(true, 'Reservation cancelled successfully.', ['reservation_id' => $reservationId]);
+    }
 
     $roomId = intval($input['room_id'] ?? 0);
     $checkIn = trim($input['check_in'] ?? '');

@@ -52,6 +52,31 @@
         padding-left: 0;
       }
     }
+
+    @media print {
+      body * {
+        visibility: hidden !important;
+      }
+      #invoicePrintArea, #invoicePrintArea * {
+        visibility: visible !important;
+      }
+      #invoicePrintArea {
+        position: fixed !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 32px !important;
+        background: white !important;
+        box-shadow: none !important;
+        border: none !important;
+        z-index: 999999 !important;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
   </style>
 </head>
 
@@ -261,6 +286,108 @@
       <h2>Employee and admin accounts use a different dashboard</h2>
       <p>This profile page is only available to guest accounts. Use the button below to return to the homepage.</p>
       <a href="./index.html" class="save-btn no-underline" style="display:inline-block;">Back to Home</a>
+    </div>
+  </div>
+
+  <!-- ===== INVOICE / RECEIPT MODAL ===== -->
+  <div id="invoiceOverlay" class="rf-modal-overlay hidden" style="display:none;align-items:center;justify-content:center;">
+    <div class="rf-modal !w-[780px] !max-w-[95vw] !p-0 !text-left overflow-hidden shadow-[0_25px_70px_rgba(0,0,0,0.25)] border-[0.5px] border-solid border-[#bfbfbf] bg-white rounded-[24px]">
+      <!-- Printable Invoice Area -->
+      <div id="invoicePrintArea" class="bg-white p-6 md:p-10 font-inter text-[#1e2e37]">
+        <!-- Invoice Header -->
+        <div class="flex items-start justify-between border-b border-[#e5e5e5] pb-6 mb-6">
+          <div>
+            <img src="./Brand Container.png" alt="RoomFound" class="h-10 w-auto mb-2">
+            <p class="font-inter text-xs text-[#98979b] m-0">Luxury & Boutique Hotel Management</p>
+            <p class="font-inter text-xs text-[#98979b] m-0">Dhaka &amp; Cox's Bazar, Bangladesh</p>
+          </div>
+          <div class="text-right">
+            <span class="inline-block px-3 py-1 rounded-full text-xs font-semibold bg-[#e6f4ef] text-[#10b981] mb-2 uppercase tracking-wider" id="invStatusBadge">PAID IN FULL</span>
+            <h2 class="font-abeezee text-xl font-bold text-[#1e2e37] m-0" id="invNumber">RF-INV-2026-00001</h2>
+            <p class="font-inter text-xs text-[#666] m-0 mt-1" id="invDate">Date: Oct 13, 2026</p>
+          </div>
+        </div>
+
+        <!-- Details Grid (Billed To & Property) -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-[#f7f6f4] p-5 rounded-2xl mb-6">
+          <div>
+            <p class="text-[11px] font-semibold text-[#98979b] uppercase tracking-wider m-0 mb-1">Guest Information</p>
+            <h4 class="font-abeezee text-base font-medium text-[#1e2e37] m-0" id="invGuestName">—</h4>
+            <p class="text-xs text-[#666] m-0 mt-0.5" id="invGuestEmail">—</p>
+            <p class="text-xs text-[#666] m-0 mt-0.5" id="invGuestPhone">—</p>
+          </div>
+          <div>
+            <p class="text-[11px] font-semibold text-[#98979b] uppercase tracking-wider m-0 mb-1">Hotel Property</p>
+            <h4 class="font-abeezee text-base font-medium text-[#1e2e37] m-0" id="invHotelName">—</h4>
+            <p class="text-xs text-[#666] m-0 mt-0.5" id="invHotelLocation">—</p>
+            <p class="text-xs text-[#666] m-0 mt-0.5" id="invStayDates">—</p>
+          </div>
+        </div>
+
+        <!-- Stay Details Summary -->
+        <div class="flex flex-wrap items-center justify-between gap-4 py-3 px-4 border border-[#eee] rounded-xl text-xs text-[#555] mb-6 bg-white">
+          <div><strong class="text-[#1e2e37]">Check-in:</strong> <span id="invCheckIn">—</span></div>
+          <div><strong class="text-[#1e2e37]">Check-out:</strong> <span id="invCheckOut">—</span></div>
+          <div><strong class="text-[#1e2e37]">Duration:</strong> <span id="invNights">—</span> night(s)</div>
+          <div><strong class="text-[#1e2e37]">Guests / Rooms:</strong> <span id="invOccupancy">—</span></div>
+        </div>
+
+        <!-- Itemized Charges Table -->
+        <table class="w-full text-left text-sm mb-6 border-collapse">
+          <thead>
+            <tr class="border-b border-[#ddd] text-[12px] uppercase tracking-wider text-[#98979b]">
+              <th class="py-2.5">Description</th>
+              <th class="py-2.5 text-right">Amount</th>
+            </tr>
+          </thead>
+          <tbody id="invLineItems" class="text-[#333]">
+            <!-- Dynamic rows -->
+          </tbody>
+          <tfoot class="border-t border-[#eee]">
+            <tr>
+              <td class="pt-3 text-xs text-[#666]">Base Room Accommodation</td>
+              <td class="pt-3 text-right text-xs text-[#333]" id="invBasePrice">$0.00</td>
+            </tr>
+            <tr>
+              <td class="py-1 text-xs text-[#666]">Upgrades &amp; Add-on Services</td>
+              <td class="py-1 text-right text-xs text-[#333]" id="invServicesPrice">$0.00</td>
+            </tr>
+            <tr>
+              <td class="py-1 text-xs text-[#666]">Tourism &amp; Service Tax (5%)</td>
+              <td class="py-1 text-right text-xs text-[#333]" id="invTaxPrice">$0.00</td>
+            </tr>
+            <tr class="border-t border-[#1e2e37] text-base font-bold text-[#1e2e37]">
+              <td class="pt-3">Total Amount Paid</td>
+              <td class="pt-3 text-right text-xl" id="invTotalPrice">$0.00</td>
+            </tr>
+          </tfoot>
+        </table>
+
+        <!-- Loyalty Rewards Banner -->
+        <div class="bg-[#1e2e37] text-white p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <span class="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm font-bold text-[#5bb5a2]">★</span>
+            <div>
+              <p class="text-xs text-white/70 m-0">RoomFound Rewards</p>
+              <p class="text-sm font-semibold m-0 text-white">Loyalty Points Earned</p>
+            </div>
+          </div>
+          <div class="text-right">
+            <span class="text-lg font-bold text-[#5bb5a2]" id="invPointsBadge">+0 pts</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Footer (Buttons - hidden when printed) -->
+      <div class="bg-[#faf9f8] px-6 py-4 border-t border-[#eee] flex items-center justify-between no-print">
+        <button id="closeInvoiceBtn" type="button" class="px-5 py-2.5 rounded-xl border border-[#ddd] bg-white text-sm font-medium text-[#666] hover:text-[#1e2e37] transition-colors cursor-pointer">
+          Close
+        </button>
+        <button id="printInvoiceBtn" type="button" class="px-6 py-2.5 rounded-xl border-none text-white text-sm font-medium cursor-pointer bg-[linear-gradient(111deg,rgb(63,63,63)_18%,rgb(21,21,21)_77%)] shadow-[inset_0px_4px_12px_0px_#081738] flex items-center gap-2">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+          Print / Save PDF
+        </button>
+      </div>
     </div>
   </div>
 
