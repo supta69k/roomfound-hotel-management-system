@@ -15,7 +15,7 @@
   // retry the request once. Has no effect where the host has no such check.
   function isHostChallenge(res) {
     var type = res.headers.get('Content-Type') || '';
-    if (type.indexOf('text/html') === -1) return Promise.resolve(false);
+    if (type.indexOf('json') !== -1) return Promise.resolve(false);
     return res.clone().text().then(function (body) {
       return body.indexOf('aes.js') !== -1 && body.indexOf('__test=') !== -1;
     }, function () { return false; });
