@@ -17,3 +17,6 @@ _tmp*
 
 # Local payment gateway keys (never commit)
 api/payment_config.php
+
+# Server database credentials (never commit)
+api/db_config.php

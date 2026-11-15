@@ -1,9 +1,15 @@
 <?php
 // Database configuration
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'hotel_management');
-define('DB_USER', 'root');
-define('DB_PASS', '');
+// Loads api/db_config.php when present (git-ignored, real server credentials);
+// without it everything falls back to the local XAMPP defaults below.
+if (file_exists(__DIR__ . '/db_config.php')) {
+    require_once __DIR__ . '/db_config.php';
+}
+defined('DB_HOST') || define('DB_HOST', 'localhost');
+defined('DB_PORT') || define('DB_PORT', 3306);
+defined('DB_NAME') || define('DB_NAME', 'hotel_management');
+defined('DB_USER') || define('DB_USER', 'root');
+defined('DB_PASS') || define('DB_PASS', '');
 
 // SMTP / Email config
 define('SMTP_FROM_EMAIL', 'noreply@hotelmanagement.com');
@@ -50,7 +56,7 @@ function getDB() {
     static $pdo = null;
     if ($pdo === null) {
         try {
-            $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=utf8mb4';
+            $dsn = 'mysql:host=' . DB_HOST . ';port=' . DB_PORT . ';dbname=' . DB_NAME . ';charset=utf8mb4';
             $pdo = new PDO($dsn, DB_USER, DB_PASS, [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
