@@ -125,18 +125,9 @@
     switchers.forEach(function (sw) {
       var buttons = sw.querySelectorAll('.rf-curr-btn');
       buttons.forEach(function (btn) {
-        var c = btn.getAttribute('data-curr');
-        if (c === curr) {
-          btn.style.background = '#1e2e37';
-          btn.style.color = '#ffffff';
-          btn.style.boxShadow = '0 1px 3px rgba(0,0,0,0.18)';
-          btn.setAttribute('aria-pressed', 'true');
-        } else {
-          btn.style.background = 'transparent';
-          btn.style.color = '#71717a';
-          btn.style.boxShadow = 'none';
-          btn.setAttribute('aria-pressed', 'false');
-        }
+        var active = btn.getAttribute('data-curr') === curr;
+        btn.classList.toggle('is-active', active);
+        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
       });
     });
   }
@@ -144,14 +135,14 @@
   // Build a segmented toggle pill
   function createSwitcherElement(customClass) {
     var wrap = document.createElement('div');
-    wrap.className = 'rf-currency-switcher flex items-center bg-[#f7f6f4] rounded-[30px] p-[2px] border border-[#e5e5e5] text-[12px] font-inter font-medium shrink-0 ' + (customClass || '');
-    wrap.style.userSelect = 'none';
+    // Styling lives in input.css (.rf-currency-switcher / .rf-curr-btn).
+    wrap.className = 'rf-currency-switcher' + (customClass ? ' ' + customClass : '');
     wrap.setAttribute('role', 'group');
     wrap.setAttribute('aria-label', 'Currency selector');
 
     wrap.innerHTML =
-      '<button type="button" class="rf-curr-btn px-[9px] py-[3.5px] rounded-[20px] transition-all duration-150 border-none cursor-pointer" data-curr="USD" style="font-family:Inter,sans-serif;font-size:11.5px;font-weight:600;">$ USD</button>' +
-      '<button type="button" class="rf-curr-btn px-[9px] py-[3.5px] rounded-[20px] transition-all duration-150 border-none cursor-pointer" data-curr="BDT" style="font-family:Inter,sans-serif;font-size:11.5px;font-weight:600;">৳ BDT</button>';
+      '<button type="button" class="rf-curr-btn" data-curr="USD" aria-label="Show prices in US dollars">$ USD</button>' +
+      '<button type="button" class="rf-curr-btn" data-curr="BDT" aria-label="Show prices in Bangladeshi taka">৳ BDT</button>';
 
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('.rf-curr-btn');

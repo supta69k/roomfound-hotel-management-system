@@ -19,6 +19,55 @@
   opacity: 0.92;
 }
 
+/* ===== Currency switcher (USD / BDT segmented pill, built by currency.js) ===== */
+.rf-currency-switcher {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  gap: 2px;
+  height: 40px;
+  padding: 4px;
+  border-radius: 32px;
+  background: #f7f6f4;
+  border: 1px solid rgba(30, 46, 55, 0.12);
+  user-select: none;
+}
+.rf-curr-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  height: 100%;
+  padding: 0 14px;
+  border: none;
+  border-radius: 28px;
+  background: transparent;
+  color: #070200;
+  opacity: 0.5;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: -0.4px;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease, opacity 0.2s ease, box-shadow 0.2s ease;
+}
+.rf-curr-btn:hover {
+  opacity: 0.85;
+}
+.rf-curr-btn.is-active {
+  background: linear-gradient(111deg, rgb(63, 63, 63) 18%, rgb(21, 21, 21) 77%);
+  box-shadow: inset 0px 4px 12px 0px #081738;
+  color: #ffffff;
+  opacity: 1;
+  cursor: default;
+}
+.rf-curr-btn:focus-visible {
+  outline: 2px solid #1e2e37;
+  outline-offset: 2px;
+}
+
 .btn-book {
   transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
