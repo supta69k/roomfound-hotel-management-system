@@ -10,8 +10,12 @@
   var allHotels = [];
   var globalStatusBreakdown = {};
 
-  // Design-system avatar colors (no red/blue/green/yellow)
-  var avatarColors = ['#1e2e37', '#3a5a6a', '#5bb5a2', '#3d8b6e', '#4a7a8c', '#2c4450'];
+  // Avatars use steps of the site's navy only
+  var avatarColors = ['#1e2e37', '#2c4450', '#3a5a6a', '#4a6572'];
+  var SECTION_TITLES = {
+    overview: 'Overview', bookings: 'Bookings', users: 'Users', employees: 'Employees',
+    hotels: 'Hotels', support: 'Support', settings: 'Settings'
+  };
 
   // ===== AUTH CHECK =====
   fetch(API_BASE + '/session.php', { credentials: 'include' })
@@ -23,7 +27,6 @@
         return;
       }
       var user = data.user;
-      document.getElementById('adminGreeting').textContent = 'Welcome back, ' + user.name;
       document.getElementById('adminAvatar').textContent = user.name.charAt(0).toUpperCase();
       loadDashboard();
     })
@@ -33,7 +36,7 @@
 
   // ===== DATE =====
   var now = new Date();
-  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric', year: 'numeric' });
+  document.getElementById('todayDate').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
 
   // ===== SIDEBAR NAVIGATION =====
   var navItems = document.querySelectorAll('.admin-nav-item[data-section]');
@@ -51,6 +54,8 @@
     document.querySelectorAll('.admin-section').forEach(function (s) { s.classList.remove('active'); });
     var sectionEl = document.getElementById('section-' + section);
     if (sectionEl) sectionEl.classList.add('active');
+    document.getElementById('pageTitle').textContent = SECTION_TITLES[section] || 'Overview';
+    window.scrollTo(0, 0);
 
     if (section === 'users') loadUsers();
     if (section === 'bookings') loadBookings();
@@ -87,479 +92,464 @@
   });
 
   // ===== LOAD DASHBOARD =====
+  // Stats, reservations and hotels are loaded together so every number on the
+  // overview (cards, chart, occupancy ring, room board) comes from one snapshot.
+  var dashData = { stats: null, reservations: [], hotels: [] };
+  var selectedHotel = 'all';
+  var ACTIVE_STATUSES = ['pending', 'approved', 'paid'];
+
+  function getJson(url) {
+    return fetch(url, { credentials: 'include' }).then(function (r) { return r.json(); });
+  }
+
+  function setText(id, text) {
+    var el = document.getElementById(id);
+    if (el) el.textContent = text;
+  }
+
+  function money(v) {
+    return '$' + Math.round(parseFloat(v) || 0).toLocaleString('en-US');
+  }
+
   function loadDashboard() {
-    fetch(API_BASE + '/admin.php?action=stats', { credentials: 'include' })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data.success) return;
-        var s = data.stats;
+    Promise.all([
+      getJson(API_BASE + '/admin.php?action=stats'),
+      getJson(API_BASE + '/admin.php?action=reservations'),
+      getJson(API_BASE + '/admin.php?action=hotels')
+    ]).then(function (res) {
+      if (!res[0] || !res[0].success) throw new Error('stats');
+      dashData.stats = res[0].stats;
+      window.__adminStats = res[0].stats;
+      dashData.reservations = (res[1] && res[1].success) ? res[1].reservations : [];
+      dashData.hotels = (res[2] && res[2].success) ? res[2].hotels : [];
+      if (dashData.stats.total_rooms_all > 0) TOTAL_ROOMS = dashData.stats.total_rooms_all;
 
-        // Keep the raw stats reachable for the hotel-filter "all" branch
-        window.__adminStats = s;
-
-        // The "All Hotels" inventory is the sum of every hotel's rooms
-        if (s.total_rooms_all && s.total_rooms_all > 0) {
-          TOTAL_ROOMS = s.total_rooms_all;
-        }
-
-        var statusBreakdown = {};
-        if (s.by_status && Array.isArray(s.by_status)) {
-          s.by_status.forEach(function (item) {
-            statusBreakdown[item.status] = parseInt(item.count) || 0;
-          });
-        }
-
-        var bookedCount = statusBreakdown.paid || 0;
-        var pendingCount = s.pending_count || statusBreakdown.pending || 0;
-        var cancelledCount = statusBreakdown.cancelled || 0;
-
-        // Summary cards (2x2 grid)
-        document.getElementById('statBooked').textContent = bookedCount;
-        document.getElementById('statPending').textContent = pendingCount;
-        document.getElementById('statCancelled').textContent = cancelledCount;
-
-        // Revenue
-        var totalRev = s.total_revenue || 0;
-        document.getElementById('statRevenue').textContent = '$' + formatNumber(totalRev);
-
-        // Pending badge in nav
-        var badge = document.getElementById('navPendingBadge');
-        if (pendingCount > 0) {
-          badge.textContent = pendingCount;
-          badge.style.display = 'inline';
-        }
-
-        // Store global stats for "All Hotels" view
-        globalStatusBreakdown = statusBreakdown;
-
-        // Charts
-        renderRevenueChart(s.revenue_by_day || []);
-
-        // Room grid + occupancy ring use date-aware occupancy from the API
-        // (active stays overlapping today), not the raw paid-booking count.
-        var occupiedNow = Math.min(s.occupied_now || 0, TOTAL_ROOMS);
-        var pendingNow = Math.min(pendingCount, Math.max(0, TOTAL_ROOMS - occupiedNow));
-        renderRoomGrid(occupiedNow, pendingNow, TOTAL_ROOMS);
-        renderOccupancyChart(occupiedNow, TOTAL_ROOMS, statusBreakdown, pendingNow);
-      })
-      .catch(function () {
-        alert('Could not load dashboard stats. Please refresh the page.');
-      });
-
-    // Load ALL reservations (used for recent bookings + per-hotel filtering)
-    fetch(API_BASE + '/admin.php?action=reservations', { credentials: 'include' })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data.success) return;
-        allReservations = data.reservations;
-        renderRecentBookings(data.reservations.slice(0, 6));
-        renderActivityFeed(data.reservations.slice(0, 8));
-      })
-      .catch(function () {
-        console.error('Failed to load reservations feed.');
-      });
+      renderStats(dashData.stats);
+      populateHotelFilter();
+      renderRevenueChart();
+      renderTonight();
+      renderRecentBookings(dashData.reservations.slice(0, 6));
+      renderActivityFeed(dashData.reservations.slice(0, 8));
+    }).catch(function () {
+      alert('Could not load dashboard stats. Please refresh the page.');
+    });
   }
 
-  // ===== FORMAT NUMBERS =====
-  function formatNumber(num) {
-    if (num >= 1000000) return (num / 1000000).toFixed(1) + 'M';
-    if (num >= 1000) return (num / 1000).toFixed(num >= 10000 ? 0 : 1) + 'K';
-    return num.toLocaleString();
+  // ===== STAT CARDS =====
+  function renderStats(s) {
+    var by = {};
+    (s.by_status || []).forEach(function (item) { by[item.status] = parseInt(item.count, 10) || 0; });
+    globalStatusBreakdown = by;
+    var pending = parseInt(s.pending_count, 10) || by.pending || 0;
+
+    setText('statBooked', (by.paid || 0).toLocaleString('en-US'));
+    setText('statPending', pending.toLocaleString('en-US'));
+    setText('statCancelled', (by.cancelled || 0).toLocaleString('en-US'));
+    setText('statRevenue', money(s.total_revenue || 0));
+
+    var note = document.getElementById('statPendingNote');
+    if (pending > 0) {
+      note.innerHTML = '<button type="button" class="stat-link" id="reviewPendingBtn">Review ' + (pending === 1 ? 'request' : 'requests') + '</button>';
+      document.getElementById('reviewPendingBtn').addEventListener('click', function () { openBookings('pending'); });
+    } else {
+      note.textContent = 'Nothing waiting';
+    }
+
+    var badge = document.getElementById('navPendingBadge');
+    badge.textContent = pending;
+    badge.style.display = pending > 0 ? 'inline-flex' : 'none';
   }
 
-  // ===== REVENUE CHART =====
-  function renderRevenueChart(revenueData) {
+  function openBookings(filter) {
+    currentFilter = filter;
+    document.querySelectorAll('#bookingFilters .filter-btn').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-filter') === filter);
+    });
+    switchSection('bookings');
+  }
+
+  // ===== REVENUE CHART (paid bookings per month, from reservations) =====
+  function monthlyRevenue(months) {
+    var now = new Date();
+    var buckets = [];
+    for (var i = months - 1; i >= 0; i--) {
+      var d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      buckets.push({ y: d.getFullYear(), m: d.getMonth(), total: 0 });
+    }
+    dashData.reservations.forEach(function (r) {
+      if (r.status !== 'paid') return;
+      var d = parseDateValue(r.created_at);
+      buckets.forEach(function (b) {
+        if (b.y === d.getFullYear() && b.m === d.getMonth()) b.total += parseFloat(r.total_price) || 0;
+      });
+    });
+    return buckets;
+  }
+
+  function monthYear(b) {
+    return new Date(b.y, b.m, 1).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+  }
+
+  function renderRevenueChart() {
+    var months = parseInt(document.getElementById('revPeriod').value, 10) || 12;
+    var buckets = monthlyRevenue(months);
+    var labels = buckets.map(function (b) { return new Date(b.y, b.m, 1).toLocaleDateString('en-US', { month: 'short' }); });
+    var fullLabels = buckets.map(function (b) { return new Date(b.y, b.m, 1).toLocaleDateString('en-US', { month: 'long', year: 'numeric' }); });
+    var values = buckets.map(function (b) { return Math.round(b.total); });
+    var total = values.reduce(function (a, b) { return a + b; }, 0);
+    var max = Math.max.apply(null, values);
+    var lastIdx = values.length - 1;
+
+    setText('revTotal', money(total));
+    setText('revCaption', 'Paid bookings, ' + monthYear(buckets[0]) + ' – ' + monthYear(buckets[lastIdx]));
+
     var canvas = document.getElementById('revenueChart');
     if (revenueChartInstance) revenueChartInstance.destroy();
 
-    var labels = [];
-    var values = [];
-
-    if (revenueData.length > 0) {
-      // Group by month for monthly display
-      var monthMap = {};
-      revenueData.forEach(function (d) {
-        var dt = new Date(d.day || d.date);
-        var key = dt.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
-        if (!monthMap[key]) monthMap[key] = 0;
-        monthMap[key] += parseFloat(d.revenue);
-      });
-      Object.keys(monthMap).forEach(function (k) {
-        labels.push(k);
-        values.push(monthMap[k]);
-      });
-    }
-
-    // Fallback: show last 6 months with $0
-    if (labels.length === 0) {
-      for (var i = 5; i >= 0; i--) {
-        var d = new Date();
-        d.setMonth(d.getMonth() - i);
-        labels.push(d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' }));
-        values.push(0);
-      }
-    }
-
-    // Generate a simulated expenses line (30-60% of income) for visual effect
-    var expenses = values.map(function (v) {
-      return Math.round(v * (0.3 + Math.random() * 0.3));
-    });
-
-    // Crosshair vertical line plugin
-    var crosshairPlugin = {
-      id: 'revenueCrosshair',
+    // Hover: dashed guide and a small value card, in the panel's own palette.
+    var hoverPlugin = {
+      id: 'revenueHover',
       afterDraw: function (chart) {
-        var activeElements = chart.getActiveElements();
-        if (!activeElements || activeElements.length === 0) return;
+        var active = chart.getActiveElements();
+        if (!active || !active.length) return;
+        var point = chart.getDatasetMeta(0).data[active[0].index];
+        if (!point) return;
         var ctx = chart.ctx;
         var area = chart.chartArea;
-        var meta = chart.getDatasetMeta(activeElements[0].datasetIndex);
-        var point = meta.data[activeElements[0].index];
-        if (!point) return;
-        var x = point.x;
+        var idx = active[0].index;
 
         ctx.save();
-        // Dashed vertical line
         ctx.beginPath();
         ctx.setLineDash([4, 4]);
         ctx.lineWidth = 1;
-        ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-        ctx.moveTo(x, area.top);
-        ctx.lineTo(x, area.bottom);
+        ctx.strokeStyle = 'rgba(30,46,55,0.16)';
+        ctx.moveTo(point.x, area.top);
+        ctx.lineTo(point.x, area.bottom);
         ctx.stroke();
-        ctx.restore();
+        ctx.setLineDash([]);
 
-        // Draw highlighted dot
-        var px = point.x;
-        var py = point.y;
-
-        ctx.save();
-        // Outer glow
         ctx.beginPath();
-        ctx.arc(px, py, 10, 0, Math.PI * 2);
-        ctx.fillStyle = 'rgba(232,149,109,0.15)';
+        ctx.arc(point.x, point.y, 5, 0, Math.PI * 2);
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
-        // Inner white ring
-        ctx.beginPath();
-        ctx.arc(px, py, 6, 0, Math.PI * 2);
-        ctx.fillStyle = '#fff';
-        ctx.fill();
-        // Colored center dot
-        ctx.beginPath();
-        ctx.arc(px, py, 4, 0, Math.PI * 2);
-        ctx.fillStyle = '#e8956d';
-        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = '#1e2e37';
+        ctx.stroke();
 
-        // Value label above the dot in a white rounded card
-        var value = chart.data.datasets[0].data[activeElements[0].index];
-        var label = '$' + value.toLocaleString();
-        var monthLabel = chart.data.labels[activeElements[0].index];
-
-        ctx.font = '700 14px Inter, sans-serif';
-        var valWidth = ctx.measureText(label).width;
-        ctx.font = '400 11px Inter, sans-serif';
-        var monthWidth = ctx.measureText(monthLabel).width;
-        var boxW = Math.max(valWidth, monthWidth) + 28;
+        var valText = money(values[idx]);
+        var subText = fullLabels[idx];
+        ctx.font = '500 14px Inter, sans-serif';
+        var w1 = ctx.measureText(valText).width;
+        ctx.font = '400 12px Inter, sans-serif';
+        var w2 = ctx.measureText(subText).width;
+        var boxW = Math.max(w1, w2) + 24;
         var boxH = 48;
-        var boxX = px - boxW / 2;
-        var boxY = py - 22 - boxH;
+        var boxX = Math.min(Math.max(point.x - boxW / 2, area.left), area.right - boxW);
+        var boxY = point.y - boxH - 12;
+        if (boxY < area.top) boxY = point.y + 12;
 
-        // Clamp to chart area
-        if (boxX < area.left) boxX = area.left + 2;
-        if (boxX + boxW > area.right) boxX = area.right - boxW - 2;
-        if (boxY < area.top) boxY = py + 18;
-
-        // Shadow
-        ctx.shadowColor = 'rgba(0,0,0,0.08)';
+        ctx.shadowColor = 'rgba(7,2,0,0.08)';
         ctx.shadowBlur = 12;
         ctx.shadowOffsetY = 4;
-
-        // White rounded rect
-        var r = 10;
         ctx.beginPath();
-        ctx.moveTo(boxX + r, boxY);
-        ctx.lineTo(boxX + boxW - r, boxY);
-        ctx.quadraticCurveTo(boxX + boxW, boxY, boxX + boxW, boxY + r);
-        ctx.lineTo(boxX + boxW, boxY + boxH - r);
-        ctx.quadraticCurveTo(boxX + boxW, boxY + boxH, boxX + boxW - r, boxY + boxH);
-        ctx.lineTo(boxX + r, boxY + boxH);
-        ctx.quadraticCurveTo(boxX, boxY + boxH, boxX, boxY + boxH - r);
-        ctx.lineTo(boxX, boxY + r);
-        ctx.quadraticCurveTo(boxX, boxY, boxX + r, boxY);
-        ctx.closePath();
-        ctx.fillStyle = '#fff';
+        if (ctx.roundRect) ctx.roundRect(boxX, boxY, boxW, boxH, 10); else ctx.rect(boxX, boxY, boxW, boxH);
+        ctx.fillStyle = '#ffffff';
         ctx.fill();
-
-        // Reset shadow
         ctx.shadowColor = 'transparent';
-        ctx.shadowBlur = 0;
-        ctx.shadowOffsetY = 0;
-
-        // Border
-        ctx.strokeStyle = '#f0f0f0';
         ctx.lineWidth = 1;
+        ctx.strokeStyle = 'rgba(30,46,55,0.08)';
         ctx.stroke();
 
-        // Value text
-        ctx.font = '700 14px Inter, sans-serif';
-        ctx.textAlign = 'center';
-        ctx.fillStyle = '#1e2e37';
-        ctx.fillText(label, boxX + boxW / 2, boxY + 22);
-
-        // Month text
-        ctx.font = '400 11px Inter, sans-serif';
-        ctx.fillStyle = '#999';
-        ctx.fillText(monthLabel, boxX + boxW / 2, boxY + 38);
-
+        ctx.textAlign = 'left';
+        ctx.font = '500 14px Inter, sans-serif';
+        ctx.fillStyle = '#070200';
+        ctx.fillText(valText, boxX + 12, boxY + 21);
+        ctx.font = '400 12px Inter, sans-serif';
+        ctx.fillStyle = '#98979b';
+        ctx.fillText(subText, boxX + 12, boxY + 38);
         ctx.restore();
       }
     };
 
     revenueChartInstance = new Chart(canvas, {
       type: 'line',
-      plugins: [crosshairPlugin],
+      plugins: [hoverPlugin],
       data: {
         labels: labels,
-        datasets: [
-          {
-            label: 'Income',
-            data: values,
-            borderColor: '#e8956d',
-            backgroundColor: function (context) {
-              var chart = context.chart;
-              var ctx = chart.ctx;
-              var area = chart.chartArea;
-              if (!area) return 'rgba(232,149,109,0.05)';
-              var gradient = ctx.createLinearGradient(0, area.top, 0, area.bottom);
-              gradient.addColorStop(0, 'rgba(232,149,109,0.18)');
-              gradient.addColorStop(0.7, 'rgba(232,149,109,0.03)');
-              gradient.addColorStop(1, 'rgba(232,149,109,0)');
-              return gradient;
-            },
-            fill: true,
-            tension: 0.4,
-            pointRadius: 0,
-            pointHoverRadius: 0,
-            borderWidth: 2.5,
-            order: 1
-          }
-        ]
+        datasets: [{
+          label: 'Revenue',
+          data: values,
+          borderColor: '#1e2e37',
+          borderWidth: 2,
+          tension: 0.35,
+          fill: true,
+          backgroundColor: function (context) {
+            var area = context.chart.chartArea;
+            if (!area) return 'rgba(30,46,55,0.06)';
+            var g = context.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+            g.addColorStop(0, 'rgba(30,46,55,0.12)');
+            g.addColorStop(1, 'rgba(30,46,55,0)');
+            return g;
+          },
+          // The current month is marked; hover shows the rest.
+          pointRadius: values.map(function (_, i) { return i === lastIdx ? 4 : 0; }),
+          pointBackgroundColor: '#1e2e37',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointHoverRadius: 0
+        }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         interaction: { mode: 'index', intersect: false },
-        plugins: {
-          legend: { display: false },
-          tooltip: { enabled: false }
-        },
+        animation: { duration: 400 },
+        plugins: { legend: { display: false }, tooltip: { enabled: false } },
         scales: {
           y: {
             beginAtZero: true,
-            grid: { color: 'rgba(0,0,0,0.04)', drawBorder: false },
+            suggestedMax: max > 0 ? undefined : 1000,
+            grid: { color: 'rgba(30,46,55,0.06)' },
             border: { display: false },
             ticks: {
-              font: { family: 'Inter', size: 11 }, color: '#bbb', padding: 8,
+              maxTicksLimit: 5,
+              font: { family: 'Inter', size: 12 },
+              color: '#98979b',
+              padding: 8,
               callback: function (v) {
-                if (v === 0) return '0';
-                if (v >= 1000000) return (v / 1000000).toFixed(0) + ',00k';
-                if (v >= 1000) return (v / 1000).toFixed(0) + 'k';
-                return v;
+                if (v >= 1000) return '$' + (v / 1000).toLocaleString('en-US', { maximumFractionDigits: 1 }) + 'k';
+                return '$' + v;
               }
             }
           },
           x: {
             grid: { display: false },
             border: { display: false },
-            ticks: { font: { family: 'Inter', size: 11 }, color: '#bbb', padding: 8 }
+            ticks: { font: { family: 'Inter', size: 12 }, color: '#98979b', padding: 8 }
           }
         }
       }
     });
   }
 
-  // ===== OCCUPANCY CHART (based on date-aware occupied rooms) =====
-  function renderOccupancyChart(occupied, total, breakdown, pendingNow) {
+  // ===== TONIGHT: occupancy ring + room board =====
+  function pad2(n) { return (n < 10 ? '0' : '') + n; }
+
+  function todayKey() {
+    var d = new Date();
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
+  }
+
+  // Rooms taken tonight: a stay covers check-in (inclusive) to check-out
+  // (exclusive), the same rule the booking API uses for availability.
+  function tonightFor(hotelId) {
+    var today = todayKey();
+    var reserved = 0;
+    var pending = 0;
+    dashData.reservations.forEach(function (r) {
+      if (hotelId !== 'all' && String(r.room_id) !== String(hotelId)) return;
+      if (ACTIVE_STATUSES.indexOf(r.status) === -1) return;
+      var ci = String(r.check_in).slice(0, 10);
+      var co = String(r.check_out).slice(0, 10);
+      if (!(ci <= today && co > today)) return;
+      var n = parseInt(r.rooms_count, 10) || 1;
+      if (r.status === 'pending') pending += n; else reserved += n;
+    });
+    var total = 0;
+    dashData.hotels.forEach(function (h) {
+      if (hotelId === 'all' || String(h.id) === String(hotelId)) total += parseInt(h.total_rooms, 10) || 0;
+    });
+    if (!total && hotelId === 'all') total = TOTAL_ROOMS;
+    reserved = Math.min(reserved, total);
+    pending = Math.min(pending, Math.max(0, total - reserved));
+    return { reserved: reserved, pending: pending, free: Math.max(0, total - reserved - pending), total: total };
+  }
+
+  function hotelById(id) {
+    var found = null;
+    dashData.hotels.forEach(function (h) { if (String(h.id) === String(id)) found = h; });
+    return found;
+  }
+
+  function populateHotelFilter() {
+    var select = document.getElementById('hotelFilter');
+    var hotels = dashData.hotels.slice().sort(function (a, b) { return String(a.name).localeCompare(String(b.name)); });
+    var html = '<option value="all">All hotels</option>';
+    hotels.forEach(function (h) {
+      html += '<option value="' + h.id + '">' + escapeHtml(h.name) + '</option>';
+    });
+    select.innerHTML = html;
+    if (selectedHotel !== 'all' && !hotelById(selectedHotel)) selectedHotel = 'all';
+    select.value = selectedHotel;
+  }
+
+  function renderTonight() {
+    var t = tonightFor(selectedHotel);
+    var hotel = selectedHotel === 'all' ? null : hotelById(selectedHotel);
+    setText('occupancyScope', hotel ? hotel.name : 'All hotels');
+    renderOccupancy(t);
+    renderRoomBoard(t, hotel);
+  }
+
+  function renderOccupancy(t) {
+    var taken = t.reserved + t.pending;
+    var pct = t.total > 0 ? (taken / t.total) * 100 : 0;
+    setText('occupancyPct', (pct > 0 && pct < 10 ? pct.toFixed(1) : Math.round(pct)) + '%');
+    setText('occupancySub', taken + ' of ' + t.total + ' rooms');
+
     var canvas = document.getElementById('occupancyChart');
     if (occupancyChartInstance) occupancyChartInstance.destroy();
-
-    var percentage = total > 0 ? Math.round((occupied / total) * 100) : 0;
-    document.getElementById('occupancyPct').textContent = percentage + '%';
-    document.getElementById('occupancySub').textContent = occupied + ' / ' + total + ' rooms';
-
     occupancyChartInstance = new Chart(canvas, {
       type: 'doughnut',
       data: {
         datasets: [{
-          data: [occupied, total - occupied],
-          backgroundColor: ['#1e2e37', '#eaeaea'],
+          data: t.total > 0 ? [t.reserved, t.pending, t.free] : [0, 0, 1],
+          backgroundColor: ['#1e2e37', '#9fb0b9', '#efeeeb'],
           borderWidth: 0,
-          borderRadius: occupied > 0 && occupied < total ? 6 : 0
+          spacing: taken > 0 && t.free > 0 ? 2 : 0
         }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: true,
-        cutout: '78%',
+        cutout: '80%',
         plugins: { legend: { display: false }, tooltip: { enabled: false } },
-        animation: { animateRotate: true, duration: 1200 }
+        animation: { duration: 400 }
       }
     });
 
-    // Render booking breakdown legend below occupancy ring
-    if (breakdown) {
-      var statusData = [
-        { label: 'Occupied now', value: occupied, color: '#1e2e37' },
-        { label: 'Pending', value: (typeof pendingNow === 'number' ? pendingNow : (breakdown.pending || 0)), color: '#5bb5a2' },
-        { label: 'Approved (upcoming)', value: breakdown.approved || 0, color: '#3a5a6a' },
-        { label: 'Cancelled', value: breakdown.cancelled || 0, color: '#8b5e5e' }
-      ];
-      var legendEl = document.getElementById('statusLegend');
-      var legendTotal = statusData.reduce(function (a, b) { return a + b.value; }, 0) || 1;
-      legendEl.innerHTML = statusData.map(function (s) {
-        var pct = Math.round((s.value / legendTotal) * 100);
-        return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;">' +
-          '<span style="width:10px;height:10px;border-radius:3px;background:' + s.color + ';flex-shrink:0;"></span>' +
-          '<span style="flex:1;font-family:Inter,sans-serif;font-size:12px;color:#666;">' + s.label + '</span>' +
-          '<span style="font-family:Inter,sans-serif;font-size:13px;font-weight:600;color:#1e2e37;">' + s.value + '</span>' +
-          '<span style="font-family:Inter,sans-serif;font-size:11px;color:#aaa;min-width:32px;text-align:right;">' + pct + '%</span>' +
-          '</div>';
-      }).join('');
-    }
-  }
-
-  // ===== ROOM STATUS GRID (occupied → pending → available, serial) =====
-  function renderRoomGrid(occupied, pending, totalRooms) {
-    var grid = document.getElementById('roomGrid');
-    var total = totalRooms || TOTAL_ROOMS;
-    var bookedCount = Math.min(occupied || 0, total);
-    var remaining = total - bookedCount;
-    var pendingCount = Math.min(pending || 0, remaining);
-
-    var cells = [];
-    for (var i = 0; i < total; i++) {
-      if (i < bookedCount) cells.push('booked');
-      else if (i < bookedCount + pendingCount) cells.push('pending');
-      else cells.push('available');
-    }
-
-    grid.innerHTML = cells.map(function (type, idx) {
-      var num = String(idx + 1).padStart(2, '0');
-      return '<div class="room-cell room-' + type + '">' + num + '</div>';
+    var rows = [
+      { label: 'Reserved', value: t.reserved, sw: 'sw-reserved' },
+      { label: 'Awaiting approval', value: t.pending, sw: 'sw-pending' },
+      { label: 'Free', value: t.free, sw: 'sw-free' }
+    ];
+    document.getElementById('statusLegend').innerHTML = rows.map(function (r) {
+      return '<div class="legend-row"><i class="sw ' + r.sw + '"></i><span class="lbl">' + r.label + '</span>' +
+        '<span class="val">' + r.value.toLocaleString('en-US') + (r.value === 1 ? ' room' : ' rooms') + '</span></div>';
     }).join('');
   }
 
-  // ===== HOTEL FILTER (exposed globally for inline onchange) =====
-  window.handleHotelFilter = function (hotelId) {
-    if (hotelId === 'all') {
-      // Recompute from the stored global stats
-      if (window.__adminStats) {
-        var s = window.__adminStats;
-        var occupiedNow = Math.min(s.occupied_now || 0, TOTAL_ROOMS);
-        var pendingNow = Math.min(s.pending_count || 0, Math.max(0, TOTAL_ROOMS - occupiedNow));
-        renderRoomGrid(occupiedNow, pendingNow, TOTAL_ROOMS);
-        renderOccupancyChart(occupiedNow, TOTAL_ROOMS, globalStatusBreakdown, pendingNow);
+  function renderRoomBoard(t, hotel) {
+    var body = document.getElementById('roomBoardBody');
+
+    if (!hotel) {
+      setText('roomBoardCaption', 'Rooms taken tonight in each hotel');
+      var rows = dashData.hotels.map(function (h) {
+        var ht = tonightFor(h.id);
+        return { h: h, t: ht, share: ht.total ? (ht.reserved + ht.pending) / ht.total : 0 };
+      }).sort(function (a, b) {
+        return (b.share - a.share) || String(a.h.name).localeCompare(String(b.h.name));
+      });
+      if (!rows.length) {
+        body.innerHTML = '<p class="card-sub" style="margin:0;">No hotels yet</p>';
+        return;
       }
+      body.innerHTML = '<div class="board-list">' + rows.map(function (row) {
+        var tt = row.t;
+        var resPct = tt.total ? (tt.reserved / tt.total) * 100 : 0;
+        var penPct = tt.total ? (tt.pending / tt.total) * 100 : 0;
+        var place = String(row.h.location || '').split(',')[0];
+        return '<div class="board-row">' +
+          '<div class="board-top"><span class="board-name">' + escapeHtml(row.h.name) +
+          (place ? '<span class="board-loc">' + escapeHtml(place) + '</span>' : '') + '</span>' +
+          '<span class="board-count"><b>' + (tt.reserved + tt.pending) + '</b> of ' + tt.total + '</span></div>' +
+          '<div class="board-bar"><span class="reserved" style="width:' + resPct + '%"></span><span class="pending" style="width:' + penPct + '%"></span></div>' +
+          '</div>';
+      }).join('') + '</div>';
       return;
     }
 
-    fetch(API_BASE + '/admin.php?action=hotel_stats&hotel_id=' + encodeURIComponent(hotelId), { credentials: 'include' })
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data.success) return;
+    setText('roomBoardCaption', (hotel.location ? hotel.location + ' · ' : '') + t.total + ' rooms, tonight');
+    var html = '';
+    for (var i = 0; i < t.total; i++) {
+      var type = i < t.reserved ? 'reserved' : (i < t.reserved + t.pending ? 'pending' : 'free');
+      var label = type === 'reserved' ? 'Reserved' : (type === 'pending' ? 'Awaiting approval' : 'Free');
+      html += '<div class="room-tag ' + type + '" title="Room ' + pad2(i + 1) + ': ' + label + '">' + pad2(i + 1) + '</div>';
+    }
+    body.innerHTML = '<div class="room-tags">' + html + '</div>';
+  }
 
-        var statusBreakdown = {};
-        if (data.by_status && Array.isArray(data.by_status)) {
-          data.by_status.forEach(function (item) {
-            statusBreakdown[item.status] = parseInt(item.count) || 0;
-          });
-        }
+  document.getElementById('hotelFilter').addEventListener('change', function () {
+    selectedHotel = this.value;
+    renderTonight();
+  });
+  document.getElementById('revPeriod').addEventListener('change', renderRevenueChart);
 
-        var totalRooms = data.total_rooms || TOTAL_ROOMS;
-        var occupied = Math.min(data.occupied_now || 0, totalRooms);
-        var pendingCount = Math.min(statusBreakdown.pending || 0, Math.max(0, totalRooms - occupied));
-        renderRoomGrid(occupied, pendingCount, totalRooms);
-        renderOccupancyChart(occupied, totalRooms, statusBreakdown, pendingCount);
-      })
-      .catch(function (err) {
-        console.error('[HotelFilter] Fetch error:', err);
-        alert('Could not load hotel stats. Please try again.');
-      });
-  };
+  // ===== SHARED ROW CELLS =====
+  function guestCell(name, email) {
+    var initial = (name || 'U').charAt(0).toUpperCase();
+    var color = avatarColors[initial.charCodeAt(0) % avatarColors.length];
+    return '<div class="guest-cell"><div class="user-avatar" style="background:' + color + ';">' + initial + '</div>' +
+      '<div><div class="cell-strong">' + escapeHtml(name || 'Unknown') + '</div>' +
+      (email ? '<div class="cell-sub">' + escapeHtml(email) + '</div>' : '') + '</div></div>';
+  }
 
-  // ===== RECENTLY BOOKED TABLE =====
+  function stayCell(r) {
+    var a = parseDateValue(r.check_in);
+    var b = parseDateValue(r.check_out);
+    var left = a.toLocaleDateString('en-US', a.getFullYear() === b.getFullYear()
+      ? { month: 'short', day: 'numeric' }
+      : { month: 'short', day: 'numeric', year: 'numeric' });
+    var right = b.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    var nights = parseInt(r.nights, 10) || Math.max(1, Math.round((b - a) / 86400000));
+    return '<div style="white-space:nowrap;">' + left + ' – ' + right + '</div>' +
+      '<div class="cell-sub">' + nights + (nights === 1 ? ' night' : ' nights') + '</div>';
+  }
+
+  function emptyRow(cols, text, isError) {
+    return '<tr><td colspan="' + cols + '" class="empty-cell' + (isError ? ' is-error' : '') + '">' + text + '</td></tr>';
+  }
+
+  // ===== RECENT BOOKINGS TABLE =====
   function renderRecentBookings(reservations) {
     var tbody = document.getElementById('recentBookingsBody');
     if (!reservations || reservations.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:#999;padding:40px;font-family:Inter,sans-serif;font-size:13px;">No bookings yet</td></tr>';
+      tbody.innerHTML = emptyRow(5, 'No bookings yet');
       return;
     }
-
-    var html = '';
-    reservations.forEach(function (r) {
-      var initial = (r.user_name || 'U').charAt(0).toUpperCase();
-      var color = avatarColors[initial.charCodeAt(0) % avatarColors.length];
-      html += '<tr>';
-      html += '<td style="padding-left:24px;"><div style="display:flex;align-items:center;gap:10px;">';
-      html += '<div class="user-avatar" style="background:' + color + ';">' + initial + '</div>';
-      html += '<div><div style="font-weight:600;font-size:13px;">' + escapeHtml(r.user_name || 'Unknown') + '</div>';
-      html += '<div style="font-size:11px;color:#aaa;">' + escapeHtml(r.user_email || '') + '</div></div></div></td>';
-      html += '<td style="font-size:12px;color:#666;">' + escapeHtml(r.hotel_name) + '</td>';
-      html += '<td style="font-size:12px;color:#666;">' + (r.guests || 1) + '</td>';
-      html += '<td style="font-size:12px;color:#666;">' + formatDate(r.check_in) + '<div style="font-size:11px;color:#9a9a9a;line-height:1.35;">Booked ' + formatTime(r.created_at) + '</div></td>';
-      html += '<td style="font-size:12px;color:#666;">' + formatDate(r.check_out) + '<div style="font-size:11px;color:#9a9a9a;line-height:1.35;">Booked ' + formatTime(r.created_at) + '</div></td>';
-      html += '<td style="padding-right:24px;"><span class="status-badge status-' + r.status + '">' + capitalizeStatus(r.status) + '</span></td>';
-      html += '</tr>';
-    });
-    tbody.innerHTML = html;
+    tbody.innerHTML = reservations.map(function (r) {
+      return '<tr>' +
+        '<td>' + guestCell(r.user_name, r.user_email) + '</td>' +
+        '<td class="cell-muted">' + escapeHtml(r.hotel_name) + '</td>' +
+        '<td>' + stayCell(r) + '</td>' +
+        '<td>' + (parseInt(r.guests, 10) || 1) + '</td>' +
+        '<td><span class="status-badge status-' + r.status + '">' + capitalizeStatus(r.status) + '</span></td>' +
+        '</tr>';
+    }).join('');
   }
 
-  // ===== ACTIVITY FEED (in notification dropdown) =====
+  // ===== ACTIVITY FEED (notification dropdown) =====
   function renderActivityFeed(reservations) {
     var feed = document.getElementById('activityFeed');
     var notifCountEl = document.getElementById('notifCount');
     var notifDot = document.getElementById('notifDot');
 
     if (!reservations || reservations.length === 0) {
-      feed.innerHTML = '<div style="text-align:center;color:#999;padding:30px 20px;font-family:Inter,sans-serif;font-size:13px;">No recent activity</div>';
-      notifCountEl.textContent = '0';
+      feed.innerHTML = '<div class="notif-empty">No recent activity</div>';
+      notifCountEl.textContent = '';
       return;
     }
 
-    // Show notification dot and count
-    notifCountEl.textContent = reservations.length;
+    notifCountEl.textContent = 'Latest ' + reservations.length;
     notifDot.style.display = 'block';
 
-    // Design-system activity icons
-    var icons = {
-      paid: { bg: '#e6f4ef', color: '#3d8b6e', icon: '<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' },
-      pending: { bg: '#eaeaea', color: '#666', icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>' },
-      approved: { bg: '#e8f0f3', color: '#3a5a6a', icon: '<path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>' },
-      cancelled: { bg: '#f0eaea', color: '#8b5e5e', icon: '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>' }
-    };
-
+    var dots = { paid: '#2f6e57', pending: '#98979b', approved: '#1e2e37', cancelled: '#8b5e5e' };
     var actions = {
-      paid: 'booked',
+      paid: 'paid for a stay at',
       pending: 'requested a booking at',
-      approved: 'booking approved for',
-      cancelled: 'booking cancelled at'
+      approved: 'was approved for',
+      cancelled: 'cancelled a booking at'
     };
 
-    var html = '';
-    reservations.forEach(function (r) {
+    feed.innerHTML = reservations.map(function (r) {
       var s = r.status || 'pending';
-      var ic = icons[s] || icons.pending;
-      var action = actions[s] || 'updated';
-      var timeAgo = getTimeAgo(r.created_at);
-
-      html += '<div class="activity-item">';
-      html += '<div class="activity-dot" style="background:' + ic.bg + ';"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="' + ic.color + '" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + ic.icon + '</svg></div>';
-      html += '<div style="flex:1;">';
-      html += '<div class="activity-text"><strong>' + escapeHtml(r.user_name || 'Guest') + '</strong> ' + action + ' <strong>' + escapeHtml(r.hotel_name) + '</strong></div>';
-      html += '<div class="activity-time">' + timeAgo + '</div>';
-      html += '</div></div>';
-    });
-    feed.innerHTML = html;
+      return '<div class="activity-item">' +
+        '<span class="activity-dot" style="background:' + (dots[s] || dots.pending) + ';"></span>' +
+        '<div style="flex:1;min-width:0;">' +
+        '<div class="activity-text"><strong>' + escapeHtml(r.user_name || 'Guest') + '</strong> ' + (actions[s] || 'updated') + ' <strong>' + escapeHtml(r.hotel_name) + '</strong></div>' +
+        '<div class="activity-time">' + getTimeAgo(r.created_at) + '</div>' +
+        '</div></div>';
+    }).join('');
   }
 
   // ===== ALL BOOKINGS =====
@@ -580,27 +570,21 @@
   function renderAllBookings(reservations) {
     var tbody = document.getElementById('allBookingsBody');
     if (!reservations || reservations.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;color:#999;padding:40px;font-family:Inter,sans-serif;font-size:13px;">No bookings found</td></tr>';
+      tbody.innerHTML = emptyRow(8, 'No bookings found');
       return;
     }
 
     var html = '';
     reservations.forEach(function (r) {
-      var initial = (r.user_name || 'U').charAt(0).toUpperCase();
-      var color = avatarColors[initial.charCodeAt(0) % avatarColors.length];
       html += '<tr>';
-      html += '<td style="padding-left:24px;"><div style="display:flex;align-items:center;gap:10px;">';
-      html += '<div class="user-avatar" style="background:' + color + ';">' + initial + '</div>';
-      html += '<div><div style="font-weight:600;font-size:13px;">' + escapeHtml(r.user_name || 'Unknown') + '</div>';
-      html += '<div style="font-size:11px;color:#aaa;">' + escapeHtml(r.user_email || '') + '</div></div></div></td>';
-      html += '<td>' + escapeHtml(r.hotel_name) + '</td>';
-      html += '<td style="font-size:12px;color:#666;">' + formatDate(r.check_in) + '<div style="font-size:11px;color:#9a9a9a;line-height:1.35;">Booked ' + formatTime(r.created_at) + '</div></td>';
-      html += '<td style="font-size:12px;color:#666;">' + formatDate(r.check_out) + '<div style="font-size:11px;color:#9a9a9a;line-height:1.35;">Booked ' + formatTime(r.created_at) + '</div></td>';
+      html += '<td>' + guestCell(r.user_name, r.user_email) + '</td>';
+      html += '<td class="cell-muted">' + escapeHtml(r.hotel_name) + '</td>';
+      html += '<td>' + stayCell(r) + '<div class="cell-sub">Booked ' + formatDate(r.created_at) + ', ' + formatTime(r.created_at) + '</div></td>';
       html += '<td>' + r.rooms_count + '</td>';
       html += '<td>' + r.guests + '</td>';
-      html += '<td style="font-weight:700;">$' + parseFloat(r.total_price).toFixed(0) + '</td>';
+      html += '<td class="cell-strong">' + money(r.total_price) + '</td>';
       html += '<td><span class="status-badge status-' + r.status + '">' + capitalizeStatus(r.status) + '</span></td>';
-      html += '<td style="white-space:nowrap;padding-right:24px;">';
+      html += '<td style="white-space:nowrap;">';
 
       if (r.status === 'pending') {
         html += '<button class="action-btn approve" onclick="updateReservation(' + r.id + ', \'approved\')">Approve</button> ';
@@ -608,7 +592,7 @@
       } else if (r.status === 'approved') {
         html += '<button class="action-btn cancel" onclick="updateReservation(' + r.id + ', \'cancelled\')">Cancel</button>';
       } else {
-        html += '<span style="color:#ccc;font-size:12px;">—</span>';
+        html += '<span class="cell-none">—</span>';
       }
 
       html += '</td></tr>';
@@ -708,24 +692,19 @@
   function renderUsers(users) {
     var tbody = document.getElementById('usersBody');
     if (!users || users.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#999;padding:40px;font-family:Inter,sans-serif;font-size:13px;">No users found</td></tr>';
+      tbody.innerHTML = emptyRow(5, 'No users yet');
       return;
     }
 
     var html = '';
     users.forEach(function (u) {
-      var joined = new Date(u.created_at);
-      var joinedStr = joined.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
-      var initial = (u.full_name || 'U').charAt(0).toUpperCase();
-      var color = avatarColors[initial.charCodeAt(0) % avatarColors.length];
+      var role = String(u.role || 'user');
       html += '<tr>';
-      html += '<td style="padding-left:24px;"><div style="display:flex;align-items:center;gap:10px;">';
-      html += '<div class="user-avatar" style="background:' + color + ';">' + initial + '</div>';
-      html += '<span style="font-weight:600;font-size:13px;">' + escapeHtml(u.full_name || 'Unknown') + '</span></div></td>';
-      html += '<td style="font-size:13px;">' + escapeHtml(u.email) + '</td>';
-      html += '<td><span class="status-badge ' + (u.role === 'admin' ? 'status-approved' : 'status-paid') + '">' + u.role + '</span></td>';
+      html += '<td>' + guestCell(u.full_name, '') + '</td>';
+      html += '<td class="cell-muted">' + escapeHtml(u.email) + '</td>';
+      html += '<td><span class="status-badge ' + (role === 'admin' ? 'status-approved' : 'status-pending') + '">' + role.charAt(0).toUpperCase() + role.slice(1) + '</span></td>';
       html += '<td>' + (u.reservation_count || 0) + '</td>';
-      html += '<td style="padding-right:24px;font-size:12px;color:#888;">' + joinedStr + '</td>';
+      html += '<td class="cell-muted">' + formatDate(u.created_at) + '</td>';
       html += '</tr>';
     });
     tbody.innerHTML = html;
@@ -797,7 +776,7 @@
         var hotelSelect = document.getElementById('empHotel');
         if (!hotelSelect) return;
 
-        var options = '<option value="">Select hotel...</option>';
+        var options = '<option value="">Select hotel</option>';
         hotelsForEmployees.forEach(function (h) {
           options += '<option value="' + h.id + '">' + escapeHtml(h.name) + '</option>';
         });
@@ -813,7 +792,7 @@
 
   function loadEmployees() {
     var tbody = document.getElementById('empTableBody');
-    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#bbb;font-size:14px;">Loading...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="8" class="empty-cell">Loading employees…</td></tr>';
 
     fetch(API_BASE + '/admin.php?action=employees', { credentials: 'include' })
       .then(function (r) { return r.json(); })
@@ -822,7 +801,7 @@
         renderEmployees();
       })
       .catch(function () {
-        tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#e44;font-size:14px;">Failed to load employees.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" class="empty-cell is-error">Could not load employees</td></tr>';
       });
   }
 
@@ -831,31 +810,26 @@
     var filtered = empCurrentRole === 'all' ? allEmployees : allEmployees.filter(function (e) { return e.role === empCurrentRole; });
 
     if (filtered.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:#bbb;font-family:Inter,sans-serif;font-size:14px;">No employees found.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="8" class="empty-cell">No employees yet</td></tr>';
       return;
     }
 
     var html = '';
     filtered.forEach(function (emp) {
-      var initial = (emp.full_name || 'E').charAt(0).toUpperCase();
-      var color = emp.role === 'manager' ? '#3d8b6e' : '#9b5a1a';
-      var joined = new Date(emp.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
       var isActive = parseInt(emp.is_active) === 1;
 
       html += '<tr>';
-      html += '<td style="padding-left:20px;"><div style="display:flex;align-items:center;gap:10px;">';
-      html += '<div style="width:36px;height:36px;border-radius:50%;background:' + color + ';color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;font-family:Inter,sans-serif;flex-shrink:0;">' + initial + '</div>';
-      html += '<span style="font-weight:600;font-size:13px;font-family:Inter,sans-serif;">' + escapeHtml(emp.full_name) + '</span></div></td>';
-      html += '<td style="font-size:13px;font-family:Inter,sans-serif;">' + escapeHtml(emp.email) + '</td>';
+      html += '<td>' + guestCell(emp.full_name, '') + '</td>';
+      html += '<td class="cell-muted">' + escapeHtml(emp.email) + '</td>';
       html += '<td><span class="role-badge role-' + emp.role + '">';
       html += emp.role === 'manager' ? 'Manager' : 'Waiter';
       html += '</span></td>';
-      html += '<td style="font-size:13px;color:#666;">' + (emp.hotel_name ? escapeHtml(emp.hotel_name) : '<span style="color:#ccc;">Not assigned</span>') + '</td>';
-      html += '<td style="font-size:13px;color:#666;">' + (emp.phone ? escapeHtml(emp.phone) : '<span style="color:#ccc;">—</span>') + '</td>';
+      html += '<td class="cell-muted">' + (emp.hotel_name ? escapeHtml(emp.hotel_name) : '<span class="cell-none">Not assigned</span>') + '</td>';
+      html += '<td class="cell-muted">' + (emp.phone ? escapeHtml(emp.phone) : '<span class="cell-none">—</span>') + '</td>';
       html += '<td><span class="status-badge ' + (isActive ? 'status-paid' : 'status-cancelled') + '">' + (isActive ? 'Active' : 'Inactive') + '</span></td>';
-      html += '<td style="font-size:12px;color:#888;padding-right:16px;">' + joined + '</td>';
-      html += '<td style="padding-right:20px;">';
-      html += '<button class="action-btn" style="margin-right:6px;" onclick="toggleEmployee(' + emp.id + ', this)">' + (isActive ? 'Deactivate' : 'Activate') + '</button>';
+      html += '<td class="cell-muted">' + formatDate(emp.created_at) + '</td>';
+      html += '<td style="white-space:nowrap;">';
+      html += '<button class="action-btn" onclick="toggleEmployee(' + emp.id + ', this)">' + (isActive ? 'Deactivate' : 'Activate') + '</button>';
       html += '<button class="action-btn cancel" onclick="deleteEmployee(' + emp.id + ', this)">Remove</button>';
       html += '</td>';
       html += '</tr>';
@@ -927,7 +901,7 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         btn.disabled = false;
-        btn.textContent = 'Create Employee Account';
+        btn.textContent = 'Create account';
         if (!data.success) {
           errEl.textContent = data.message;
           errEl.style.display = 'block';
@@ -938,7 +912,7 @@
       })
       .catch(function () {
         btn.disabled = false;
-        btn.textContent = 'Create Employee Account';
+        btn.textContent = 'Create account';
         errEl.textContent = 'Network error. Please try again.';
         errEl.style.display = 'block';
       });
@@ -988,19 +962,19 @@
   // ===== SUPPORT INQUIRIES =====
   function loadSupport() {
     var tbody = document.getElementById('supportTableBody');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#bbb;font-size:14px;">Loading…</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">Loading…</td></tr>';
 
     fetch(API_BASE + '/admin.php?action=support', { credentials: 'include' })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.success) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#e44;font-size:14px;">Failed to load inquiries.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" class="empty-cell is-error">Could not load inquiries</td></tr>';
           return;
         }
         renderSupport(data.inquiries || []);
       })
       .catch(function () {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#e44;font-size:14px;">Network error.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-cell is-error">Could not reach the server</td></tr>';
       });
   }
 
@@ -1018,7 +992,7 @@
     }
 
     if (inquiries.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#bbb;font-size:14px;">No support inquiries yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">No support inquiries yet</td></tr>';
       return;
     }
 
@@ -1027,13 +1001,13 @@
       var name = escapeHtml((q.first_name || '') + ' ' + (q.last_name || ''));
       var short = (q.message || '').length > 140 ? (q.message || '').slice(0, 140) + '…' : (q.message || '');
       html += '<tr>';
-      html += '<td style="padding-left:24px;"><span style="font-weight:600;font-size:13px;font-family:Inter,sans-serif;">' + name + '</span></td>';
-      html += '<td style="font-size:12px;color:#666;">' + escapeHtml(q.email || '') + (q.phone ? '<div style="font-size:11px;color:#9a9a9a;">' + escapeHtml(q.phone) + '</div>' : '') + '</td>';
-      html += '<td style="font-size:12px;color:#666;max-width:360px;" title="' + escapeHtml(q.message || '') + '">' + escapeHtml(short) + '</td>';
+      html += '<td><span class="cell-strong">' + name + '</span></td>';
+      html += '<td class="cell-muted">' + escapeHtml(q.email || '') + (q.phone ? '<div class="cell-sub">' + escapeHtml(q.phone) + '</div>' : '') + '</td>';
+      html += '<td class="cell-muted" style="max-width:360px;font-size:13px;line-height:1.5;" title="' + escapeHtml(q.message || '') + '">' + escapeHtml(short) + '</td>';
       html += '<td><span class="status-badge status-' + (q.status === 'new' ? 'pending' : q.status === 'closed' ? 'cancelled' : 'approved') + '">' + capitalizeStatus(q.status || 'new') + '</span></td>';
-      html += '<td style="font-size:12px;color:#888;">' + formatDate(q.created_at) + '</td>';
-      html += '<td style="padding-right:24px;">';
-      html += '<select class="support-status-select" data-id="' + q.id + '" style="font-family:Inter,sans-serif;font-size:12px;padding:6px 10px;border:1px solid #e0e0e0;border-radius:8px;background:#fff;cursor:pointer;">';
+      html += '<td class="cell-muted" style="white-space:nowrap;">' + formatDate(q.created_at) + '</td>';
+      html += '<td>';
+      html += '<select class="select support-status-select" data-id="' + q.id + '" aria-label="Inquiry status" style="height:32px;">';
       ['new', 'read', 'replied', 'closed'].forEach(function (s) {
         html += '<option value="' + s + '"' + (q.status === s ? ' selected' : '') + '>' + s.charAt(0).toUpperCase() + s.slice(1) + '</option>';
       });
@@ -1075,7 +1049,7 @@
 
   function openHotelModal(hotel) {
     editingHotelId = hotel ? parseInt(hotel.id, 10) : 0;
-    document.getElementById('hotelModalTitle').textContent = hotel ? 'Edit Hotel' : 'Add Hotel';
+    document.getElementById('hotelModalTitle').textContent = hotel ? 'Edit hotel' : 'Add hotel';
     document.getElementById('hotelName').value = hotel ? hotel.name : '';
     document.getElementById('hotelLocation').value = hotel ? hotel.location : '';
     document.getElementById('hotelPrice').value = hotel ? hotel.price_per_night : '';
@@ -1088,40 +1062,40 @@
 
   function loadHotelsAdmin() {
     var tbody = document.getElementById('hotelsTableBody');
-    tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#bbb;font-size:14px;">Loading…</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">Loading…</td></tr>';
 
     fetch(API_BASE + '/admin.php?action=hotels', { credentials: 'include' })
       .then(function (r) { return r.json(); })
       .then(function (data) {
         if (!data.success) {
-          tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#e44;font-size:14px;">Failed to load hotels.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="6" class="empty-cell is-error">Could not load hotels</td></tr>';
           return;
         }
         allHotels = data.hotels || [];
         renderHotelsAdmin(allHotels);
       })
       .catch(function () {
-        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#e44;font-size:14px;">Network error.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="6" class="empty-cell is-error">Could not reach the server</td></tr>';
       });
   }
 
   function renderHotelsAdmin(hotels) {
     var tbody = document.getElementById('hotelsTableBody');
     if (hotels.length === 0) {
-      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;padding:40px;color:#bbb;font-size:14px;">No hotels yet.</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="6" class="empty-cell">No hotels yet</td></tr>';
       return;
     }
 
     var html = '';
     hotels.forEach(function (h) {
       html += '<tr>';
-      html += '<td style="padding-left:24px;"><span style="font-weight:600;font-size:13px;font-family:Inter,sans-serif;">' + escapeHtml(h.name) + '</span></td>';
-      html += '<td style="font-size:12px;color:#666;">' + escapeHtml(h.location || '') + '</td>';
-      html += '<td style="font-weight:700;font-size:13px;">$' + parseFloat(h.price_per_night).toFixed(0) + '</td>';
-      html += '<td style="font-size:13px;color:#666;">★ ' + parseFloat(h.rating || 0).toFixed(1) + '</td>';
-      html += '<td style="font-size:13px;color:#666;">' + parseInt(h.total_rooms, 10) + '</td>';
-      html += '<td style="padding-right:24px;white-space:nowrap;">';
-      html += '<button class="action-btn hotel-edit-btn" data-id="' + h.id + '" style="margin-right:6px;">Edit</button>';
+      html += '<td><span class="cell-strong">' + escapeHtml(h.name) + '</span></td>';
+      html += '<td class="cell-muted">' + escapeHtml(h.location || '') + '</td>';
+      html += '<td class="cell-strong">' + money(h.price_per_night) + '</td>';
+      html += '<td class="cell-muted">' + parseFloat(h.rating || 0).toFixed(1) + '</td>';
+      html += '<td class="cell-muted">' + parseInt(h.total_rooms, 10) + '</td>';
+      html += '<td style="white-space:nowrap;">';
+      html += '<button class="action-btn hotel-edit-btn" data-id="' + h.id + '">Edit</button>';
       html += '<button class="action-btn cancel hotel-delete-btn" data-id="' + h.id + '">Delete</button>';
       html += '</td></tr>';
     });
@@ -1209,7 +1183,7 @@
       .then(function (r) { return r.json(); })
       .then(function (data) {
         btn.disabled = false;
-        btn.textContent = 'Save Hotel';
+        btn.textContent = 'Save hotel';
         if (!data.success) {
           errEl.textContent = data.message || 'Could not save the hotel.';
           errEl.style.display = 'block';
@@ -1221,7 +1195,7 @@
       })
       .catch(function () {
         btn.disabled = false;
-        btn.textContent = 'Save Hotel';
+        btn.textContent = 'Save hotel';
         errEl.textContent = 'Network error. Please try again.';
         errEl.style.display = 'block';
       });
