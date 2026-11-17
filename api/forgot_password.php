@@ -73,12 +73,19 @@ if ($action === 'reset') {
         jsonResponse(false, 'Invalid or expired reset code.');
     }
 
-    // Brute-force guard: too many wrong tries invalidates the code.
-    $_SESSION['reset_attempts'] = ($_SESSION['reset_attempts'] ?? 0) + 1;
-    if ($_SESSION['reset_attempts'] > 10) {
+    // Brute-force guard stored per account in the database (a session counter
+    // can be reset by discarding the cookie): 5 wrong codes per 15 minutes,
+    // after which every open reset code for the account is invalidated.
+    $resetKey = rateLimitKey('user:' . $user['id']);
+    $invalidateResetCodes = function () use ($db, $user) {
         $stmt = $db->prepare('UPDATE verification_codes SET used = 1 WHERE user_id = ? AND purpose = "reset" AND used = 0');
         $stmt->execute([$user['id']]);
-        jsonResponse(false, 'Too many attempts. Please request a new code.');
+    };
+
+    if (rateLimitCount($db, 'reset_code', $resetKey, 900) >= 5) {
+        $invalidateResetCodes();
+        http_response_code(429);
+        jsonResponse(false, 'Too many attempts. Please wait 15 minutes, then request a new code.');
     }
 
     $stmt = $db->prepare('SELECT id, code, expires_at FROM verification_codes WHERE user_id = ? AND used = 0 AND purpose = "reset" ORDER BY created_at DESC LIMIT 1');
@@ -86,6 +93,10 @@ if ($action === 'reset') {
     $record = $stmt->fetch();
 
     if (!$record || strtotime($record['expires_at']) < time() || !hash_equals($record['code'], $code)) {
+        rateLimitHit($db, 'reset_code', $resetKey);
+        if (rateLimitCount($db, 'reset_code', $resetKey, 900) >= 5) {
+            $invalidateResetCodes();
+        }
         jsonResponse(false, 'Invalid or expired reset code.');
     }
 
@@ -93,7 +104,9 @@ if ($action === 'reset') {
     $stmt->execute([$record['id']]);
     $stmt = $db->prepare('UPDATE users SET password_hash = ? WHERE id = ?');
     $stmt->execute([password_hash($newPassword, PASSWORD_BCRYPT), $user['id']]);
-    unset($_SESSION['reset_attempts']);
+    rateLimitClear($db, 'reset_code', $resetKey);
+    // A successful reset proves ownership, so lift any login lockout too.
+    rateLimitClear($db, 'login', rateLimitKey($email));
 
     jsonResponse(true, 'Password reset successfully. You can now log in with your new password.');
 }

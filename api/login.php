@@ -32,6 +32,15 @@ if (count($_SESSION['login_failures']) >= 10) {
 
 $db = getDB();
 
+// Per-account brute-force limit stored in the database, so it also holds when
+// an attacker throws away the session cookie between guesses. Covers guest,
+// employee and admin logins alike.
+$loginKey = rateLimitKey($email);
+if (rateLimitCount($db, 'login', $loginKey, 900) >= 10) {
+    http_response_code(429);
+    jsonResponse(false, 'Too many failed attempts for this account. Please try again in 15 minutes.');
+}
+
 // Check admins table first (separate admin table)
 try {
     $stmt = $db->prepare('SELECT id, full_name, email, password_hash FROM admins WHERE email = ?');
@@ -41,6 +50,7 @@ try {
     if ($admin && password_verify($password, $admin['password_hash'])) {
         session_regenerate_id(true);
         unset($_SESSION['login_failures']);
+        rateLimitClear($db, 'login', $loginKey);
         $_SESSION['user_id'] = $admin['id'];
         $_SESSION['user_name'] = $admin['full_name'];
         $_SESSION['user_email'] = $admin['email'];
@@ -73,6 +83,7 @@ try {
         }
         session_regenerate_id(true);
         unset($_SESSION['login_failures']);
+        rateLimitClear($db, 'login', $loginKey);
         $_SESSION['user_id'] = $emp['id'];
         $_SESSION['user_name'] = $emp['full_name'];
         $_SESSION['user_email'] = $emp['email'];
@@ -108,6 +119,7 @@ if (!$user) {
         if ($legacyAdmin && password_verify($password, $legacyAdmin['password_hash'])) {
             session_regenerate_id(true);
             unset($_SESSION['login_failures']);
+        rateLimitClear($db, 'login', $loginKey);
             $_SESSION['user_id'] = $legacyAdmin['id'];
             $_SESSION['user_name'] = $legacyAdmin['full_name'];
             $_SESSION['user_email'] = $legacyAdmin['email'];
@@ -119,11 +131,14 @@ if (!$user) {
     } catch (PDOException $e) {
         // role column already dropped — ignore
     }
+    // Reached for unknown emails and for wrong admin/employee passwords.
+    rateLimitHit($db, 'login', $loginKey);
     jsonResponse(false, 'Invalid email or password.');
 }
 
 if (!password_verify($password, $user['password_hash'])) {
     $_SESSION['login_failures'][] = time();
+    rateLimitHit($db, 'login', $loginKey);
     jsonResponse(false, 'Invalid email or password.');
 }
 
@@ -134,6 +149,7 @@ if (!$user['is_verified']) {
 // Set session
 session_regenerate_id(true);
 unset($_SESSION['login_failures']);
+        rateLimitClear($db, 'login', $loginKey);
 $_SESSION['user_id'] = $user['id'];
 $_SESSION['user_name'] = $user['full_name'];
 $_SESSION['user_email'] = $user['email'];

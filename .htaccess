@@ -25,6 +25,15 @@
   Require all denied
 </FilesMatch>
 
+# Never serve dependency code, the SQL dump or include-only PHP files over HTTP.
+# PHP still loads them from disk; this only stops direct browser requests
+# (for example PHPMailer's get_oauth_token.php example or composer metadata).
+<IfModule mod_alias.c>
+  RedirectMatch 404 (?i)/(vendor|database|node_modules)(/|$)
+  RedirectMatch 404 (?i)/api/(config|db_config|mail_config|payment_config|send_mail|stripe|migrate)(\.example)?\.php$
+  RedirectMatch 404 (?i)/api/[a-z_]+\.example\.php$
+</IfModule>
+
 # Custom 404 handler matching design system
 ErrorDocument 404 /Hotel%20Management/src/404.html
 

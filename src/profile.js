@@ -13,6 +13,13 @@
     toastTimeout = setTimeout(function () { toastEl.classList.remove('show'); }, 4000);
   }
 
+  // Escape text from the server before it goes into innerHTML
+  function esc(text) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(String(text == null ? '' : text)));
+    return div.innerHTML.replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+  }
+
   function apiCall(endpoint, method, body, callback) {
     var options = { method: method, headers: { 'Content-Type': 'application/json' }, credentials: 'include' };
     if (body) options.body = JSON.stringify(body);
@@ -287,26 +294,26 @@
         html += '<div class="reservation-card" style="background:white;border-radius:16px;padding:24px 28px;border:1px solid #e5e5e5;display:flex;align-items:center;justify-content:space-between;gap:20px;">';
         html += '<div style="flex:1;">';
         html += '<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">';
-        html += '<h3 style="font-family:ABeeZee,sans-serif;font-size:18px;margin:0;color:#000;">' + r.hotel_name + '</h3>';
+        html += '<h3 style="font-family:ABeeZee,sans-serif;font-size:18px;margin:0;color:#000;">' + esc(r.hotel_name) + '</h3>';
         html += '<span style="font-size:12px;font-weight:500;padding:4px 12px;border-radius:20px;background:' + color + '18;color:' + color + ';font-family:Inter,sans-serif;">' + label + '</span>';
         html += '</div>';
         html += '<div style="font-family:Inter,sans-serif;font-size:14px;color:#666;display:flex;gap:20px;flex-wrap:wrap;">';
-        html += '<span>' + r.check_in + ' → ' + r.check_out + '</span>';
+        html += '<span>' + esc(r.check_in) + ' → ' + esc(r.check_out) + '</span>';
         html += '<span>' + r.nights + ' night(s)</span>';
         html += '<span>' + r.rooms_count + ' room(s), ' + r.guests + ' guest(s)</span>';
         html += '</div>';
         if (roomTypeLabel || extraServices.length) {
           html += '<div style="font-family:Inter,sans-serif;font-size:13px;color:#7a7a7a;display:flex;gap:16px;flex-wrap:wrap;margin-top:8px;">';
           if (roomTypeLabel) {
-            html += '<span><strong style="color:#1e2e37;font-weight:600;">Room type:</strong> ' + roomTypeLabel + '</span>';
+            html += '<span><strong style="color:#1e2e37;font-weight:600;">Room type:</strong> ' + esc(roomTypeLabel) + '</span>';
           }
           if (extraServices.length) {
-            html += '<span><strong style="color:#1e2e37;font-weight:600;">Services:</strong> ' + extraServices.join(', ') + '</span>';
+            html += '<span><strong style="color:#1e2e37;font-weight:600;">Services:</strong> ' + extraServices.map(esc).join(', ') + '</span>';
           }
           html += '</div>';
         }
         if (r.admin_note) {
-          html += '<p style="font-family:Inter,sans-serif;font-size:13px;color:#3b82f6;margin:8px 0 0;"><strong>Update:</strong> ' + r.admin_note + '</p>';
+          html += '<p style="font-family:Inter,sans-serif;font-size:13px;color:#3b82f6;margin:8px 0 0;"><strong>Update:</strong> ' + esc(r.admin_note) + '</p>';
         }
         html += '</div>';
         html += '<div style="text-align:right;shrink:0;">';
@@ -318,10 +325,10 @@
 
         html += '<div style="margin-top:10px;display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;">';
         if (r.status === 'approved') {
-          html += '<button onclick="cancelReservation(' + r.id + ', \'' + (r.hotel_name || '').replace(/'/g, "\\'") + '\', this)" style="padding:8px 16px;border-radius:10px;border:1px solid #ddd;color:#666;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;">Cancel</button>';
+          html += '<button onclick="cancelReservation(' + r.id + ', ' + esc(JSON.stringify(String(r.hotel_name || ''))) + ', this)" style="padding:8px 16px;border-radius:10px;border:1px solid #ddd;color:#666;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;">Cancel</button>';
           html += '<button onclick="payReservation(' + r.id + ', this)" style="padding:8px 20px;border-radius:10px;border:none;color:white;font-family:Inter,sans-serif;font-weight:500;font-size:13px;cursor:pointer;background:linear-gradient(119deg,#3f3f3f 18%,#151515 77%);box-shadow:inset 0 4px 12px #081738;">Pay Now</button>';
         } else if (r.status === 'pending') {
-          html += '<button onclick="cancelReservation(' + r.id + ', \'' + (r.hotel_name || '').replace(/'/g, "\\'") + '\', this)" style="padding:8px 16px;border-radius:10px;border:1px solid #ddd;color:#888;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;">Cancel Booking</button>';
+          html += '<button onclick="cancelReservation(' + r.id + ', ' + esc(JSON.stringify(String(r.hotel_name || ''))) + ', this)" style="padding:8px 16px;border-radius:10px;border:1px solid #ddd;color:#888;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;">Cancel Booking</button>';
         } else if (r.status === 'paid') {
           html += '<button onclick="viewInvoice(' + r.id + ')" style="padding:8px 18px;border-radius:10px;border:1px solid #1e2e37;color:#1e2e37;font-family:Inter,sans-serif;font-weight:500;font-size:12px;cursor:pointer;background:white;display:inline-flex;align-items:center;gap:6px;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>View Receipt</button>';
         }
@@ -404,7 +411,7 @@
   window.cancelReservation = function (reservationId, hotelName, btn) {
     rfModal.confirm({
       title: 'Cancel Reservation',
-      message: 'Are you sure you want to cancel your reservation for "' + hotelName + '"? This will release your rooms.',
+      message: 'Are you sure you want to cancel your reservation for "' + esc(hotelName) + '"? This will release your rooms.',
       confirmText: 'Yes, Cancel',
       cancelText: 'Keep Reservation',
       onConfirm: function () {
@@ -516,7 +523,7 @@
       linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2.5">Room Stay (' + inv.stay.nights + ' night(s) × ' + inv.stay.rooms_count + ' room(s))</td><td class="py-2.5 text-right font-medium">' + formatMoney(inv.line_items.base_price) + '</td></tr>';
       if (inv.line_items.services_details && inv.line_items.services_details.length > 0) {
         inv.line_items.services_details.forEach(function (s) {
-          linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2 text-xs text-[#666] pl-3">• ' + s.label + '</td><td class="py-2 text-right text-xs text-[#666]">' + formatMoney(s.price) + '</td></tr>';
+          linesHtml += '<tr class="border-b border-[#f0f0f0]"><td class="py-2 text-xs text-[#666] pl-3">• ' + esc(s.label) + '</td><td class="py-2 text-right text-xs text-[#666]">' + formatMoney(s.price) + '</td></tr>';
         });
       }
       itemsTbody.innerHTML = linesHtml;

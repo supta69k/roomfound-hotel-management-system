@@ -198,11 +198,10 @@
         hotel.reviews = '(' + Number(r.reviews_count).toLocaleString() + ' Reviews)';
         hotel.price = parseFloat(r.price_per_night);
         hotel.image = r.image;
+        // Database descriptions are plain text: escape them so markup typed
+        // into the admin hotel form can never run as HTML on this page.
         var desc = r.description || '';
-        if (desc && desc.indexOf('<') === -1) {
-          desc = '<p class="m-0">' + desc + '</p>';
-        }
-        if (desc) hotel.description = desc;
+        if (desc) hotel.description = '<p class="m-0">' + escapeReviewHtml(desc) + '</p>';
         populateHotelInfo();
         if (typeof updatePrice === 'function') updatePrice();
         if (typeof fetchAvailability === 'function') fetchAvailability();

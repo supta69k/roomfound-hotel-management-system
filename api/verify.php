@@ -96,6 +96,9 @@ session_regenerate_id(true);
 $_SESSION['user_id'] = $userId;
 $_SESSION['user_name'] = $user['full_name'];
 $_SESSION['user_email'] = $user['email'];
+// Guest role, so guest-only endpoints (booking, profile) work right away
+// instead of only after the next login.
+$_SESSION['user_role'] = 'user';
 
 // Clear pending verification
 unset($_SESSION['pending_verification_user_id']);

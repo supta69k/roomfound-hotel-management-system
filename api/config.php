@@ -25,11 +25,27 @@ header('X-Frame-Options: SAMEORIGIN');
 header('Referrer-Policy: strict-origin-when-cross-origin');
 header('Permissions-Policy: geolocation=(), camera=(), microphone=()');
 
-// Secure session cookie settings (must be set before session_start)
+// True when the visitor reached the site over HTTPS, including behind the
+// hosting provider's TLS-terminating proxy.
+function isHttpsRequest() {
+    if (!empty($_SERVER['HTTPS']) && strtolower((string) $_SERVER['HTTPS']) !== 'off') {
+        return true;
+    }
+    if (strtolower((string) ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '')) === 'https') {
+        return true;
+    }
+    return (int) ($_SERVER['SERVER_PORT'] ?? 0) === 443;
+}
+
+// Secure session cookie settings (must be set before session_start).
+// Over HTTPS the cookies are also marked Secure so they never travel over
+// plain HTTP; local XAMPP over http://localhost keeps working.
 if (session_status() === PHP_SESSION_NONE) {
+    ini_set('session.use_strict_mode', '1');
     session_set_cookie_params([
         'lifetime' => 0,
         'path' => '/',
+        'secure' => isHttpsRequest(),
         'httponly' => true,
         'samesite' => 'Lax',
     ]);
@@ -46,6 +62,7 @@ if (!headers_sent()) {
     setcookie('rf_csrf_token', $_SESSION['csrf_token'], [
         'expires' => 0,
         'path' => '/',
+        'secure' => isHttpsRequest(),
         'samesite' => 'Lax',
         'httponly' => false,
     ]);
@@ -69,6 +86,47 @@ function getDB() {
         }
     }
     return $pdo;
+}
+
+// ===== Database-backed rate limiting =====
+// Session counters can be bypassed by simply discarding the session cookie,
+// so brute-force limits are stored per account in the rate_limits table.
+// Identifiers are hashed so raw email addresses are not stored there.
+function rateLimitKey($value) {
+    return hash('sha256', strtolower(trim((string) $value)));
+}
+
+function rateLimitCount(PDO $db, $action, $key, $windowSeconds) {
+    try {
+        $stmt = $db->prepare('SELECT COUNT(*) FROM rate_limits WHERE action = ? AND identifier = ? AND attempted_at > (NOW() - INTERVAL ? SECOND)');
+        $stmt->execute([$action, $key, (int) $windowSeconds]);
+        return (int) $stmt->fetchColumn();
+    } catch (PDOException $e) {
+        error_log('rateLimitCount failed: ' . $e->getMessage());
+        return 0;
+    }
+}
+
+function rateLimitHit(PDO $db, $action, $key) {
+    try {
+        $stmt = $db->prepare('INSERT INTO rate_limits (identifier, action) VALUES (?, ?)');
+        $stmt->execute([$key, $action]);
+        // Occasionally prune old rows so the table stays small.
+        if (random_int(1, 50) === 1) {
+            $db->exec('DELETE FROM rate_limits WHERE attempted_at < (NOW() - INTERVAL 1 DAY)');
+        }
+    } catch (PDOException $e) {
+        error_log('rateLimitHit failed: ' . $e->getMessage());
+    }
+}
+
+function rateLimitClear(PDO $db, $action, $key) {
+    try {
+        $stmt = $db->prepare('DELETE FROM rate_limits WHERE action = ? AND identifier = ?');
+        $stmt->execute([$action, $key]);
+    } catch (PDOException $e) {
+        error_log('rateLimitClear failed: ' . $e->getMessage());
+    }
 }
 
 // Generate a 6-digit verification code
